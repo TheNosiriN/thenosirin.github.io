@@ -1,0 +1,8 @@
+@font-face {
+	font-family: Colus;
+	src: url('./fonts/Colus/WEB/Colus-Regular.eot'); /* IE9 Compat Modes */
+	src: url('./fonts/Colus/WEB/Colus-Regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+			 url('./fonts/Colus/WEB/Colus-Regular.woff2') format('woff2'), /* Super Modern Browsers */
+			 url('./fonts/Colus/WEB/Colus-Regular.woff') format('woff'), /* Pretty Modern Browsers */
+			 url('./fonts/Colus/TTF/Colus-Regular.ttf')  format('truetype'), /* Safari, Android, iOS */
+}

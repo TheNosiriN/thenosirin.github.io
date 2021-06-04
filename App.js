@@ -6,3 +6,5 @@ const hello = el("h1", "Hello world!");
 
 
 mount(document.body, hello);
+
+console.log(hello.textContent);
