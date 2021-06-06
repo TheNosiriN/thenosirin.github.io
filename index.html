@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <meta name="description" content="Chinomso Nosiri (TheNosiriN): Graphics Programmer and Shader Artist">
-    <title>Chinomso Nosiri</title>
+    <title>Chinomso Nosiri (TheNosiriN)</title>
 
     <link rel="stylesheet" href="/css/loadfonts.css">
 
@@ -28,27 +28,25 @@
 		}
 
 		.welcome {
-			top: 50%;
-			left: 50%;
-			width: 80%;
+			top: 40%;
+	    left: 50%;
+	    width: 80%;
 	    height: 25%;
 	    position: absolute;
-	    /*border: 5px solid red;*/
-
-		  margin-left: -40%;
-			margin-top: -12.5%;
-
-			text-align: center;
+	    /* border: 5px solid red; */
+	    margin-left: -40%;
+	    /* margin-top: 25%; */
+	    text-align: center;
 	    text-transform: uppercase;
-			color: rgb(250,250,250);
+	    color: #ffffff;
 		}
 
-		.welcome_name {
+		/*.welcome_name {
 			font-family: Colus;
 			letter-spacing: 10px;
-			font-size: 25px;
+			font-size: 5vmin;
 
-		}
+		}*/
 
 		/*.welcome_icon {
 			max-width: 100px;
@@ -56,10 +54,54 @@
 		  width: auto;
 		  height: auto;
 		}*/
+
 		.welcome_icon {
+			color: #fffedd;
 			font-family: Cherubic;
-			font-size: 100px;
+			font-size: 15vmin;
 			font-weight: 100;
+			margin: 0;
+			letter-spacing: 0;
+			padding: 0;
+		}
+
+		.nav_buttons {
+			font-family: Colus;
+			font-size: 2.5vmin;
+		  position: relative;
+			text-align: center;
+	    text-transform: uppercase;
+		}
+
+		.nav_buttons > a {
+			color: white;
+			text-decoration: none;
+			display: inline-block;
+		  position: relative;
+			letter-spacing: 0.15em;
+			cursor: pointer;
+			margin: 2em;
+			margin-top: 1.5em;
+			margin-bottom: 0.3em;
+			padding-bottom: 0.3em;
+		}
+
+		a:after {
+		  content: '';
+		  position: absolute;
+		  width: 100%;
+		  transform: scaleX(0);
+		  height: 0.1em;
+		  bottom: 0;
+		  left: 0;
+		  background-color: #fffedd;
+		  transform-origin: center;
+		  transition: transform 0.25s ease-out;
+		}
+
+		a:hover:after {
+		  transform: scaleX(1);
+		  transform-origin: center;
 		}
 
 	</style>
@@ -68,7 +110,13 @@
 		<div class="welcome">
 			<!--img class="welcome_icon" src="img/NN/Logo172.png" alt="NNLogo"></img-->
 			<h1 class="welcome_icon">N</h1>
-			<h1 class="welcome_name">CHINOMSO NOSIRI</h1>
+			<!--h1 class="welcome_name">CHINOMSO NOSIRI</h1-->
+			<div class="nav_buttons">
+				<a href="#" class="home">Home</a>
+				<a href="#" class="about">About</a>
+				<a href="#" class="blog">Blog</a>
+				<a href="#" class="Contact">Contact</a>
+			</div>
 		</div>
 	</div>
 
