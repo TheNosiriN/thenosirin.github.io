@@ -59,7 +59,7 @@ var trackSettings = {
 	numberOfQuestionBlocks: 5,
 
 	// 0 means ride normally, 1 means always ride up, never go down
-	tendencyToGoUp: 0.15,
+	tendencyToGoUp: 0.2,
 }
 
 

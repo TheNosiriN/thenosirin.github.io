@@ -119,7 +119,7 @@ function mainMenuScreen()
 			//big game text
 			let mainMenu = new PIXI.Container();
 
-			let mainMenuText = new PIXI.Text("Untitled game", {fontFamily : PRIMARY_FONT, fontSize: 200, fill : "0x000000", align : 'center'});
+			let mainMenuText = new PIXI.Text("Geo Coaster", {fontFamily : PRIMARY_FONT, fontSize: 200, fill : "0x000000", align : 'center'});
 
 			var ratio = mainMenuText.width / mainMenuText.height;
 			mainMenuText.width = game.renderer.width/1.75;

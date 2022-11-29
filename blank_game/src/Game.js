@@ -57,11 +57,12 @@ function setupKey(value) {
 		}
 	};
 
-	//The `upHandler`
+	//The upHandler`
 	key.upHandler = (event) => {
-		if (event.key === key.value) {
-			if (key.isDown && key.release) {
-				key.release();
+		if (event.key == key.value) {
+			if (key.isDown) {
+				// key.release();
+                __developerSkipQuestion();
 			}
 			key.isDown = false;
 			key.isUp = true;
@@ -95,6 +96,9 @@ function setupKey(value) {
 
 
 
+
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////
@@ -104,7 +108,7 @@ function setupKey(value) {
 
 function create()
 {
-	keys.vk_T = setupKey(84);
+	keys.vk_T = setupKey('t');
 
 	var errfunc = function(err){
 		console.error(err);
@@ -234,11 +238,14 @@ function gameUpdate()
 	game.stage.scale.x = camScale.x;
 	game.stage.scale.y = camScale.y;
 
+}
 
-	// update developer shortcuts
-	// if (questionOpen == true && keys.vk_T == true){
-	// 	gotRight();
-	// }
+
+
+function __developerSkipQuestion(){
+    if (questionOpen == true){
+		gotRight();
+	}
 }
 
 
@@ -539,7 +546,7 @@ function updateTimer()
 	}else{
 		var b = new Block(track);
 		b.create();
-		track.blocks.unshift(b);
+        track.blocks.unshift(b);
 	}
 }
 
