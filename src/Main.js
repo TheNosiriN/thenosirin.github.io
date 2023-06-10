@@ -34,8 +34,21 @@ function update(){
 }
 
 
-window.addEventListener("DOMContentLoaded", function(){
 
+
+async function logJSONData() {
+    const response = await fetch("https://www.shadertoy.com/api/v1/shaders/WdGBWt?key=rt8lhH");
+    const jsonData = await response.json();
+    console.log("printing json data");
+    console.log(jsonData);
+}
+
+
+window.addEventListener("DOMContentLoaded", function(){
+    logJSONData();
+    setupWebGL();
+
+    resizeWebGL();
     update();
 
 });
