@@ -1,110 +1,267 @@
-const vertexShader = `
-attribute vec4 a_position;
+const vertexShader = `#version 300 es
+
+vec2 pos[3] = vec2[3](
+    vec2(-1,-1), vec2(-1,3), vec2(3,-1)
+);
 
 void main() {
-
-    gl_Position = a_position;
+    gl_Position = vec4(pos[gl_VertexID], 0, 1);
 }
 `;
 
-const fragmentShader = `
+const shadertoyfragmentShaderHeader = `#version 300 es
 precision highp float;
 
-uniform vec2 iResolution;
+uniform vec3 iResolution;
 uniform vec2 iMouse;
 uniform float iTime;
+uniform int iFrame;
 
+uniform sampler2D iChannel0;
+uniform sampler2D iChannel1;
+uniform sampler2D iChannel2;
+uniform sampler2D iChannel3;
+
+void mainImage(out vec4 fragColor, in vec2 fragCoord);
+
+out vec4 outColor;
 void main() {
-    gl_FragColor = vec4(fract((gl_FragCoord.xy - u_mouse) / u_resolution), fract(u_time), 1);
+    mainImage(outColor, gl_FragCoord.xy);
+    // outColor = vec4(gl_FragCoord.xy/iResolution.xy,0,1);
 }
 `;
 
 
-let mouseX = 0;
-let mouseY = 0;
-function setMousePosition(e) {
-    const rect = inputElem.getBoundingClientRect();
-    mouseX = e.clientX - rect.left;
-    mouseY = rect.height - (e.clientY - rect.top) - 1;  // bottom is 0 in WebGL
-}
 
+var gl, canvas, renderer;
 
-function createShaders(){
+class Renderer {
+    constructor(){
+        this.mouseX = 0;
+        this.mouseY = 0;
+        this.width = 0;
+        this.height = 0;
+        this.time = 0;
+        this.frame = 0;
 
-}
-
-
-function setupWebGL(){
-    const canvas = document.querySelector("#background_canvas");
-    const gl = canvas.getContext("webgl");
-    if (!gl) {
-        return;
+        this.mainPass = null;
+        this.passes = {};
+        this.textures = {};
     }
 
-    // setup GLSL program
-    const program = webglUtils.createProgramFromSources(gl, [vs, fs]);
+    resize(width, height){
+        this.width = width;
+        this.height = height;
+        canvas.width = width;
+        canvas.height = height;
 
-    const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
+        for(var i in this.passes) {
+            this.passes[i].resize(width, height);
+        }
+    }
 
-    const resolutionLocation = gl.getUniformLocation(program, "iResolution");
-    const mouseLocation = gl.getUniformLocation(program, "iMouse");
-    const timeLocation = gl.getUniformLocation(program, "iTime");
+    addTexture(tex){
+        this.textures[tex.id] = tex;
+    }
 
-    const positionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-        -1, -1,  // first triangle
-        1, -1,
-        -1,  1,
-        -1,  1,  // second triangle
-        1, -1,
-        1,  1,
-    ]), gl.STATIC_DRAW);
+    addPass(pass){
+        this.passes[pass.id] = pass;
+    }
+
+    updateMouse(x, y){
+        this.mouseX = x;
+        this.mouseY = y;
+    }
+
+    setupPassInputs(pass){
+        for (var i=0; i<pass.inputs.length; ++i){
+            const desc = pass.inputs[i];
+            gl.activeTexture(gl.TEXTURE0+i);
+            if (desc.buffered){
+                gl.bindTexture(gl.TEXTURE_2D, this.passes[desc.id].getTarget(this.frame+1).texture);
+            }else{
+                gl.bindTexture(gl.TEXTURE_2D, this.textures[desc.id].internal);
+                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+            }
+
+            // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+            gl.uniform1i(pass.uniforms.iChannel[desc.channel], i);
+        }
+    }
+
+    drawPass(pass){
+        gl.useProgram(pass.program);
+        this.setupPassInputs(pass);
+        gl.viewport(0, 0, this.width, this.height);
+        gl.uniform3f(pass.uniforms.iResolution, this.width, this.height, 0);
+        gl.uniform2f(pass.uniforms.iMouse, this.mouseX, this.mouseY);
+        gl.uniform1f(pass.uniforms.iTime, this.time);
+        gl.uniform1i(pass.uniforms.iFrame, this.frame);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+    }
+
+    drawPasses(){
+        for(var i in this.passes) {
+            gl.bindFramebuffer(gl.FRAMEBUFFER, this.passes[i].getTarget(this.frame).framebuffer);
+            this.drawPass(this.passes[i]);
+        }
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        this.drawPass(this.mainPass);
+    }
 }
 
 
-let then = 0;
-let time = 0;
-function render(now) {
-    requestId = undefined;
-    now *= 0.001;  // convert to seconds
-    const elapsedTime = Math.min(now - then, 0.1);
-    time += elapsedTime;
-    then = now;
 
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-    gl.useProgram(program);
-    gl.enableVertexAttribArray(positionAttributeLocation);
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+class ChannelDesc {
+    constructor(id, channel, sampler, buffered){
+        this.id = id;
+        this.channel = channel;
+        this.buffered = buffered || false;
+        this.sampler = sampler;
+    }
+}
 
-    // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-    gl.vertexAttribPointer(
-        positionAttributeLocation,
-        2,          // 2 components per iteration
-        gl.FLOAT,   // the data is 32bit floats
-        false,      // don't normalize the data
-        0,          // 0 = move forward size * sizeof(type) each iteration to get the next position
-        0,          // start at the beginning of the buffer
-    );
 
-    gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
-    gl.uniform2f(mouseLocation, mouseX, mouseY);
-    gl.uniform1f(timeLocation, time);
+class TextureResource {
+    constructor(id){
+        this.id = id;
+        this.internal = gl.createTexture();
+    }
 
-    gl.drawArrays(
-        gl.TRIANGLES,
-        0,     // offset
-        6,     // num vertices to process
-    );
+    init(url){
+        gl.bindTexture(gl.TEXTURE_2D, this.internal);
+
+        const level = 0;
+        const internalFormat = gl.RGBA;
+        const width = 1;
+        const height = 1;
+        const border = 0;
+        const srcFormat = gl.RGBA;
+        const srcType = gl.UNSIGNED_BYTE;
+        gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width, height, border, srcFormat, srcType, null);
+
+        function isPowerOf2(value) {
+            return (value & (value - 1)) === 0;
+        }
+
+        const image = new Image();
+        const corsImageModified = new Image();
+        image.onload = () => {
+            gl.bindTexture(gl.TEXTURE_2D, this.internal);
+            gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, srcFormat, srcType, image);
+
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+
+            if (isPowerOf2(image.width) && isPowerOf2(image.height)){
+                gl.generateMipmap(gl.TEXTURE_2D);
+            }
+        };
+
+        url = "https://cors-anywhere.herokuapp.com/"+ url + "?"+Date.now();
+        image.crossOrigin = "anonymous";
+        image.src = url;
+        console.log(url);
+    }
 }
 
 
 
-function resizeWebGL(){
-    const w = window.innerWidth;
-    const h = window.innerHeight;
+class Renderpass {
+    constructor(inputs){
+        this.inputs = inputs;
+    }
+
+    init(vsh, fsh){
+        this.program = gl.createProgram();
+        const vertId = gl.createShader(gl.VERTEX_SHADER);
+        const fragId = gl.createShader(gl.FRAGMENT_SHADER);
+        gl.shaderSource(vertId, vsh);
+        gl.shaderSource(fragId, fsh);
+        gl.compileShader(vertId);
+        gl.compileShader(fragId);
+
+        if (!gl.getShaderParameter(vertId, gl.COMPILE_STATUS)) {
+            console.error(vsh);
+            console.error("Vertex Shader Compiler Error: " + gl.getShaderInfoLog(vertId));
+            gl.deleteShader(vertId);
+            return false;
+        }
+
+        if (!gl.getShaderParameter(fragId, gl.COMPILE_STATUS)) {
+            console.error(fsh);
+            console.error("Fragment Shader Compiler Error: " + gl.getShaderInfoLog(fragId));
+            gl.deleteShader(fragId);
+            return false;
+        }
+
+        gl.attachShader(this.program, vertId);
+        gl.attachShader(this.program, fragId);
+        gl.linkProgram(this.program);
+
+        if (!gl.getProgramParameter(this.program, gl.LINK_STATUS)) {
+            console.error("Shader Linking Error: " + gl.getProgramInfoLog(this.program));
+            return false;
+        }
+
+        this.uniforms = {
+            iResolution: gl.getUniformLocation(this.program, "iResolution"),
+            iMouse: gl.getUniformLocation(this.program, "iMouse"),
+            iTime: gl.getUniformLocation(this.program, "iTime"),
+            iFrame: gl.getUniformLocation(this.program, "iFrame"),
+            iChannel: [
+                gl.getUniformLocation(this.program, "iChannel0"),
+                gl.getUniformLocation(this.program, "iChannel1"),
+                gl.getUniformLocation(this.program, "iChannel2"),
+                gl.getUniformLocation(this.program, "iChannel3"),
+            ]
+        };
+
+        return true;
+    }
 }
 
 
 
-window.addEventListener('resize', resizeWebGL);
+class BufferRenderpass extends Renderpass {
+    constructor(id, inputs){
+        super(inputs);
+        this.id = id;
+        this.targets = [];
+        for (var i=0; i<2; ++i){
+            this.targets.push({
+                texture: gl.createTexture(),
+                framebuffer: gl.createFramebuffer()
+            });
+        }
+    }
+
+    getTarget(frame){
+        return this.targets[frame % 2];
+    }
+
+    resize(width, height){
+        for (var i=0; i<2; ++i){
+            gl.bindTexture(gl.TEXTURE_2D, this.targets[i].texture);
+
+            const level = 0;
+            const internalFormat = gl.RGBA;
+            const border = 0;
+            const format = gl.RGBA;
+            const type = gl.UNSIGNED_BYTE;
+            const data = null;
+            gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width, height, border, format, type, data);
+
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+            gl.bindFramebuffer(gl.FRAMEBUFFER, this.targets[i].framebuffer);
+            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.targets[i].texture, level);
+        }
+    }
+}

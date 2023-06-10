@@ -10,8 +10,8 @@
 
     <link rel="stylesheet" href="/css/loadfonts.css">
 
-    <script type="module" src="src/Main.js"></script>
-    <script type="module" src="src/Renderer.js"></script>
+    <script src="src/Renderer.js"></script>
+    <script src="src/Main.js"></script>
 </head>
 
 <body>
@@ -25,7 +25,7 @@
         top: 0;
         left: 0;
         position: fixed !important;
-        background-color: rgb(28, 27, 23);
+        background-color: black;/*rgb(28, 27, 23);*/
     }
 
     .welcome {
@@ -46,6 +46,12 @@
         position: relative;
         width: 100%;
         /* pointer-events: none; */
+    }
+
+    #background_canvas {
+        width: 640;
+        height: 480;
+        overflow:hidden;
     }
 
     .welcome_icon {
@@ -120,21 +126,21 @@
 
 
     <div class="welcome_container">
-        <iframe class="unselectable" id="shaders" allowtransparence="true" width="640" height="360" frameborder="0"
+        <!-- <iframe class="unselectable" id="shaders" allowtransparence="true" width="640" height="360" frameborder="0"
         src="https://www.shadertoy.com/embed/mlySzt?gui=false&t=0&paused=false&muted=true"
         frameborder="0" style="overflow:hidden;height:100%;width:100%" height="100%" width="100%"
-        ></iframe>
+        ></iframe> -->
 
-        <!-- <canvas id="background_canvas"></canvas> -->
+        <canvas id="background_canvas"></canvas>
 
         <div class="welcome_overlay"style="
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            position: fixed !important;
-            background-color: rgba(28, 27, 23, 0.25);
-            pointer-events: none;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        position: fixed !important;
+        background-color: rgba(28, 27, 23, 0.25);
+        pointer-events: none;
         "></div>
 
         <div class="welcome unselectable">
