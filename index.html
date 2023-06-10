@@ -42,12 +42,6 @@
         color: #ffffff;
     }
 
-    #shaders {
-        position: relative;
-        width: 100%;
-        /* pointer-events: none; */
-    }
-
     #background_canvas {
         width: 640;
         height: 480;
@@ -66,6 +60,7 @@
 
     .welcome_name {
         color: #fffedd;
+        /* background-color: linear-gradient(#fffedd, #000000); */
         font-family: Colus;
         font-size: 4vmin;
         font-weight: 100;
@@ -126,21 +121,17 @@
 
 
     <div class="welcome_container">
-        <!-- <iframe class="unselectable" id="shaders" allowtransparence="true" width="640" height="360" frameborder="0"
-        src="https://www.shadertoy.com/embed/mlySzt?gui=false&t=0&paused=false&muted=true"
-        frameborder="0" style="overflow:hidden;height:100%;width:100%" height="100%" width="100%"
-        ></iframe> -->
 
         <canvas id="background_canvas"></canvas>
 
-        <div class="welcome_overlay"style="
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        position: fixed !important;
-        background-color: rgba(28, 27, 23, 0.25);
-        pointer-events: none;
+        <div class="unselectable" style="
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            position: fixed !important;
+            background-color: rgba(28, 27, 23, 0.25);
+            pointer-events: none;
         "></div>
 
         <div class="welcome unselectable">
@@ -156,9 +147,6 @@
         </div>
     </div>
 
-    <!-- <video autoplay loop id="myVideo">
-    <source src="vids/Programming Showreel 2020.mp4" type="video/mp4">
-</video> -->
 
 </body>
 

@@ -50,11 +50,43 @@ function setupWebGL(){
 }
 
 
-async function loadShaderToy() {
+async function loadShaderToy(){
     const response = await fetch("https://www.shadertoy.com/api/v1/shaders/mlySzt?key=rt8lhH");
     const jsonData = await response.json();
     return jsonData;
 }
+
+
+async function fetchBlob(url){
+    const response = await fetch(url, {mode: "no-cors"});
+    return response.blob();
+}
+async function downloadImageAndSetSource(imageUrl){
+    const image = await fetchBlob(imageUrl);
+    return URL.createObjectURL(image);
+}
+function requestCORSIfNotSameOrigin(img, url) {
+  if ((new URL(url, window.location.href)).origin !== window.location.origin) {
+    img.crossOrigin = "";
+  }
+}
+
+function fetchNoCors(url, options = {}, corsAnyWhereInstanceURL = "https://cors-anywhere.herokuapp.com/"){
+    return new Promise(async function(resolve, reject){
+        try {
+            const res = await fetch(`${corsAnyWhereInstanceURL}${url}`, {
+                ...options,
+                headers: {
+                    ...options.headers,
+                    "X-Requested-With": "XMLHttpRequest",
+                }
+            });
+            resolve(res);
+        } catch (err) {
+            reject(err);
+        }
+    });
+};
 
 
 
@@ -80,8 +112,16 @@ window.addEventListener("DOMContentLoaded", function(){
         for (var i=0; i<inputs.length; ++i){
             var buffered = true;
             if (inputs[i].ctype == "texture"){
-                var tex = new TextureResource(inputs[i].id);
-                tex.init("https://www.shadertoy.com"+inputs[i].src);
+                let tex = new TextureResource(inputs[i].id);
+
+                fetchNoCors(
+                    "https://www.shadertoy.com"+inputs[i].src
+                ).then(function(response){
+                    response.blob().then(function(blob){
+                        tex.init(URL.createObjectURL(blob));
+                    });
+                });
+
                 renderer.addTexture(tex);
                 buffered = false;
             }

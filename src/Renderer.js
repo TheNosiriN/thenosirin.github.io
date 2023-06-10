@@ -96,10 +96,10 @@ class Renderer {
             }else{
                 gl.bindTexture(gl.TEXTURE_2D, this.textures[desc.id].internal);
 
+                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
-                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
             }
 
             // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
@@ -143,6 +143,8 @@ class ChannelDesc {
 }
 
 
+
+
 class TextureResource {
     constructor(id){
         this.id = id;
@@ -165,8 +167,7 @@ class TextureResource {
             return (value & (value - 1)) === 0;
         }
 
-        const image = new Image();
-        const corsImageModified = new Image();
+        var image = new Image();
         image.onload = () => {
             gl.bindTexture(gl.TEXTURE_2D, this.internal);
             gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, srcFormat, srcType, image);
@@ -180,9 +181,28 @@ class TextureResource {
             }
         };
 
-        // url = "https://cors-anywhere.herokuapp.com/"+ url + "?"+Date.now();
-        image.crossOrigin = "anonymous";
         image.src = url;
+
+        // url = "https://cors-anywhere.herokuapp.com/"+ url + "?"+Date.now();
+        // image.crossOrigin = "anonymous";
+        // image.src = "https://www.shadertoy.com/media/a/79520a3d3a0f4d3caa440802ef4362e99d54e12b1392973e4ea321840970a88a.jpg";
+
+        // image.alt = "";
+
+        // canvas.innerHTML += `<img id="tester" src="https://www.shadertoy.com/media/a/92d7758c402f0927011ca8d0a7e40251439fba3a1dac26f5b8b62026323501aa.jpg">`;
+        // image = canvas.querySelector("#tester");
+        // image.onload = onLoadImg;
+        // image.src = url;
+
+        // fetchNoCors(
+        //     "https://www.shadertoy.com/media/a/79520a3d3a0f4d3caa440802ef4362e99d54e12b1392973e4ea321840970a88a.jpg",
+        // ).then((response) => {
+        //     console.log(response);
+        //     response.blob().then((blob) => {
+        //         console.log(blob);
+        //         image.src = URL.createObjectURL(blob);
+        //     });
+        // });
         console.log(url);
     }
 }
