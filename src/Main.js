@@ -12,14 +12,18 @@
 
 
 let then = 0;
+let tmouseX = 0;
+let tmouseY = 0;
 function update(now){
     requestAnimationFrame(update);
 
     now *= 0.001;  // convert to seconds
     const elapsedTime = Math.min(now - then, 0.1);
+    renderer.deltaTime = elapsedTime;
     renderer.time += elapsedTime;
     then = now;
 
+    renderer.updateMouse(tmouseX, tmouseY);
     renderer.drawPasses();
 
     renderer.frame++;
@@ -27,7 +31,9 @@ function update(now){
 
 
 function resize(){
-    renderer.resize(window.innerWidth, window.innerHeight);
+    if (renderer){
+        renderer.resize(window.innerWidth, window.innerHeight);
+    }
 }
 
 
@@ -57,14 +63,16 @@ window.addEventListener('resize', resize);
 
 window.addEventListener("mousemove", function(e){
     const rect = canvas.getBoundingClientRect();
-    renderer.mouseX = e.clientX - rect.left;
-    renderer.mouseY = rect.height - (e.clientY - rect.top) - 1;  // bottom is 0 in WebGL
+    tmouseX = e.clientX - rect.left;
+    tmouseY = rect.height - (e.clientY - rect.top) - 1;  // bottom is 0 in WebGL
 });
 
 window.addEventListener("DOMContentLoaded", function(){
     if (!setupWebGL())return;
 
-    renderer = new Renderer();
+    renderer = new Renderer({
+        lerpMouseFactor: 2,
+    });
 
 
     function get_rp_inputs(inputs){

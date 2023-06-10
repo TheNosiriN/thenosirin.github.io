@@ -32,16 +32,25 @@ void main() {
 `;
 
 
+function lerp(a, b, alpha) {
+    return a + alpha * (b - a);
+}
+
+
+
 
 var gl, canvas, renderer;
 
 class Renderer {
-    constructor(){
+    constructor(options){
+        this.options = options || {};
+
         this.mouseX = 0;
         this.mouseY = 0;
         this.width = 0;
         this.height = 0;
         this.time = 0;
+        this.deltaTime = 0;
         this.frame = 0;
 
         this.mainPass = null;
@@ -69,8 +78,13 @@ class Renderer {
     }
 
     updateMouse(x, y){
-        this.mouseX = x;
-        this.mouseY = y;
+        if (this.options.lerpMouseFactor > 0){
+            this.mouseX = lerp(this.mouseX, x, this.deltaTime * this.options.lerpMouseFactor);
+            this.mouseY = lerp(this.mouseY, y, this.deltaTime * this.options.lerpMouseFactor);
+        }else{
+            this.mouseX = x;
+            this.mouseY = y;
+        }
     }
 
     setupPassInputs(pass){
@@ -81,6 +95,10 @@ class Renderer {
                 gl.bindTexture(gl.TEXTURE_2D, this.passes[desc.id].getTarget(this.frame+1).texture);
             }else{
                 gl.bindTexture(gl.TEXTURE_2D, this.textures[desc.id].internal);
+
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
                 gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
             }
 
@@ -153,16 +171,16 @@ class TextureResource {
             gl.bindTexture(gl.TEXTURE_2D, this.internal);
             gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, srcFormat, srcType, image);
 
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+            // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+            // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
 
             if (isPowerOf2(image.width) && isPowerOf2(image.height)){
                 gl.generateMipmap(gl.TEXTURE_2D);
             }
         };
 
-        url = "https://cors-anywhere.herokuapp.com/"+ url + "?"+Date.now();
+        // url = "https://cors-anywhere.herokuapp.com/"+ url + "?"+Date.now();
         image.crossOrigin = "anonymous";
         image.src = url;
         console.log(url);
