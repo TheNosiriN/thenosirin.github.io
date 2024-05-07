@@ -10,7 +10,7 @@ void main() {
 `;
 
 const shadertoyfragmentShaderHeader = `#version 300 es
-precision highp float;
+precision lowp float;
 
 uniform vec3 iResolution;
 uniform vec2 iMouse;
@@ -93,9 +93,11 @@ class Renderer {
             gl.activeTexture(gl.TEXTURE0+i);
             if (desc.buffered){
                 gl.bindTexture(gl.TEXTURE_2D, this.passes[desc.id].getTarget(this.frame+1).texture);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
             }else{
                 gl.bindTexture(gl.TEXTURE_2D, this.textures[desc.id].internal);
-
                 gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
@@ -182,27 +184,6 @@ class TextureResource {
         };
 
         image.src = url;
-
-        // url = "https://cors-anywhere.herokuapp.com/"+ url + "?"+Date.now();
-        // image.crossOrigin = "anonymous";
-        // image.src = "https://www.shadertoy.com/media/a/79520a3d3a0f4d3caa440802ef4362e99d54e12b1392973e4ea321840970a88a.jpg";
-
-        // image.alt = "";
-
-        // canvas.innerHTML += `<img id="tester" src="https://www.shadertoy.com/media/a/92d7758c402f0927011ca8d0a7e40251439fba3a1dac26f5b8b62026323501aa.jpg">`;
-        // image = canvas.querySelector("#tester");
-        // image.onload = onLoadImg;
-        // image.src = url;
-
-        // fetchNoCors(
-        //     "https://www.shadertoy.com/media/a/79520a3d3a0f4d3caa440802ef4362e99d54e12b1392973e4ea321840970a88a.jpg",
-        // ).then((response) => {
-        //     console.log(response);
-        //     response.blob().then((blob) => {
-        //         console.log(blob);
-        //         image.src = URL.createObjectURL(blob);
-        //     });
-        // });
         console.log(url);
     }
 }

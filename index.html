@@ -10,8 +10,11 @@
 
     <link rel="stylesheet" href="/css/loadfonts.css">
 
+    <script src="lib/ShaderToyLite.js"></script>
+    <script src="src/Utils.js"></script>
+    <script src="src/Constants.js"></script>
     <script src="src/Renderer.js"></script>
-    <script src="src/Main.js"></script>
+    <script src="src/Home.js"></script>
 </head>
 
 <body>
@@ -34,17 +37,18 @@
         width: 50%;
         height: 25%;
         position: absolute;
-        /* border: 5px solid red; */
         /* margin-left: -40%; */
         /* margin-top: -5%; */
         text-align: center;
         text-transform: uppercase;
         color: #ffffff;
+
+        /* border: 5px solid red; */
     }
 
     #background_canvas {
-        width: 640;
-        height: 480;
+        width: 100%;
+        height: 100%;
         overflow:hidden;
     }
 
@@ -72,7 +76,7 @@
 
     .nav_buttons {
         font-family: Colus;
-        font-size: 2.5vmin;
+        font-size: 2.25vmin;
         position: relative;
         text-align: center;
         text-transform: uppercase;
@@ -130,17 +134,17 @@
             top: 0;
             left: 0;
             position: fixed !important;
-            background-color: rgba(28, 27, 23, 0.25);
+            background-color: rgba(0,0,0, 0.3);
             pointer-events: none;
         "></div>
 
         <div class="welcome unselectable">
             <!-- <h1 class="welcome_icon">N</h1> -->
             <h1 class="welcome_name">CHINOMSO NOSIRI</h1>
-            <h1 class="welcome_name" style="font-size:1.5vmin; letter-spacing:1.5vmin;">GRAPHICS PROGRAMMER</h1>
+            <h1 class="welcome_name" style="font-size:1.5vmin; letter-spacing:0.75vmin;">REAL TIME GRAPHICS PROGRAMMING</h1>
             <div class="nav_buttons">
                 <a href="#" class="home">Home</a>
-                <a href="#" class="About">About</a>
+                <a href="#" class="Blog">Blog</a>
                 <a href="#" class="Projects">Projects</a>
                 <a href="#" class="Contact">Contact</a>
             </div>
