@@ -1,14 +1,3 @@
-// import { el, mount } from "https://redom.js.org/redom.es.min.js";
-//
-//
-//
-//
-// const hello = el("h1", "Hello world!");
-//
-//
-// mount(document.body, hello);
-//
-// console.log(hello.textContent);
 
 
 let then = 0;
@@ -30,130 +19,8 @@ function update(now){
 }
 
 
-function resize(){
-    if (renderer){
-        renderer.resize(window.innerWidth, window.innerHeight);
-    }
-}
 
-
-
-
-
-function setupWebGL(){
-    gl = canvas.getContext("webgl2");
-    if (!gl) {
-        return false;
-    }
-    return true;
-}
-
-
-async function loadShaderToy(){
-    const response = await fetch("https://www.shadertoy.com/api/v1/shaders/mlySzt?key=rt8lhH");
-    const jsonData = await response.json();
-    return jsonData;
-}
-
-
-async function fetchBlob(url){
-    const response = await fetch(url, {mode: "no-cors"});
-    return response.blob();
-}
-async function downloadImageAndSetSource(imageUrl){
-    const image = await fetchBlob(imageUrl);
-    return URL.createObjectURL(image);
-}
-function requestCORSIfNotSameOrigin(img, url) {
-    if ((new URL(url, window.location.href)).origin !== window.location.origin) {
-        img.crossOrigin = "";
-    }
-}
-
-function fetchNoCors(url, options = {}, corsAnyWhereInstanceURL = "https://cors-anywhere.herokuapp.com/"){
-    return new Promise(async function(resolve, reject){
-        try {
-            const res = await fetch(`${corsAnyWhereInstanceURL}${url}`, {
-                ...options,
-                headers: {
-                    ...options.headers,
-                    "X-Requested-With": "XMLHttpRequest",
-                }
-            });
-            resolve(res);
-        } catch (err) {
-            reject(err);
-        }
-    });
-};
-
-
-
-function createShadertoyBackground(){
-    function get_rp_inputs(inputs){
-        var descs = [];
-        for (var i=0; i<inputs.length; ++i){
-            var buffered = true;
-            if (inputs[i].ctype == "texture"){
-                let tex = new TextureResource(inputs[i].id);
-
-                fetchNoCors(
-                    "https://www.shadertoy.com"+inputs[i].src
-                ).then(function(response){
-                    response.blob().then(function(blob){
-                        tex.init(URL.createObjectURL(blob));
-                    });
-                });
-
-                renderer.addTexture(tex);
-                buffered = false;
-            }
-            descs.push(new ChannelDesc(inputs[i].id, inputs[i].channel, null, buffered));
-        }
-        return descs;
-    }
-
-
-    loadShaderToy().then(function(blob){
-        console.log(blob);
-
-        var common = shadertoyfragmentShaderHeader;
-        var buffercode = [];
-        var tpasses = [];
-
-        for (var i=blob.Shader.renderpass.length; i--;){
-            const pass = blob.Shader.renderpass[i];
-            console.log(pass);
-            const code = common+"\n"+pass.code+"\n";
-
-            switch (pass.type){
-                case "common": common = code; break;
-                case "image": {
-                    var r = new Renderpass(get_rp_inputs(pass.inputs));
-                    if (!r.init(vertexShader, code))return;
-                    renderer.mainPass = r;
-                } break;
-                case "buffer": {
-                    buffercode.push(code);
-                    tpasses.push(new BufferRenderpass(pass.outputs[0].id, get_rp_inputs(pass.inputs)));
-                } break;
-            }
-        }
-
-
-        for (var i=0; i<tpasses.length; ++i){
-            if (!tpasses[i].init(vertexShader, buffercode[i]))return;
-            renderer.addPass(tpasses[i]);
-        }
-
-
-        resize();
-        console.log(renderer);
-        update(0);
-    });
-}
-
-
+var toy, gl, canvas;
 
 
 function LoadTextureFile(path, callback, binary){
@@ -202,8 +69,6 @@ function SetupTexture3D(path, width, height, depth, filter, wrap){
     return ftex;
 }
 
-
-var toy;
 function UseShaderToyLite(){
     var image = `
     void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
@@ -250,22 +115,8 @@ function resizeShaderToyLite(e){
 
 
 
-
-
-
-window.addEventListener("mousemove", (e) => {
-    const rect = canvas.getBoundingClientRect();
-    tmouseX = e.clientX - rect.left;
-    tmouseY = rect.height - (e.clientY - rect.top) - 1;  // bottom is 0 in WebGL
-});
-
-window.addEventListener("DOMContentLoaded", () => {
+function StartShaderBackground(){
     canvas = document.querySelector("#background_canvas");
-    // if (!setupWebGL())return;
-    //
-    // renderer = new Renderer({
-    //     lerpMouseFactor: 3,
-    // });
 
     Promise.all([
         UTILS.loadFile("src/shader/portfolio_shader1/portfolio_shader1_common.glsl"),
@@ -284,6 +135,105 @@ window.addEventListener("DOMContentLoaded", () => {
 
         UseShaderToyLite();
     });
+}
 
 
+
+
+function AddDebugBorders(element, level=0){
+    const colors = ["red", "blue", "lime"];
+    element.style.border = "5px solid";
+    element.style.borderColor = colors[level % colors.length];
+    for (const child of element.children) {
+        // if (child.tagName != "DIV")continue;
+        AddDebugBorders(child, level+1);
+    }
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+    if (SHOW_DEBUG_BORDERS){
+        AddDebugBorders(document.getElementById("home_page_container"));
+    }
+    SetupMainPageScrolling();
+    SetupSecondSection();
+    if (SHOW_BACKGROUND_SHADER){
+        StartShaderBackground();
+    }
 });
+
+
+function SetupMainPageScrolling(){
+    var event_elements = document.getElementsByClassName("centered_title_event");
+    event_elements[0].style.opacity = 1;
+
+    var lastScroll = 0;
+
+    var mainPage = document.getElementsByClassName("main_page")[0];
+    mainPage.addEventListener("scroll", (event) => {
+        var scroll = mainPage.scrollTop;
+        if (lastScroll == scroll)return;
+
+        const interval = window.innerHeight;
+        const nscroll = scroll + interval - 10;
+        const nlastScroll = lastScroll + interval - 10;
+
+        const downward = scroll > lastScroll;
+        const top = Math.min(nscroll, nlastScroll)/interval;
+        const difference = Math.abs(Math.floor(nscroll/interval) - Math.floor(nlastScroll/interval));
+        lastScroll = scroll <= 0 ? 0 : scroll; // For Mobile or negative scrolling
+
+        if (!difference)return;
+
+        var touched = Math.floor(top);
+        if (touched == 4 && toy){
+            if (toy.getIsPlaying()){
+                toy.pause();
+                console.log("paused");
+            }else{
+                toy.play();
+            }
+        }
+        // console.log("touched: "+touched+", from: "+(downward ? "down-up" : "up-down"));
+
+        // hide other ones
+        const previousIndex = touched + (downward ? -1 : 1);
+        if (previousIndex >= 0 && previousIndex < event_elements.length){
+            var el = event_elements[previousIndex];
+            el.style.opacity = 0;
+            el.style.pointerEvents = "none !important";
+        }
+
+        // show the touched one
+        if (touched < event_elements.length){
+            var el = event_elements[touched];
+            if (el.style.opacity == 1){
+                el.style.opacity = 0;
+                el.querySelectorAll("a").forEach((cl) => {
+                    cl.style.pointerEvents = "none";
+                });
+            }else{
+                el.style.opacity = 1;
+                el.querySelectorAll("a").forEach((cl) => {
+                    cl.style.pointerEvents = "auto";
+                });
+            }
+        }
+
+    });
+}
+
+
+
+function SetupSecondSection(){
+    var section = document.getElementById("second_section");
+    let observer = new IntersectionObserver(
+        ([e]) => {
+            e.target.classList.toggle('isSticky', e.boundingClientRect.top <= 10);
+        }, {
+            root: section.parent,
+            // rootMargin: '-10px -10px -10px -10px',
+            threshold: [0.9, 0.95, 1.0]//SHOW_DEBUG_BORDERS ? 0.957 : 1.0
+        }
+    );
+    observer.observe(section);
+}

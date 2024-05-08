@@ -8,6 +8,16 @@
 }
 
 @font-face {
+    font-family: Esqadero;
+    src: url('../fonts/EsqaderoFFCY4F/OT-tt/Esqadero FF CY 4F-Regular.ttf');
+}
+
+@font-face {
     font-family: Cherubic;
     src: url('../fonts/CherubicInitials/Cherubic.ttf');
+}
+
+@font-face {
+    font-family: RobotoMono;
+    src: url('../fonts/RobotoMono/RobotoMono-Medium.ttf');
 }

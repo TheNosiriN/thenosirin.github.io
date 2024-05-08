@@ -9,20 +9,9 @@ float hash13(vec3 p3){
 //
 
 
-vec3 ACES(vec3 x){
-    float a = 2.51f;
-    float b = 0.03f;
-    float c = 2.43f;
-    float d = 0.59f;
-    float e = 0.14f;
-    return clamp((x*(a*x + b)) / (x*(c*x + d) + e), 0.0f, 1.0f);
-}
-
-
 void mainImage( out vec4 O, in vec2 C )
 {
     #ifdef MARGIN
-    //if (abs(C.x-R.x/2.) >= mR/margin.x){ O=vec4(0); return; }
     if (abs(C.y-R.y/2.) >= mR/margin.y){ O=vec4(0); return; }
     #endif
 
@@ -38,12 +27,10 @@ void mainImage( out vec4 O, in vec2 C )
         5.+col-col);
     }//
     col = pow(col/16.,.2+col-col);
-    vec4 tex = texture(iChannel0, uv);
-    //col = smoothstep(0.1, 0.2, tex.y);
-    //col = mix(tex.x, col, smoothstep(0.1, 0.15, tex.y));
+    vec4 tex = texelFetch(iChannel0, ivec2(C), 0);
     col = mix(tex.xyz, col, smoothstep(0.075, 0.1, tex.w));
     #else
-    col = texture(iChannel0, uv).xyz;
+    col = texelFetch(iChannel0, ivec2(C), 0).xyz;
     #endif
 
     col = max(col - hash13(vec3(C, float(iFrame)))*0.05, 0.); //film grain
