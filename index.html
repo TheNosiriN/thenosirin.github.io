@@ -78,14 +78,14 @@
         display: grid;
         justify-content: center;
         grid-template-columns: 1fr;
-        height: 100vh;
+        min-height: 100vh;
         width: 75vw;
     }
     .fullwidth_pageheight {
         display: grid;
         justify-content: center;
         width: 100vw;
-        height: 100vh;
+        min-height: 100vh;
         background-color: rgb(0,0,0);
     }
 
@@ -175,7 +175,7 @@
         background-position: center;
         background-repeat: no-repeat;
         background-size: cover;
-        background-image: url('img/planet2.jpg');
+        background-image: url('img/background/planet2.jpg');
     }
     #second_section.isSticky {
         overflow-y: auto;
@@ -188,7 +188,7 @@
 
     #section_about {
         /* width: 50%; */
-        height: auto;
+        /* height: 200vh !important; */
         padding: 20% 0 20% 0;
         /* grid-template-columns: 2fr 1fr; */
         grid-gap: 50%;
@@ -208,9 +208,25 @@
     }
 
     #section_about .about_pair {
+        width: 100vw;
         display: grid;
         justify-content: center;
         grid-gap: 10%;
+
+        background-color: rgba(0,0,0,0);
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+
+    #section_about .about_pair > div {
+        margin-left: 15vw;
+        margin-right: 15vw;
+    }
+
+    #section_about .description_container {
+        background-color: rgba(0,0,0,0.8);
+        padding: 40px;
     }
 
     #section_about .description {
@@ -232,9 +248,9 @@
                         <h1 class="caps_bold">CHINOMSO NOSIRI</h1>
                         <h1 class="caps_bold" style="font-size:1.5vmin; letter-spacing:0.75vmin;">REAL TIME GRAPHICS PROGRAMMING</h1>
                         <div class="nav_buttons">
-                            <a href="#" id="Home">Home</a>
                             <a href="#" id="Blog">Blog</a>
                             <a href="#" id="Projects">Projects</a>
+                            <a href="#" id="Work">Work</a>
                             <a href="#" id="Contact">Contact</a>
                         </div>
                     </div>
@@ -248,41 +264,51 @@
             <div class="halfwidth_pageheight_centered"></div>
             <div class="fullwidth_pageheight" style="height: 200vh; background: linear-gradient(to bottom, transparent 15%, black 85%);"></div>
             <div id="second_section" class="fullwidth_pageheight hide_scrollbars">
-                <div class="nav_buttons" style="position: sticky; top: 0px; background-color: black;">
+                <div class="nav_buttons" style="position: sticky; top: 0px; background-color: rgba(0,0,0,0.5);">
                     <a href="#" id="Blog">Blog</a>
                     <a href="#" id="Projects">Projects</a>
+                    <a href="#" id="Work">Work</a>
                     <a href="#" id="Contact">Contact</a>
                 </div>
                 <div id="section_about" class="halfwidth_pageheight_centered">
-                    <div id="about_graphics" class="about_pair" style="grid-template-columns: 2fr 1fr; text-align: left">
-                        <div>
+                    <div id="about_graphics" class="about_pair" style="background-image: url('img/graphics/shadertoy_pt5.png'); grid-template-columns: 2fr 1fr;">
+                        <div class="description_container">
                             <h1 class="caps_bold">Graphics Programming</h1>
-                            <p class="description">My name is Chinomso Nosiri, I am a graphics programmer, C++ programmer, and full stack enginner.</p>
+                            <p class="description">
+                                I am well-versed in real-time graphics programming, applied mathematics, light transport research, and shader programming. I have experience with several graphics and compute apis, including OpenGL, Vulkan, D3D12, WebGPU, CUDA, etc...
+                            </p>
                         </div>
-                        <div>
-                            Image goes here
+                        <div></div>
+                    </div>
+                    <div id="about_cpp" class="about_pair" style="background-image: url('img/graphics/atom_editor_1.jpg'); grid-template-columns: 1fr 2fr;">
+                        <div></div>
+                        <div class="description_container">
+                            <h1 class="caps_bold">Low-Level Programming</h1>
+                            <p class="description">
+                                My skillset isn't limited to just graphics, I also have many years of experience with several low-level languages and practices, such as C/C++, RISC and CISC assembly instruction sets, memory management, driver programming, and engine development.
+                            </p>
                         </div>
                     </div>
-                    <div id="about_graphics" class="about_pair" style="grid-template-columns: 1fr 2fr; text-align: right">
-                        <div>
-                            Image goes here
-                        </div>
-                        <div>
-                            <h1 class="caps_bold">C++ Programming</h1>
-                            <p class="description">My name is Chinomso Nosiri, I am a graphics programmer, C++ programmer, and full stack enginner.</p>
-                        </div>
-                    </div>
-                    <div id="about_fullstack" class="about_pair" style="grid-template-columns: 2fr 1fr; text-align: left">
-                        <div>
+                    <div id="about_fullstack" class="about_pair" style="background-image: url('img/graphics/editor.jpg'); grid-template-columns: 2fr 1fr;">
+                        <div class="description_container">
                             <h1 class="caps_bold">Full Stack Engineering</h1>
-                            <p class="description">My name is Chinomso Nosiri, I am a graphics programmer, C++ programmer, and full stack enginner.</p>
+                            <p class="description">
+                                I have professional experience as a fullstack software engineer, working in frontend, server-side, database technologies, and DevOps. Working with standards, writing extensive documentation, and deploying applications.
+                            </p>
                         </div>
-                        <div>
-                            Image goes here
+                        <div></div>
+                    </div>
+                    <div id="about_game" class="about_pair" style="background-image: url('img/graphics/pnp_game_1.png'); grid-template-columns: 1fr 2fr;">
+                        <div></div>
+                        <div class="description_container">
+                            <h1 class="caps_bold">Game Development</h1>
+                            <p class="description">
+                                I only had experience as an indie game developer until I worked with Wizards of the Coast (Hasbro) and gained valuable professional game and graphics development experience.
+                            </p>
                         </div>
                     </div>
                 </div>
-                <div class="halfwidth_pageheight_centered"></div>
+                <!-- <div class="halfwidth_pageheight_centered"></div> -->
             </div>
         </div>
     </div>
