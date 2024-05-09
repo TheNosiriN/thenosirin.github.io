@@ -151,13 +151,14 @@ function AddDebugBorders(element, level=0){
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-    if (SHOW_DEBUG_BORDERS){
-        AddDebugBorders(document.getElementById("home_page_container"));
-    }
     SetupMainPageScrolling();
-    SetupSecondSection();
+    SetupStickySections();
     if (SHOW_BACKGROUND_SHADER){
         StartShaderBackground();
+    }
+
+    if (SHOW_DEBUG_BORDERS){
+        AddDebugBorders(document.getElementById("home_page_container"));
     }
 });
 
@@ -224,16 +225,26 @@ function SetupMainPageScrolling(){
 
 
 
-function SetupSecondSection(){
-    var section = document.getElementById("second_section");
-    let observer = new IntersectionObserver(
-        ([e]) => {
-            e.target.classList.toggle('isSticky', e.boundingClientRect.top <= 10);
-        }, {
-            root: section.parent,
-            // rootMargin: '-10px -10px -10px -10px',
-            threshold: [0.9, 0.95, 1.0]//SHOW_DEBUG_BORDERS ? 0.957 : 1.0
+function SetupStickySections(){
+    var currentSection;
+    let callback = ([e]) => {
+        if (e.isIntersecting){
+            e.target.classList.add("isSticky");
+        }else{
+            e.target.classList.remove("isSticky");
         }
-    );
-    observer.observe(section);
+    };
+
+    const sections = document.getElementsByClassName("section");
+    for (var i=0; i<sections.length; ++i){
+        if (i<sections.length-1){
+            sections[i].appendChild(sections[i+1]);
+        }
+
+        let observer = new IntersectionObserver(callback, {
+            root: sections[i].parentElement,
+            threshold: [0.955, 1.0]
+        });
+        observer.observe(sections[i]);
+    }
 }
