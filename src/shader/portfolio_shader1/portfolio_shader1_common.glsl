@@ -1,9 +1,5 @@
 // Made by: TheNosiriN
 
-precision mediump float;
-precision mediump int;
-precision lowp sampler3D;
-
 //#define LOW_QUALITY // use this if you're having troubles
 #define HIGH_QUALITY // for beefy machines
 

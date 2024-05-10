@@ -71,17 +71,17 @@ float planet(vec3 eye, vec3 dir){
 
 vec3 screenray(vec3 eye, vec3 dir, float maxd){
     float d=0., i=0.; vec2 ind;
-    for (; i<100. && d<maxd; i++){
+    for (; i<64. && d<maxd; ++i){
         ind = space(eye + dir * d);
         if (ind.x < 0.001 * d)break;
-        d += ind.x;
+        d += ind.x * (d/maxd+1.);// *1.1+0.9);
     }
-    return vec3(d, i/100., ind.y);
+    return vec3(d, i/64., ind.y);
 }
 
-float shadowray(vec3 eye, vec3 dir, float steps, float maxd) {
+float shadowray(vec3 eye, vec3 dir, float maxd) {
     float d=0.2, i=0., r=1., ph=2e10;
-    for(; i<steps && d<maxd; i++){
+    for(; i<64. && d<maxd; ++i){
      	vec3 p = eye + dir * d;
         float ind = space(p).x;
         if (ind < 0.0)return 0.;
@@ -89,7 +89,7 @@ float shadowray(vec3 eye, vec3 dir, float steps, float maxd) {
         float y = ind*ind/ph,
         nd = sqrt(ind*ind-y*y);
         r = min( r, 10.0*nd/max(0.0,d-y) );
-        d += ind;
+        d += ind * (d/maxd+1.);
     }
 
     return r;
@@ -107,10 +107,10 @@ vec3 normal(vec3 P){
 }
 
 
-float shade(vec3 eye, float dist, float md, vec3 P, vec3 N, bool firstIter){
+float shade(vec3 eye, float dist, float md, vec3 P, vec3 N){
     float shading = max(dot(N, light)*0.5+0.25, 0.);
     shading = mix(min(1.0,shading*2.0), shading, dot(normalize(eye), N));
-    if (shading >= 0.0){ shading *= shadowray(P, light, firstIter ? 64. : 100., md/2.)+0.1; }
+    if (shading >= 0.0){ shading *= shadowray(P, light, md/2.)+0.1; }
     return saturate( (shading+0.1)+(dist/md)*0.1 );
 }
 
@@ -188,10 +188,10 @@ vec4 makePixel(vec2 C){
             continue;
         }
 
-        vec3 sh = vec3(shade(eye, dist.x, maxd, P, N, i==0));
+        vec3 sh = vec3(shade(eye, dist.x, maxd, P, N));
         sh -= (1.0-vec3(pulse,0,0.4)) * (0.5/max(length(P-focusPoint), 0.));
         sh = max(sh, 0.);
-        col += mix(sh*0.3, sh, saturate(1.0-pow(dist.y,3.0)*3.0));
+        col += mix(sh*0.5, sh, saturate(1.0-pow(dist.y,3.0)*3.0));
         break;
     }
 
