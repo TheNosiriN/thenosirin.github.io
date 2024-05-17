@@ -8,16 +8,21 @@
 }
 
 @font-face {
-    font-family: Esqadero;
-    src: url('../fonts/EsqaderoFFCY4F/OT-tt/Esqadero FF CY 4F-Regular.ttf');
-}
-
-@font-face {
-    font-family: Cherubic;
-    src: url('../fonts/CherubicInitials/Cherubic.ttf');
+    font-family: Botsmatic;
+    src: url('../fonts/Botsmatic/Botsmatic3d-Exl8.ttf');
 }
 
 @font-face {
     font-family: RobotoMono;
     src: url('../fonts/RobotoMono/RobotoMono-Medium.ttf');
+}
+
+@font-face {
+    font-family: Undertale;
+    src: url('../fonts/Undertale/undertale-font-lowercase-b.ttf');
+}
+
+@font-face {
+    font-family: QuinqueFive;
+    src: url('../fonts/QuinqueFive/Quinquefive-ALoRM.ttf');
 }

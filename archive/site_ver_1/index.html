@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="Chinomso Nosiri (TheNosiriN): Graphics Programmer and Shader Artist">
+    <title>Chinomso Nosiri (TheNosiriN)</title>
+
+    <link rel="stylesheet" href="/css/loadfonts.css">
+
+    <script src="lib/ShaderToyLite.js"></script>
+    <script src="src/Utils.js"></script>
+    <script src="src/Constants.js"></script>
+    <script src="src/Home.js"></script>
+</head>
+
+<body>
+    <style>
+
+    .unselectable {
+        -webkit-user-select: none; /* Safari */
+        -ms-user-select: none; /* IE 10 and IE 11 */
+        user-select: none; /* Standard syntax */
+    }
+    .hide_scrollbars {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+
+    html {
+        scroll-behavior: smooth;
+    }
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background-color: rgb(0,0,0);/*rgb(27, 24, 21);*/
+    }
+
+    #background_canvas {
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        overflow: hidden;
+        position: absolute;
+    }
+
+
+    .page_container {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background-color: rgba(0, 0, 0, 0.2);
+    }
+
+    .main_page {
+        width: 100%;
+        height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+        position: relative;
+        color: #ffffff;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .main_page::-webkit-scrollbar {
+        display: none;
+    }
+
+    .halfwidth_pageheight_centered {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        grid-template-columns: 1fr;
+        min-height: 100vh;
+        width: 75vw;
+    }
+    .fullwidth_pageheight {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100vw;
+        min-height: 100vh;
+        background-color: rgb(0,0,0);
+    }
+
+    .caps_bold {
+        color: #fffedd;
+        font-family: Colus;
+        font-size: 4vmin;
+        font-weight: 100;
+        margin: 0;
+        letter-spacing: 1vmin;
+        padding: 0;
+        padding-top: 1vmin;
+    }
+
+    .nav_buttons {
+        display: inline-block;
+        font-family: Colus;
+        font-size: 2.25vmin;
+        position: relative;
+        text-align: center;
+        text-transform: uppercase;
+        padding-top: 1.5em;
+        padding-bottom: 0.3em;
+    }
+
+    .nav_buttons > a {
+        color: white;
+        text-decoration: none;
+        display: inline-block;
+        position: relative;
+        letter-spacing: 0.15em;
+        cursor: pointer;
+        margin-left: 2em;
+        margin-right: 2em;
+        padding-bottom: 0.3em;
+    }
+
+    #top_nav_banner {
+        width: 100%;
+        padding: 0.5em;
+    }
+
+    a:after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        transform: scaleX(0);
+        height: 0.1em;
+        bottom: 0;
+        left: 0;
+        background-color: #fffedd;
+        transform-origin: center;
+        transition: transform 0.25s ease-out;
+    }
+
+    a:hover:after {
+        transform: scaleX(1);
+        transform-origin: center;
+    }
+
+
+    .center_fade_inout {
+        position: fixed;
+    }
+    .center_fade_inout.inactive {
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+    }
+
+    .centered_title_event {
+        text-align: center;
+        opacity: 0;
+        position: fixed;
+        pointer-events: none;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: inherit;
+        transition: opacity 0.75s ease-in-out;
+    }
+    .centered_title_event a {
+        pointer-events: auto;
+    }
+
+
+    .section_transition {
+        height: 200vh;
+        background: linear-gradient(to bottom, transparent 15%, black 85%);
+    }
+
+
+    .section {
+        /* position: sticky; */
+        overflow-x: hidden;
+        overflow-y: hidden;
+        top: 0px;
+        background-color: rgb(0,0,0);
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+    .section.isSticky {
+        overflow-y: auto;
+    }
+    .section .nav_buttons {
+        color: white;
+        font-family: RobotoMono;
+    }
+
+
+    #section_about {
+        padding: 20% 0 20% 0;
+        grid-gap: 50vh;
+        color: silver;
+    }
+
+    #section_about .caps_bold {
+        color: white;
+        font-family: RobotoMono;
+        font-size: 7.5vmin;
+        font-weight: 100;
+        margin: 0;
+        letter-spacing: 0;
+        padding: 0;
+        padding-top: 1vmin;
+        text-transform: uppercase;
+    }
+
+    #section_about .about_pair {
+        width: 100vw;
+        display: grid;
+        justify-content: center;
+        grid-gap: 10%;
+
+        background-color: rgba(0,0,0,0);
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+
+    #section_about .about_pair > div {
+        margin-left: 15vw;
+        margin-right: 15vw;
+    }
+
+    #section_about .description_container {
+        background-color: rgba(0,0,0,0.8);
+        padding: 40px;
+    }
+
+    #section_about .description {
+        font-family: RobotoMono;
+        font-size: 2vmin;
+    }
+
+
+    #section_projects .caps_bold {
+        color: #fffedd;
+        font-family: RobotoMono;
+        font-size: 7.5vmin;
+        font-weight: 100;
+        margin: 0;
+        letter-spacing: 0;
+        padding: 0;
+        padding-top: 1vmin;
+        text-transform: uppercase;
+    }
+
+    </style>
+
+
+    <canvas id="background_canvas"></canvas>
+
+
+    <div class="page_container" id="home_page_container">
+        <div class="main_page hide_scrollbars">
+            <div class="halfwidth_pageheight_centered unselectable">
+                <div class="centered_title_event">
+                    <div id="welcome_title_div">
+                        <h1 class="caps_bold">CHINOMSO NOSIRI</h1>
+                        <h1 class="caps_bold" style="font-size:1.5vmin; letter-spacing:0.75vmin;">REAL TIME GRAPHICS PROGRAMMING</h1>
+                        <div class="nav_buttons">
+                            <a href="#" id="Blog">Blog</a>
+                            <a href="#" id="Projects">Projects</a>
+                            <a href="#" id="Work">Work</a>
+                            <a href="#" id="Contact">Contact</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="centered_title_event">
+                    <h1 class="caps_bold">THIS SCENE IS RENDERED IN REALTIME</h1>
+                </div>
+            </div>
+            <div class="halfwidth_pageheight_centered unselectable" style="min-height: 300vh"></div>
+            <div class="fullwidth_pageheight section_transition"></div>
+            <div id="section_about_container" class="section fullwidth_pageheight hide_scrollbars" style="background-image: url('img/background/planet2.jpg');">
+                <div style="width: 100vw; position: sticky; top: 0px; background-color: rgba(0,0,0,0.5);">
+                    <div id="top_nav_banner" class="nav_buttons">
+                        <a href="#" id="Blog">Blog</a>
+                        <a href="#" id="Projects">Projects</a>
+                        <a href="#" id="Work">Work</a>
+                        <a href="#" id="Contact">Contact</a>
+                    </div>
+                </div>
+                <div id="section_about" class="halfwidth_pageheight_centered">
+                    <div id="about_graphics" class="about_pair" style="background-image: url('img/graphics/shadertoy_pt5.png'); grid-template-columns: 2fr 1fr;">
+                        <div class="description_container">
+                            <h1 class="caps_bold">Graphics Programming</h1>
+                            <p class="description">
+                                I am well-versed in real-time graphics programming, applied mathematics, light transport research, and shader programming. I have experience with several graphics and compute apis, including OpenGL, Vulkan, D3D12, WebGPU, CUDA, etc...
+                            </p>
+                        </div>
+                        <div></div>
+                    </div>
+                    <div id="about_cpp" class="about_pair" style="background-image: url('img/graphics/atom_editor_1.jpg'); grid-template-columns: 1fr 2fr;">
+                        <div></div>
+                        <div class="description_container">
+                            <h1 class="caps_bold">Low-Level Programming</h1>
+                            <p class="description">
+                                My skillset isn't limited to just graphics, I also have many years of experience with several low-level languages and practices, such as C/C++, RISC and CISC assembly instruction sets, memory management, driver programming, and engine development.
+                            </p>
+                        </div>
+                    </div>
+                    <div id="about_fullstack" class="about_pair" style="background-image: url('img/graphics/editor.jpg'); grid-template-columns: 2fr 1fr;">
+                        <div class="description_container">
+                            <h1 class="caps_bold">Full-Stack Development</h1>
+                            <p class="description">
+                                I have professional experience as a fullstack software engineer, working in frontend, server-side, database technologies, and DevOps. Working with standards, writing extensive documentation, and deploying applications.
+                            </p>
+                        </div>
+                        <div></div>
+                    </div>
+                    <div id="about_game" class="about_pair" style="background-image: url('img/graphics/pnp_game_1.png'); grid-template-columns: 1fr 2fr;">
+                        <div></div>
+                        <div class="description_container">
+                            <h1 class="caps_bold">Game Development</h1>
+                            <p class="description">
+                                I had experience as an indie game developer until I worked with Wizards of the Coast (Hasbro) and gained valuable professional game and graphics development experience.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="halfwidth_pageheight_centered" style="min-height: 300vh;"></div>
+                <div class="fullwidth_pageheight section_transition"></div>
+            </div>
+
+            <div id="section_projects_container" class="section fullwidth_pageheight hide_scrollbars" style="background-image: url('img/background/universe_bg1.png');">
+                <div id="section_projects" class="halfwidth_pageheight_centered">
+                    <div style="width: 100%; padding-top: 18vh; padding-bottom: 2vh; padding-left: 10%">
+                        <h1 class="caps_bold">Projects</h1>
+                    </div>
+                    <div style="width: 100vw; height: 50vh; background-color: rgba(0,0,0,0.25)">
+                    </div>
+                </div>
+                <div class="fullwidth_pageheight section_transition"></div>
+            </div>
+
+            <div id="section_contact_container" class="section fullwidth_pageheight hide_scrollbars" style="background-color: rgb(0,0,0);">
+                <div id="section_contact" class="halfwidth_pageheight_centered" style="width: 50vw;">
+                    <div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+
+
+</html>

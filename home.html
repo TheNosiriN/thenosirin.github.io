@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="Chinomso Nosiri">
+    <title>Chinomso Nosiri (TheNosiriN)</title>
+
+    <link rel="stylesheet" href="css/loadfonts.css">
+    <link rel="stylesheet" href="css/universal.css">
+
+    <script src="lib/ShaderToyLite.js"></script>
+    <script src="utils/Utils.js"></script>
+    <script src="frontpage/src/Constants.js"></script>
+    <script src="frontpage/src/Renderer.js"></script>
+    <script src="frontpage/src/Universal.js"></script>
+</head>
+
+<body>
+    <style>
+        #center_container {
+            max-height: 90vh;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #title_text {
+            color: #fffedd;
+            font-family: Botsmatic;
+            text-align: center;
+            font-size: 7vmin;
+            text-transform: lowercase;
+        }
+
+        #menu_container {
+            position: relative;
+            display: inline-grid;
+            justify-content: center;
+            width: auto;
+            height: auto;
+        }
+
+        #menu_container_transition {
+            position: absolute;
+            pointer-events: none;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .nav_buttons {
+            text-align: center;
+            text-transform: uppercase;
+            font-size: 1.8vmin;
+            font-family: QuinqueFive;
+            display: inline-grid;
+            grid-template-columns: 1fr;
+        }
+
+        .nav_buttons > div {
+            padding-left: 1.5em;
+            padding-right: 1.5em;
+            display: block;
+        }
+
+        .nav_buttons a {
+            color: #fffedd;
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+            padding-top: 1.5em;
+            padding-bottom: 1.5em;
+        }
+
+        a:after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            transform: scaleX(0);
+            height: 0.4em;
+            bottom: 0;
+            left: 0;
+            margin-bottom: 0.75em;
+            background-color: #fffedd;
+            transform-origin: center;
+            transition: transform 0.25s ease-out;
+        }
+
+        a:hover:after {
+            transform: scaleX(1);
+            transform-origin: center;
+        }
+
+        #splash_text {
+            z-index: 2;
+            color: red;
+            font-family: QuinqueFive;
+            font-size: 0.5vmin;
+            position: absolute;
+            bottom: 20%;
+            right: 20%;
+            transform: translate(50%, 50%) rotate(-20deg);
+        }
+
+        .jumping_text {
+            animation-name: jumping_text;
+            animation-duration: 2s;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+            position: relative;
+            top: 0;
+            left: 0;
+        }
+        @keyframes jumping_text {
+            0% {
+                top: 0;
+            }
+            50% {
+                top: -0.25em;
+            }
+            100% {
+                top: 0;
+            }
+        }
+
+        .rainbow_text {
+            animation-name: rainbow_text;
+            animation-duration: 2s;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+            position: relative;
+            top: 0;
+            left: 0;
+        }
+        @keyframes rainbow_text {
+            100%,0%{
+                color: rgb(255,0,0);
+            }
+            8%{
+                color: rgb(255,127,0);
+            }
+            16%{
+                color: rgb(255,255,0);
+            }
+            25%{
+                color: rgb(127,255,0);
+            }
+            33%{
+                color: rgb(0,255,0);
+            }
+            41%{
+                color: rgb(0,255,127);
+            }
+            50%{
+                color: rgb(0,255,255);
+            }
+            58%{
+                color: rgb(0,127,255);
+            }
+            66%{
+                color: rgb(0,0,255);
+            }
+            75%{
+                color: rgb(127,0,255);
+            }
+            83%{
+                color: rgb(255,0,255);
+            }
+            91%{
+                color: rgb(255,0,127);
+            }
+        }
+    </style>
+
+    <div class="page_container hide_scrollbars unselectable" id="main_page_container">
+        <div id="center_container">
+            <div style="position: relative;">
+                <h1 id="title_text">Portfolio Site Version Two</h1>
+                <div><h1 id="splash_text"></h1></div>
+            </div>
+            <div id="menu_container">
+                <div class="nav_buttons">
+                    <div><a href="#" id="ref_about">who am I?</a></div>
+                    <div><a href="#" id="ref_blog">serious stuffs</a></div>
+                    <div><a href="#" id="ref_projects">projects</a></div>
+                    <div><a href="#" id="ref_resume">contact</a></div>
+                    <div><a href="#" id="ref_demo">my awesome demo!</a></div>
+                    <div><a href="#" id="ref_resume">resume</a></div>
+                </div>
+                <div id="menu_container_transition" class="animated_transition" data-speed=0.25 data-grid=0.6 data-start-time=0.25 data-stop-time=-10 data-type=7>
+            </div>
+        </div>
+    </div>
+
+    <div id="page_transition" class="animated_transition"></div>
+    <canvas id="foreground_canvas"></canvas>
+
+
+    <script src="frontpage/src/Home.js"></script>
+
+</body>
+
+
+</html>
