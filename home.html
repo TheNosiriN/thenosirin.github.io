@@ -101,14 +101,17 @@
             transform-origin: center;
         }
 
+        #splash_text_cont {
+            position: absolute;
+            bottom: 20%;
+            right: 20%;
+        }
+
         #splash_text {
             z-index: 2;
             color: red;
             font-family: QuinqueFive;
             font-size: 0.5vmin;
-            position: absolute;
-            bottom: 20%;
-            right: 20%;
             transform: translate(50%, 50%) rotate(-20deg);
         }
 
@@ -130,6 +133,24 @@
             }
             100% {
                 top: 0;
+            }
+        }
+
+        .scaling_text {
+            animation-name: scaling_text;
+            animation-duration: 1.5s;
+            animation-timing-function: ease-in-out;
+            animation-iteration-count: infinite;
+        }
+        @keyframes scaling_text {
+            0% {
+                transform: scale(1.1);
+            }
+            50% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.1);
             }
         }
 
@@ -186,7 +207,7 @@
         <div id="center_container">
             <div style="position: relative;">
                 <h1 id="title_text">Portfolio Site Version Two</h1>
-                <div><h1 id="splash_text"></h1></div>
+                <div id="splash_text_cont" class="scaling_text"><h1 id="splash_text"></h1></div>
             </div>
             <div id="menu_container">
                 <div class="nav_buttons">
@@ -194,7 +215,7 @@
                     <div><a href="#" id="ref_blog">serious stuffs</a></div>
                     <div><a href="#" id="ref_projects">projects</a></div>
                     <div><a href="#" id="ref_resume">contact</a></div>
-                    <div><a href="#" id="ref_demo">my awesome demo!</a></div>
+                    <div><a href="onlinedemo/index.html" id="ref_demo">my awesome demo!</a></div>
                     <div><a href="#" id="ref_resume">resume</a></div>
                 </div>
                 <div id="menu_container_transition" class="animated_transition" data-speed=0.25 data-grid=0.6 data-start-time=0.25 data-stop-time=-10 data-type=7>

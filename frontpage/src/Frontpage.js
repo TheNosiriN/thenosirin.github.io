@@ -1,3 +1,5 @@
+SetupForegroundRenderer();
+
 window.addEventListener("DOMContentLoaded", () => {
     if (SHOW_DEBUG_BORDERS){
         AddDebugBorders(document.getElementById("main_page_container"));

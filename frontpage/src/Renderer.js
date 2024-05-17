@@ -85,8 +85,11 @@ function makeRectVerts(rect, start_time=0, stop_time=0, speed=1, type=0, grid_mu
     ]);
 }
 
-function SetupForegroundRenderer(){
-    var toy = new ShaderToyLite("foreground_canvas", {
+function ConfigureForegroundRenderer(){
+    foreground.canvas = document.getElementById("foreground_canvas");
+    if (!foreground.canvas)return;
+
+    var toy = new ShaderToyLite(foreground.canvas, {
         alpha: true,
         premultipliedAlpha: true,
         vertexBufferProps: [
@@ -110,33 +113,36 @@ function SetupForegroundRenderer(){
     gl.bindBuffer(gl.ARRAY_BUFFER, rects_buffer);
     gl.bufferData(gl.ARRAY_BUFFER, RectBufferStride * RectVertexCount, gl.DYNAMIC_DRAW);
 
-    toy.setVertex(FOREGROUND_SHADER_VERTEX);
-    toy.setImage({
-        source: FOREGROUND_SHADER_IMAGE, iChannel0: "rgba_noise",
-        uniforms: ["devicePixelRatio", "backgroundColor"]
-    });
-
-    toy.setOnUniforms((gl, uniforms) => {
-        gl.uniform1f(uniforms["devicePixelRatio"], window.devicePixelRatio);
-        gl.uniform3f(uniforms["backgroundColor"], BackgroundColor.x, BackgroundColor.y, BackgroundColor.z);
-    });
-
     foreground.toy = toy;
     foreground.gl = gl;
 }
 
 
-if (SHOW_ANIMATED_TRANSITIONS){
+function SetupForegroundRenderer(){
+    if (!SHOW_ANIMATED_TRANSITIONS)return;
+
+    ConfigureForegroundRenderer();
+    resizeRenderer(foreground);
+    window.addEventListener('resize', (e) => resizeRenderer(foreground));
+    window.addEventListener("mousemove", foreground.toy.bindMousemove);
+
     Promise.all([
         UTILS.loadFile("frontpage/shader/foreground_shader_vertex.glsl"),
         UTILS.loadFile("frontpage/shader/foreground_shader_image.glsl"),
     ]).then((data) => {
-        FOREGROUND_SHADER_VERTEX = data[0];
-        FOREGROUND_SHADER_IMAGE = data[1];
-        SetupForegroundRenderer();
-        resizeRenderer(foreground);
-        window.addEventListener('resize', (e) => resizeRenderer(foreground));
-        window.addEventListener("mousemove", foreground.toy.bindMousemove);
+        var FOREGROUND_SHADER_VERTEX = data[0];
+        var FOREGROUND_SHADER_IMAGE = data[1];
+
+        foreground.toy.setVertex(FOREGROUND_SHADER_VERTEX);
+        foreground.toy.setImage({
+            source: FOREGROUND_SHADER_IMAGE, iChannel0: "rgba_noise",
+            uniforms: ["devicePixelRatio", "backgroundColor"]
+        });
+
+        foreground.toy.setOnUniforms((gl, uniforms) => {
+            gl.uniform1f(uniforms["devicePixelRatio"], window.devicePixelRatio);
+            gl.uniform3f(uniforms["backgroundColor"], BackgroundColor.x, BackgroundColor.y, BackgroundColor.z);
+        });
     });
 }
 
@@ -146,9 +152,6 @@ function StartForegroundRenderer(callback){
         if (callback){ callback(); }
         return;
     }
-
-    canvas = document.getElementById("foreground_canvas");
-    if (!canvas)return;
 
     const waitfunc = () => {
         if (!foreground.toy){

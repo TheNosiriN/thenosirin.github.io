@@ -1,3 +1,5 @@
+SetupForegroundRenderer();
+
 var menu_cont = document.getElementById("center_container");
 menu_cont.style.opacity = 0;
 
@@ -18,6 +20,18 @@ splashtext.innerHTML = SplashTexts[Math.floor(Math.random()*SplashTexts.length)]
 //     b.dataset.grid = 0.4;
 //     b.dataset.type = 1;
 // }
+
+// configure nav buttons
+{
+    let buttons = document.querySelectorAll(".nav_buttons a");
+    buttons.forEach((b) => {
+        b.onclick = (e) => {
+            leavePage(b.href, scheduler, foreground.toy.getTime());
+            e.preventDefault();
+        };
+    });
+}
+
 
 
 
@@ -60,7 +74,7 @@ window.addEventListener("DOMContentLoaded", () => {
         scheduler.addEvent(1, () => {
             mainpage.style.backgroundColor = "#252627";
             menu_cont.style.opacity = 1;
-        })
+        });
     });
 });
 
