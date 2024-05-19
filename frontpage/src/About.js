@@ -96,7 +96,7 @@ function insertImage(args, writer){
     image.dataset.grid = 1;
     image.dataset.startTime = -11;
     image.dataset.stopTime = -10;
-    image.classList.add("animated_transition");
+    image.classList.add("animated_transition", "unselectable", "uninteractable");
     writer.element.appendChild(image);
 
     RefreshAnimatedRectDivs();
@@ -113,7 +113,7 @@ function insertImage(args, writer){
 
 
 function insertUniverseVideo(args, writer){
-    universeVideo.classList.add("animated_transition");
+    universeVideo.classList.add("animated_transition", "unselectable", "uninteractable");
     writer.element.appendChild(universeVideo);
 
     RefreshAnimatedRectDivs();
