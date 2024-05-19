@@ -62,29 +62,29 @@ function setupWelcomeScheduledAnimation(){
 
     // start with name
     scheduler.addEventNoSort(1, (time) => {
-        activate(title_text.children[0], time, 3.5);
+        activate(title_text.children[0], time, 4.5);
         title_text.children[0].dataset.startTime = -10;
         title_text.children[0].style.opacity = 1;
     });
 
     // hide everything in the in-between
-    scheduler.addEventNoSort(1+3.5+(1.0/title_text.children[0].dataset.speed), (time) => {
+    scheduler.addEventNoSort(1+4.5+(1.0/title_text.children[0].dataset.speed), (time) => {
         mainpage.style.opacity = 0;
     });
 
     // from name to text
-    scheduler.addEventNoSort(6, (time) => {
+    scheduler.addEventNoSort(7, (time) => {
         deactivate(title_text.children[0]);
         activate(title_text.children[1], time, 10);
     });
 
     // unhide everything just after the rect for the text has been updated
-    scheduler.addEventNoSort(6.1, (time) => {
+    scheduler.addEventNoSort(7.1, (time) => {
         mainpage.style.opacity = 1;
     });
 
     // from text to transition
-    scheduler.addEvent(9, (time) => {
+    scheduler.addEvent(10, (time) => {
         leavePage("frontpage/home.html", scheduler, time);
     });
 }
