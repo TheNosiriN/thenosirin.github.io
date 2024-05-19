@@ -8,14 +8,14 @@
     <meta name="description" content="Chinomso Nosiri">
     <title>Chinomso Nosiri (TheNosiriN)</title>
 
-    <link rel="stylesheet" href="css/loadfonts.css">
-    <link rel="stylesheet" href="css/universal.css">
+    <link rel="stylesheet" href="../css/loadfonts.css">
+    <link rel="stylesheet" href="../css/universal.css">
 
-    <script src="lib/ShaderToyLite.js"></script>
-    <script src="utils/Utils.js"></script>
-    <script src="frontpage/src/Constants.js"></script>
-    <script src="frontpage/src/Renderer.js"></script>
-    <script src="frontpage/src/Universal.js"></script>
+    <script src="../lib/ShaderToyLite.js"></script>
+    <script src="../utils/Utils.js"></script>
+    <script src="src/Constants.js"></script>
+    <script src="src/Renderer.js"></script>
+    <script src="src/Universal.js"></script>
 </head>
 
 <body>
@@ -31,6 +31,7 @@
             flex-direction: column;
             align-items: center;
         }
+
 
         #title_text {
             color: #fffedd;
@@ -57,18 +58,16 @@
             height: 100%;
         }
 
+
         .nav_buttons {
             text-align: center;
-            text-transform: uppercase;
-            font-size: 1.8vmin;
+            font-size: 1.5vmin;
             font-family: QuinqueFive;
             display: inline-grid;
             grid-template-columns: 1fr;
         }
 
         .nav_buttons > div {
-            padding-left: 1.5em;
-            padding-right: 1.5em;
             display: block;
         }
 
@@ -87,7 +86,7 @@
             position: absolute;
             width: 100%;
             transform: scaleX(0);
-            height: 0.4em;
+            height: 0.3em;
             bottom: 0;
             left: 0;
             margin-bottom: 0.75em;
@@ -100,6 +99,7 @@
             transform: scaleX(1);
             transform-origin: center;
         }
+
 
         #splash_text_cont {
             position: absolute;
@@ -114,6 +114,7 @@
             font-size: 0.5vmin;
             transform: translate(50%, 50%) rotate(-20deg);
         }
+
 
         .jumping_text {
             animation-name: jumping_text;
@@ -209,16 +210,16 @@
                 <h1 id="title_text">Portfolio Site Version Two</h1>
                 <div id="splash_text_cont" class="scaling_text"><h1 id="splash_text"></h1></div>
             </div>
-            <div id="menu_container">
+            <div id="menu_container" class="pixel_borders">
                 <div class="nav_buttons">
-                    <div><a href="#" id="ref_about">who am I?</a></div>
+                    <div><a href="about.html" id="ref_about">who am I?</a></div>
                     <div><a href="#" id="ref_blog">serious stuffs</a></div>
                     <div><a href="#" id="ref_projects">projects</a></div>
-                    <div><a href="#" id="ref_resume">contact</a></div>
-                    <div><a href="onlinedemo/index.html" id="ref_demo">my awesome demo!</a></div>
-                    <div><a href="#" id="ref_resume">resume</a></div>
+                    <div><a href="#" id="ref_workx">work experience</a></div>
+                    <div><a href="../onlinedemo/index.html" id="ref_demo">my awesome demo!</a></div>
+                    <div><a href="#" id="ref_contact">contact</a></div>
                 </div>
-                <div id="menu_container_transition" class="animated_transition" data-speed=0.25 data-grid=0.6 data-start-time=0.25 data-stop-time=-10 data-type=7>
+                <div id="menu_container_transition" class="animated_transition" data-speed=0.25 data-grid=0.6 data-start-time=0.25 data-stop-time=-10 data-type=7></div>
             </div>
         </div>
     </div>
@@ -227,7 +228,7 @@
     <canvas id="foreground_canvas"></canvas>
 
 
-    <script src="frontpage/src/Home.js"></script>
+    <script src="src/Home.js"></script>
 
 </body>
 

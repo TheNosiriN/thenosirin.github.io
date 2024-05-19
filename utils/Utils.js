@@ -11,3 +11,10 @@ UTILS.loadFile = function(url)
         }
     });
 }
+
+
+UTILS.getSitePath = function()
+{
+    const l = document.location;
+    return l.protocol + `//` + l.host + `/`;
+}

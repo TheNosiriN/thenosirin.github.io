@@ -47,6 +47,85 @@ class TimeScheduler {
 
 
 
+class TypeWriterEffect {
+    constructor(element, options){
+        this.content = options.content || [""];
+        this.typeDelay = options.typeDelay || 50;
+        this.onFinished = options.onFinished;
+        this.onInserted = options.onInserted;
+
+        this.index = 0;
+        this.pos = 0;
+        this.isPlaying = false;
+
+        this.element = element;
+        this.element.innerHTML = "";
+    }
+
+    play(){
+        this.isPlaying = true;
+        const write = () => {
+            if (!this.isPlaying)return;
+            var nextwait = 0;
+            const txt = this.content[this.index];
+
+            if (typeof txt === "string"){
+                if (this.pos < txt.length){
+                    const char = txt.charAt(this.pos);
+                    // this.element.innerHTML += (char=='\n') ? "<br>" : char;
+                    const span = document.createElement('span');
+                    span.innerHTML = (char == '\n') ? "<br>" : char;
+                    this.element.appendChild(span);
+                    this.pos++;
+                    if (this.onInserted){ this.onInserted(this); }
+                    setTimeout(write, this.typeDelay);
+                    return;
+                }
+            }else{
+                switch(txt.type){
+                    case 1: nextwait = txt.time; break;
+                    case 2: this.typeDelay = txt.time; break;
+                    case 3: txt.func(txt.args, this); break;
+                }
+            }
+
+            this.index++;
+            if (this.index < this.content.length){
+                this.pos = 0;
+                setTimeout(write, nextwait);
+                return;
+            }
+
+            this.stop();
+            if (this.onFinished){ this.onFinished(this); }
+
+        };
+        write();
+        // setTimeout(write, el.dataset.speed);
+    }
+
+    stop(){
+        this.isPlaying = false;
+    }
+
+    getIndex(){
+        return this.index;
+    }
+
+    static wait(t){
+        return {type: 1, time:t};
+    }
+    static setdelay(t){
+        return {type: 2, time:t};
+    }
+    static callback(f, a){
+        return {type: 3, func:f, args:a};
+    }
+}
+
+
+
+
 function AddDebugBorders(element, level=0){
     const colors = ["red", "blue", "lime"];
     element.style.border = "5px solid";
@@ -65,6 +144,21 @@ var rect_div_list;
 
 
 
+function PixelPageHeader(){
+    const bg = `rgb(${BackgroundColor.x*255}, ${BackgroundColor.y*255}, ${BackgroundColor.z*255})`;
+    var mainpage = document.getElementById("main_page_container");
+    document.body.style.backgroundColor = bg;
+    mainpage.style.backgroundColor = bg;
+    mainpage.style.opacity = 0;
+
+    SetupForegroundRenderer();
+    scheduler.addEvent(1, () => {
+        mainpage.style.opacity = 1;
+    });
+}
+
+
+
 function leavePage(url, scheduler, time_entered){
     var div = document.getElementById("page_transition");
     div.style.display = "block";
@@ -73,18 +167,23 @@ function leavePage(url, scheduler, time_entered){
     div.dataset.stopTime = time_entered;
     div.dataset.speed = 0.75;
     div.style.opacity = 0;
-    scheduler.addEventNoSort(time_entered+1, (time) => {
+    scheduler.addEvent(time_entered+1, (time) => {
         window.location.href = url;
     });
 }
 function enterPage(scheduler, time_entered){
     let div = document.getElementById("page_transition");
     div.style.display = "block";
+    div.style.opacity = 1;
+    div.style.backgroundColor = `rgb(${BackgroundColor.x*255}, ${BackgroundColor.y*255}, ${BackgroundColor.z*255})`;
     div.dataset.type = 5;
     div.dataset.startTime = time_entered;
     div.dataset.stopTime = -10;
     div.dataset.speed = 0.75;
-    scheduler.addEventNoSort(time_entered+2, (time) => {
+    scheduler.addEventNoSort(time_entered+0.75, () => {
+        div.style.opacity = 0;
+    });
+    scheduler.addEvent(time_entered+2, (time) => {
         div.style.display = "none";
     });
 }
@@ -146,7 +245,6 @@ function updateAnimatedRectDivs(){
         const div_rect = rect_div_list[i].getBoundingClientRect();
         if (checkRectData(rect_div_list[i], div_rect, rect_array_list[i])){
             updateRectData(rect_div_list[i], div_rect, rect_array_list[i], i);
-            // console.log("updated: "+rect_div_list[i].id+" at: "+time, rect_array_list[i].start+" -- "+rect_array_list[i].stop);
         }
     }
 }

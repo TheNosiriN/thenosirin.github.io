@@ -9,10 +9,14 @@
 }
 
 
+html {
+    scroll-behavior: smooth;
+}
 body, html {
     margin: 0;
     padding: 0;
     height: 100%;
+    image-rendering: pixelated;
 }
 
 #foreground_canvas {
@@ -51,4 +55,16 @@ body, html {
     left: 0;
     display: none;
     pointer-events: none;
+}
+
+.pixel_borders {
+    border-radius: 24px;
+    border-width: 24px;
+    border-style: solid;
+    border-image-source: url('../img/sprites/border_image.png');
+    border-image-slice: 7; /* Each corner is 7x7 pixels */
+    border-image-repeat: stretch; /* Makes sure edges stretch */
+    border-image-outset: 7px;
+    box-shadow: -10px 10px 0px 7px rgba(25,25,26,0.5);
+    box-sizing: border-box;
 }

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="Chinomso Nosiri">
+    <title>Chinomso Nosiri (TheNosiriN)</title>
+
+    <link rel="stylesheet" href="../css/loadfonts.css">
+    <link rel="stylesheet" href="../css/universal.css">
+
+    <script src="../lib/ShaderToyLite.js"></script>
+    <script src="../utils/Utils.js"></script>
+    <script src="src/Constants.js"></script>
+    <script src="src/Renderer.js"></script>
+    <script src="src/Universal.js"></script>
+</head>
+
+<body>
+    <style>
+        #center_container {
+            position: absolute;
+            width: 100%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+
+            height: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+
+            display: grid;
+            place-items: center;
+        }
+        #center_container::-webkit-scrollbar {
+            display: none;
+        }
+
+        #typed_content {
+            color: #fffedd;
+            text-decoration: none;
+            text-align: left;
+            font-size: 1.8vmin;
+            font-family: QuinqueFive;
+            line-height: 1.8;
+
+            width: 75vw;
+            margin-top: 25vh;
+            margin-bottom: 25vh;
+        }
+    </style>
+
+    <div class="page_container hide_scrollbars" id="main_page_container">
+        <div id="center_container">
+            <div id="typed_content"></div>
+        </div>
+    </div>
+
+    <div id="page_transition" class="animated_transition"></div>
+    <canvas id="foreground_canvas"></canvas>
+
+
+    <script src="src/About.js"></script>
+
+</body>
+
+
+</html>

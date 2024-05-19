@@ -1,12 +1,10 @@
-SetupForegroundRenderer();
+PixelPageHeader();
+
 
 window.addEventListener("DOMContentLoaded", () => {
     if (SHOW_DEBUG_BORDERS){
         AddDebugBorders(document.getElementById("main_page_container"));
     }
-
-    const bg = `rgb(${BackgroundColor.x*255}, ${BackgroundColor.y*255}, ${BackgroundColor.z*255})`;
-    document.getElementById("main_page_container").style.backgroundColor = bg;
 
     var welcome = document.getElementById("welcome_message");
     welcome.innerHTML = WelcomeMessages[Math.floor(Math.random()*WelcomeMessages.length)];
@@ -44,6 +42,7 @@ function updateWithFrame(){
 
 function setupWelcomeScheduledAnimation(){
     var title_text = document.getElementById("title_text_div");
+    var mainpage = document.getElementById("main_page_container");
     var events = [];
 
     const activate = (div, time, duration) => {
@@ -68,14 +67,24 @@ function setupWelcomeScheduledAnimation(){
         title_text.children[0].style.opacity = 1;
     });
 
+    // hide everything in the in-between
+    scheduler.addEventNoSort(1+3.5+(1.0/title_text.children[0].dataset.speed), (time) => {
+        mainpage.style.opacity = 0;
+    });
+
     // from name to text
     scheduler.addEventNoSort(6, (time) => {
         deactivate(title_text.children[0]);
         activate(title_text.children[1], time, 10);
     });
 
+    // unhide everything just after the rect for the text has been updated
+    scheduler.addEventNoSort(6.1, (time) => {
+        mainpage.style.opacity = 1;
+    });
+
     // from text to transition
     scheduler.addEvent(9, (time) => {
-        leavePage("home.html", scheduler, time);
+        leavePage("frontpage/home.html", scheduler, time);
     });
 }

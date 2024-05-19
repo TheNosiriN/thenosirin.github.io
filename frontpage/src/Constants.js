@@ -19,6 +19,7 @@ var WelcomeMessages = [
     "Code. Compile. Repeat.",
     "Two million lines ago...",
     "You need to download more RAM to view this site!!",
+    "Please view all demos on a PC, thank you!"
 
     // "Once upon a byte, far, far from the console..."
     // "Once upon a time, in a repository far, far from merge conflicts..."
@@ -35,7 +36,8 @@ var SplashTexts = [
     "Hire Me!!!",
     "Made by Chino",
     "Call me Chino",
-    "Now with five percent A.I.!!",
+    "Made with five percent A.I.",
     "Made with two percent C++",
     "Ever wondered what version one was?",
+    "You won't believe how long it took to make this!"
 ];

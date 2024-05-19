@@ -1,7 +1,5 @@
-SetupForegroundRenderer();
+PixelPageHeader();
 
-var menu_cont = document.getElementById("center_container");
-menu_cont.style.opacity = 0;
 
 // splash text
 var splashtext = document.getElementById("splash_text");
@@ -13,7 +11,7 @@ splashtext.innerHTML = SplashTexts[Math.floor(Math.random()*SplashTexts.length)]
 // let buttons = document.querySelectorAll(".nav_buttons > div");
 // for (var i=0; i<buttons.length; ++i){
 //     let b = buttons[i];
-//     b.className += " animated_transition";
+//     b.classList.add("animated_transition");
 //     b.dataset.speed = 0.25 + Math.random()*0.75;
 //     b.dataset.startTime = (i*0.5) + 1;
 //     b.dataset.stopTime = -10;
@@ -27,6 +25,7 @@ splashtext.innerHTML = SplashTexts[Math.floor(Math.random()*SplashTexts.length)]
     buttons.forEach((b) => {
         b.onclick = (e) => {
             leavePage(b.href, scheduler, foreground.toy.getTime());
+            b.style.pointerEvents = "none";
             e.preventDefault();
         };
     });
@@ -50,17 +49,16 @@ animateText("title_text", "jumping_text", 2.0*0.1); // wavy text
 animateText("splash_text", "jumping_text", 2.0*0.1); // wavy text
 animateText("ref_demo", "rainbow_text", 0.05); // rainbow color text
 
+document.getElementById("menu_container").style.backgroundColor = `rgb(${
+    BackgroundColor.x*255}, ${BackgroundColor.y*255}, ${BackgroundColor.z*255
+})`;
+
 
 
 window.addEventListener("DOMContentLoaded", () => {
     if (SHOW_DEBUG_BORDERS){
         AddDebugBorders(document.getElementById("main_page_container"));
     }
-
-    const bg = `rgb(${BackgroundColor.x*255}, ${BackgroundColor.y*255}, ${BackgroundColor.z*255})`;
-    document.getElementById("menu_container").style.backgroundColor = bg;
-    var mainpage = document.getElementById("main_page_container");
-    mainpage.style.backgroundColor = bg;
 
     StartForegroundRenderer(() => {
         RefreshAnimatedRectDivs();
@@ -72,8 +70,7 @@ window.addEventListener("DOMContentLoaded", () => {
             foreground.toy.setOnDraw(update);
         }
         scheduler.addEvent(1, () => {
-            mainpage.style.backgroundColor = "#252627";
-            menu_cont.style.opacity = 1;
+            document.getElementById("main_page_container").style.backgroundColor = "#252627";
         });
     });
 });

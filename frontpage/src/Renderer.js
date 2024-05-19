@@ -102,7 +102,7 @@ function ConfigureForegroundRenderer(){
     var gl = toy.getContext();
 
     // toy.addTexture(SetupTexture2D(gl, "img/shader/pebbles.png", gl.LINEAR, gl.REPEAT), "pebbles");
-    toy.addTexture(SetupTexture2D(gl, "img/shader/rgbanoise.png", gl.NEAREST, gl.REPEAT), "rgba_noise");
+    toy.addTexture(SetupTexture2D(gl, UTILS.getSitePath()+"img/shader/rgbanoise.png", gl.NEAREST, gl.REPEAT), "rgba_noise");
     // toy.addTexture(SetupTexture2D(gl, "img/shader/bluenoise.png", gl.NEAREST, gl.REPEAT), "blue_noise");
     // toy.addTexture(SetupTexture2D(gl, "img/shader/greynoise.png", gl.NEAREST, gl.REPEAT), "grey_noise");
     // toy.addTexture(SetupTexture3D(gl, "img/shader/greynoise3d.bin", 32, 32, 32, gl.LINEAR, gl.REPEAT), "grey_noise_3d");
@@ -127,8 +127,8 @@ function SetupForegroundRenderer(){
     window.addEventListener("mousemove", foreground.toy.bindMousemove);
 
     Promise.all([
-        UTILS.loadFile("frontpage/shader/foreground_shader_vertex.glsl"),
-        UTILS.loadFile("frontpage/shader/foreground_shader_image.glsl"),
+        UTILS.loadFile(UTILS.getSitePath()+"frontpage/shader/foreground_shader_vertex.glsl"),
+        UTILS.loadFile(UTILS.getSitePath()+"frontpage/shader/foreground_shader_image.glsl"),
     ]).then((data) => {
         var FOREGROUND_SHADER_VERTEX = data[0];
         var FOREGROUND_SHADER_IMAGE = data[1];
