@@ -78,7 +78,7 @@ function ContainedPage_About(){
         TypeWriterEffect.wait(700), "\n",
 
         TypeWriterEffect.setdelay(40),
-        "I make pretty graphics, ", TypeWriterEffect.wait(500), "I make pretty games, ", TypeWriterEffect.wait(500), "I make pretty apps, ", TypeWriterEffect.wait(500), "and I make C++ look prettier than it already is.\n",
+        "I make pretty graphics, ", TypeWriterEffect.wait(500), "I make pretty games, ", TypeWriterEffect.wait(500), "I make pretty websites, ", TypeWriterEffect.wait(500), "and I make C++ look prettier than it already is.\n",
         TypeWriterEffect.wait(1500), "\n",
 
         "So basically I'm just a Programmer.\n",

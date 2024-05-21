@@ -89,9 +89,13 @@ window.addEventListener("beforeunload", (e) => {
     leavePage("", scheduler, foreground.toy.getTime());
 });
 window.addEventListener("pushstate", (e) => {
+    if (!e.state.name)return;
+    if (!pageClassesNamedMap[e.state.name])return;
     leavePage(pageClassesNamedMap[e.state.name], scheduler, foreground.toy.getTime());
 });
 window.addEventListener("popstate", (e) => {
+    if (!e.state.name)return;
+    if (!pageClassesNamedMap[e.state.name])return;
     leavePage(pageClassesNamedMap[e.state.name], scheduler, foreground.toy.getTime());
 });
 
