@@ -288,7 +288,7 @@ function LoadContainedPage(PageClass, foreground_available){
     const props = currentPage.getProps();
     mainpage.innerHTML = pageClassesMap[props.name];
     mainpage.classList.add(props.css);
-    document.title = props.name + " - Portfolio site ver. 2";
+    document.title = props.title + " - Portfolio site ver. 2";
 
     currentPage.setup();
     RefreshAnimatedRectDivs();
