@@ -6,10 +6,9 @@
 #define MARGIN //remove anoying margins
 #define DOF
 #define SHOW_LENS_FLARE
-// #define SHOW_TREE
-// #define SHOW_FROSTED_GLASS
 #define ROCK_SLIME
 #define PULSE
+#define POINT_LIGHT_SHADOWS
 
 #define R (iResolution.xy)
 #define mR min(R.x,R.y)
@@ -18,7 +17,7 @@
 
 #define PLANET_RADIUS 500.
 #define MAX_DIST 100.0
-#define MAX_CAM_ANGLE 25.0
+#define MAX_CAM_ANGLE 30.0
 
 
 #if defined(HIGH_QUALITY)
@@ -83,7 +82,7 @@ float get_cam_movement(in highp float time_12)
 {
     float tmpvar_13;
     float tmpvar_14;
-    tmpvar_14 = min (max (((sin(((time_12 * 0.03) + -1.2)) * 0.5) + 0.5), 0.0), 1.0);
+    tmpvar_14 = min (max (((sin(((time_12 * 0.03) + -1.0)) * 0.5) + 0.5), 0.0), 1.0);
     tmpvar_13 = (tmpvar_14 * (tmpvar_14 * (3.0 + -((2.0 * tmpvar_14)))));
     return tmpvar_13;
 }

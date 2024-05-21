@@ -33,18 +33,6 @@ splashtext.innerHTML = SplashTexts[Math.floor(Math.random()*SplashTexts.length)]
 
 
 
-
-function animateText(id, animation_class, delay){
-    let el = document.getElementById(id);
-    el.innerHTML = el.innerHTML.split("").map(letter => {
-        return "<span>" + letter + "</span>";
-    }).join("");
-    Array.from(el.children).forEach((span, index) => {
-        span.classList.add(animation_class);
-        span.style.animationDelay = `${index*delay+1}s`;
-    });
-}
-
 animateText("title_text", "jumping_text", 2.0*0.1); // wavy text
 animateText("splash_text", "jumping_text", 2.0*0.1); // wavy text
 animateText("ref_demo", "rainbow_text", 0.05); // rainbow color text

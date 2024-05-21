@@ -11,11 +11,58 @@ class ForegroundRectData {
 
 
 
+class TimeoutHandler {
+    constructor(){
+        this.ids = [];
+
+        window.addEventListener("beforeunload", () => {
+            this.clear();
+        });
+
+        const interval = setInterval(() => {
+            const pageAccessedByReload = (
+                (window.performance.navigation && window.performance.navigation.type === 1) ||
+                window.performance
+                .getEntriesByType('navigation')
+                .map((nav) => nav.type)
+                .includes('reload')
+            );
+            if (pageAccessedByReload){
+                console.log(this.ids);
+                this.clear();
+                clearInterval(interval);
+            }
+        }, 8);
+    }
+
+    addTimeout(func, time){
+        const lastIndex = this.ids.length;
+        this.ids.push(setTimeout(() => {
+            func();
+            this.ids.splice(lastIndex, 1);
+        }, time));
+    }
+
+    clear(func, time){
+        for (var i=0; i<this.ids.length; ++i){
+            clearTimeout(this.ids.length);
+        }
+    }
+}
+
+var timeoutHandler = new TimeoutHandler();
+function setTimeoutH(func, time){
+    timeoutHandler.addTimeout(func, time);
+}
+
+
+
 class TimeScheduler {
     constructor(){
         this.events = [];
         this.time = 0;
         this.iter = 0;
+        this.firstDrawTime = 0;
     }
 
     nextEvent(){
@@ -23,7 +70,14 @@ class TimeScheduler {
             this.events[this.iter].callback(this.time);
             this.iter++;
         }
-        this.time++;
+
+        var now = Date.now();
+        if (this.firstDrawTime == 0) {
+            this.firstDrawTime = now;
+        }
+
+        var elapsed = now - this.firstDrawTime;
+        this.time = elapsed * 0.001;
     }
 
     addEvent(time, callback){
@@ -64,48 +118,57 @@ class TypeWriterEffect {
 
     play(){
         this.isPlaying = true;
+
         const write = () => {
-            if (!this.isPlaying)return;
-            var nextwait = 0;
+            if (!this.isPlaying) return;
+
+            if (this.index >= this.content.length) {
+                this.stop();
+                if (this.onFinished) { this.onFinished(this); }
+                return;
+            }
+
             const txt = this.content[this.index];
 
-            if (typeof txt === "string"){
-                if (this.pos < txt.length){
+            if (typeof txt === "string") {
+                if (this.pos < txt.length) {
                     const char = txt.charAt(this.pos);
-                    // this.element.innerHTML += (char=='\n') ? "<br>" : char;
                     const span = document.createElement('span');
                     span.innerHTML = (char == '\n') ? "<br>" : char;
                     this.element.appendChild(span);
                     this.pos++;
-                    if (this.onInserted){ this.onInserted(this); }
-                    setTimeout(write, this.typeDelay);
-                    return;
+                    if (this.onInserted) { this.onInserted(char, this); }
+                } else {
+                    this.index++;
+                    this.pos = 0;
                 }
-            }else{
-                switch(txt.type){
-                    case 1: nextwait = txt.time; break;
-                    case 2: this.typeDelay = txt.time; break;
-                    case 3: txt.func(txt.args, this); break;
+            } else {
+                switch (txt.type) {
+                    case 1: // Wait
+                        this.stop();
+                        setTimeout(() => {
+                            this.index++;
+                            this.play();
+                        }, txt.time);
+                        return;
+                    case 2: // Set delay
+                        this.typeDelay = txt.time;
+                        this.index++;
+                        break;
+                    case 3: // Callback
+                        txt.func(txt.args, this);
+                        this.index++;
+                        break;
                 }
             }
-
-            this.index++;
-            if (this.index < this.content.length){
-                this.pos = 0;
-                setTimeout(write, nextwait);
-                return;
-            }
-
-            this.stop();
-            if (this.onFinished){ this.onFinished(this); }
-
         };
-        write();
-        // setTimeout(write, el.dataset.speed);
+
+        this.interval = setInterval(write, this.typeDelay);
     }
 
     stop(){
         this.isPlaying = false;
+        clearInterval(this.interval);
     }
 
     getIndex(){
@@ -126,9 +189,10 @@ class TypeWriterEffect {
 
 
 
+
 function AddDebugBorders(element, level=0){
     const colors = ["red", "blue", "lime"];
-    element.style.border = "5px solid";
+    element.style.border = "2.5px solid";
     element.style.borderColor = colors[level % colors.length];
     for (const child of element.children) {
         // if (child.tagName != "DIV")continue;
@@ -154,6 +218,19 @@ function PixelPageHeader(){
     SetupForegroundRenderer();
     scheduler.addEvent(1, () => {
         mainpage.style.opacity = 1;
+    });
+}
+
+
+
+function animateText(id, animation_class, delay){
+    let el = document.getElementById(id);
+    el.innerHTML = el.innerHTML.split("").map(letter => {
+        return "<span>" + letter + "</span>";
+    }).join("");
+    Array.from(el.children).forEach((span, index) => {
+        span.classList.add(animation_class);
+        span.style.animationDelay = `${index*delay+1}s`;
     });
 }
 

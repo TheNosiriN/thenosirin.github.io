@@ -5,8 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="description" content="Chinomso Nosiri">
-    <title>Chinomso Nosiri (TheNosiriN)</title>
+    <meta name="description" content="Made by TheNosiriN">
+    <title>Made by TheNosiriN</title>
 
     <link rel="stylesheet" href="../css/loadfonts.css">
     <link rel="stylesheet" href="../css/universal.css">
@@ -14,16 +14,41 @@
     <script src="../lib/ShaderToyLite.js"></script>
     <script src="../utils/Utils.js"></script>
     <script src="../frontpage/src/Renderer.js"></script>
+    <script src="../frontpage/src/Universal.js"></script>
 </head>
 
 <body>
     <style>
+
+    .caps_bold {
+        color: #fffedd;
+        font-family: Colus;
+        font-size: 3vmin;
+        font-weight: 100;
+        letter-spacing: 0.3em;
+        padding: 0;
+        margin: 0;
+    }
+
+    #warning_text {
+        opacity: 0;
+        width: 100%;
+        text-align: center;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        transition: opacity 0.8s ease-in-out;
+    }
+
     </style>
 
     <canvas id="background_canvas"></canvas>
 
     <div class="page_container hide_scrollbars unselectable" id="main_page_container">
-
+        <div id="warning_text">
+            <h1 class="caps_bold"></h1>
+        </div>
     </div>
 
     <script src="Main.js"></script>

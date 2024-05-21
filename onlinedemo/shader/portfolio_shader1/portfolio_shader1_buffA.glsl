@@ -20,8 +20,9 @@ float anflare(vec2 uv, float intensity, float stretch, float brightness){
 vec2 space(vec3 p){
     // terrain
     float h = sin(p.x*0.05+cos(p.z*0.05))*10.;
+    float dtp = length(p.xz-focusPoint.xz)/MAX_DIST;
     vec2 np = p.xz;
-    float detail = mix(1.0, 4.0, step(0.6, length(p.xz-focusPoint.xz)/MAX_DIST));
+    float detail = mix(smoothstep(0.1, 0.2, dtp), 4.0, step(0.6, dtp));
     for (float i=0., a=1.; i<groundIter; i++){
     #ifdef ROCK_SLIME
         np.xy -= (iTime*0.3*i/3.) * vec2(1, mod(i,2.)*2.-1.);
@@ -79,9 +80,9 @@ vec3 screenray(vec3 eye, vec3 dir, float maxd){
     return vec3(d, i/64., ind.y);
 }
 
-float shadowray(vec3 eye, vec3 dir, float maxd) {
+float shadowray(vec3 eye, vec3 dir, float steps, float maxd) {
     float d=0.2, i=0., r=1., ph=2e10;
-    for(; i<64. && d<maxd; ++i){
+    for(; i<steps && d<maxd; ++i){
      	vec3 p = eye + dir * d;
         float ind = space(p).x;
         if (ind < 0.0)return 0.;
@@ -107,11 +108,20 @@ vec3 normal(vec3 P){
 }
 
 
-float shade(vec3 eye, float dist, float md, vec3 P, vec3 N){
+float shade(vec3 eye, float dist, float md, vec3 P, vec3 N, bool firstIter){
     float shading = max(dot(N, light)*0.5+0.25, 0.);
     shading = mix(min(1.0,shading*2.0), shading, dot(normalize(eye), N));
-    if (shading >= 0.0){ shading *= shadowray(P, light, md/2.)+0.1; }
+    if (shading >= 0.0){ shading *= shadowray(P, light, firstIter ? 64. : 100., md/2.)+0.1; }
     return saturate( (shading+0.1)+(dist/md)*0.1 );
+}
+
+float shade_pointlight(vec3 eye, float dist, float md, vec3 P, vec3 N, vec3 light, float power){
+    vec3 ldir = normalize(light-P);
+    float shading = max(dot(N, ldir), 0.);
+    shading *= smoothstep(10., 5., length(P-light)) * power;
+    shading = mix(min(1.0,shading*2.0), shading, dot(normalize(eye), N));
+    if (shading >= 0.0){ shading *= shadowray(P, ldir, 100., md/2.)+0.1; }
+    return shading;
 }
 
 float shade_planet(vec3 eye, float dist, vec3 P, vec3 N){
@@ -120,10 +130,26 @@ float shade_planet(vec3 eye, float dist, vec3 P, vec3 N){
 }
 
 
+void makedir(vec2 uv, vec3 pdir, float rot, out vec3 dir, out vec3 gdir){
+    vec3 f = normalize(pdir),
+    s = normalize(cross(f, vec3(0,1,0)));
+    dir = (
+        mat4(vec4(s,0), vec4(cross(s, f),0), vec4(-f,0), vec4(1)) *
+        vec4(normalize(vec3(uv, -mix(2.5, 0.9, cammove) )), 0)
+    ).xyz;
+
+    dir.xy *= rotate(rot);
+
+    gdir = dir;
+    gdir.y += sin(uv.x*2.0+1.3)*0.1*cammove;
+}
+
+
 vec4 makePixel(vec2 C){
     vec3 col = vec3(0);
-    vec2 uv = (C-R*0.5)/R.y;
+    vec2 uv = (C-R*0.5)/min(R.x,R.y);
     cammove = get_cam_movement(iTime);
+    float rot = -(1.-cammove)*MAX_CAM_ANGLE;
 
     vec3 eye = vec3(0,-1.5,10);
     vec3 lookAt = vec3(3,-3., 0);
@@ -136,22 +162,12 @@ vec4 makePixel(vec2 C){
     eye = mix(eye+focusPoint+vec3(2,-1.1,0), eye, cammove);
     lookAt = mix(focusPoint+vec3(1.5,-0.5,0), lookAt, cammove);
 
-    vec3 f = normalize(lookAt - eye),
-    s = normalize(cross(f, vec3(0,1,0))),
-    dir = (
-        mat4(vec4(s,0), vec4(cross(s, f),0), vec4(-f,0), vec4(1)) *
-        vec4(normalize(vec3(uv, -mix(2.5, 0.9, cammove) )), 0)
-    ).xyz;
-
-    float rot = -(1.-cammove)*MAX_CAM_ANGLE;
-    dir.xy *= rotate(rot);
-
-    vec3 gdir = dir;
-    gdir.y += sin(uv.x*2.0+1.3)*0.1*cammove;
+    vec3 gdir, dir;
+    makedir(uv, lookAt-eye, rot, dir, gdir);
     float dof = MAX_DIST;
 
 #ifdef PULSE
-    float pulse = 1.+0.75*smoothstep(0.8, 1.1, sin(iTime)*0.5+0.5);
+    float pulse = smoothstep(0.8, 1.05, sin(iTime)*0.5+0.5);
 #else
     float pulse = 0.0;
 #endif
@@ -177,19 +193,23 @@ vec4 makePixel(vec2 C){
 
         vec3 P = eye + gdir * dist.x;
         vec3 N = normal(P);
-
         vec3 dofp = P-focusPoint;
         dof = length(dofp.xz * vec2(.4,1).xy);
 
         if (dist.z == 1.0){
             eye = P;
             gdir = normalize(reflect(gdir, N));
-            col -= 1.0-vec3(0.9,0.05,0.2)*pulse;
+            col -= 1.0-vec3(0.9+pulse*0.8,0.05,0.2);
             continue;
         }
 
-        vec3 sh = vec3(shade(eye, dist.x, maxd, P, N));
-        sh -= (1.0-vec3(pulse,0,0.4)) * (0.5/max(length(P-focusPoint), 0.));
+        vec3 sh = vec3(shade(eye, dist.x, maxd, P, N, i==0));
+    #ifdef POINT_LIGHT_SHADOWS
+        sh -= (1.0-vec3(1.,0,0.4)*0.6) * (0.5/max(length(P-focusPoint), 0.));
+        sh -= (1.0-vec3(pulse*8.,0,0.4*pulse*3.2)) * shade_pointlight(eye, dist.x, maxd, P, N, focusPoint, pulse);
+    #else
+        sh -= (1.0-vec3(pulse*0.75+1.0,0,0.4)) * (0.5/max(length(P-focusPoint), 0.));
+    #endif
         sh = max(sh, 0.);
         col += mix(sh*0.5, sh, saturate(1.0-pow(dist.y,3.0)*3.0));
         break;

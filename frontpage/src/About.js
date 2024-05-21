@@ -12,7 +12,7 @@ function PreloadUniverseVideos(){
     universeVideo.loop = true;
     universeVideo.muted = true;
     universeVideo.style.opacity = 0;
-    universeVideo.style.width = "85%";
+    universeVideo.style.width = "100%";
     universeVideo.style.height = "auto";
     universeVideo.style.display = "block";
     universeVideo.style.marginLeft = "auto";
@@ -56,8 +56,9 @@ function StartPageContent(){
         onFinished: () => {
             console.log("done");
         },
-        onInserted: (writer) => {
-            writer.element.parentElement.scrollTop = writer.element.parentElement.scrollHeight;
+        onInserted: (lastchar, writer) => {
+            if (lastchar != '\n')return;
+            writer.element.parentElement.parentElement.scrollTop = writer.element.parentElement.parentElement.scrollHeight;
         }
     });
     typer.play();
@@ -86,7 +87,7 @@ function insertImage(args, writer){
     var image = document.createElement("img");
     image.src = path;
     image.style.opacity = 0;
-    image.style.width = "85%";
+    image.style.width = "100%";
     image.style.height = "auto";
     image.style.display = "block";
     image.style.marginLeft = "auto";
@@ -137,10 +138,8 @@ const Content = [
     "I make pretty graphics, ", TypeWriterEffect.wait(500), "I make pretty games, ", TypeWriterEffect.wait(500), "I make pretty websites, ", TypeWriterEffect.wait(500), "and I make C++ look prettier than it already is.\n",
     TypeWriterEffect.wait(1500), "\n",
 
-    TypeWriterEffect.setdelay(40),
-
     "So basically I'm just a Programmer.\n",
-    TypeWriterEffect.wait(2000), TypeWriterEffect.setdelay(30), "\n",
+    TypeWriterEffect.wait(2000), "\n",
 
     "I'm also a space enthusiast, so much so that I create stars and galaxies all on my potato laptop.\n",
     TypeWriterEffect.wait(1500), "\nLet me show you a quick video...\n\n", TypeWriterEffect.wait(1000),
@@ -148,10 +147,10 @@ const Content = [
     TypeWriterEffect.callback(insertUniverseVideo), "\n", TypeWriterEffect.wait(7000), "\n",
     TypeWriterEffect.setdelay(45),
 
-    "Pretty isn't it? ", TypeWriterEffect.wait(1000), "I mean, its not perfect, but it's to scale and it's pretty.\n",
+    "Pretty isn't it? ", TypeWriterEffect.wait(1000), "I mean, its not perfect, but it's pretty and it's to scale.\n",
     TypeWriterEffect.wait(1000), "\n",
 
-    TypeWriterEffect.setdelay(30),
+    TypeWriterEffect.setdelay(40),
 
     "I made that one in my C++ game engine. ", TypeWriterEffect.wait(1000), "There are others, even one in JavaScript but thats for another day.\n",
     TypeWriterEffect.wait(1000), "\n",
@@ -159,7 +158,10 @@ const Content = [
     "Aside from space, I also make SDF modelling, raytracing, and light transport demos, ", TypeWriterEffect.wait(700), "you know, ", TypeWriterEffect.wait(700), "applied mathematics stuff.\n\n",
     TypeWriterEffect.wait(4000),
 
-    TypeWriterEffect.callback(insertImage, "graphics/shadertoy_pt5.png"), "\n", TypeWriterEffect.wait(2000), "\n",
+    TypeWriterEffect.callback(insertImage, "graphics/lighthouse_pt.png"), "\n", TypeWriterEffect.wait(2000), "\n",
 
-    "Just look at this beautiful picture! ", TypeWriterEffect.wait(1000), "Its the result of simulating how light interacts with an environment just like it does in real-life!",
+    "Just look at this beautiful picture! ", TypeWriterEffect.wait(1000), "That is not a 3D model, ", TypeWriterEffect.wait(700), "its a group of math functions combined to make that shape.\n",
+    TypeWriterEffect.wait(1000), "\n",
+
+    "This is the result of simulating how light interacts with an environment just like it does in real-life!",
 ];

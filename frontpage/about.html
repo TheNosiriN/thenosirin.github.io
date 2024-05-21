@@ -20,41 +20,26 @@
 
 <body>
     <style>
-        #center_container {
-            position: absolute;
-            width: 100%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
 
-            height: 100%;
-            overflow-x: hidden;
-            overflow-y: auto;
+    #typed_content {
+        color: #fffedd;
+        text-decoration: none;
+        text-align: left;
+        font-size: 1.8vmin;
+        font-family: QuinqueFive;
+        line-height: 1.8;
 
-            display: grid;
-            place-items: center;
-        }
-        #center_container::-webkit-scrollbar {
-            display: none;
-        }
+        margin-top: 25vh;
+        margin-bottom: 25vh;
+    }
 
-        #typed_content {
-            color: #fffedd;
-            text-decoration: none;
-            text-align: left;
-            font-size: 1.8vmin;
-            font-family: QuinqueFive;
-            line-height: 1.8;
-
-            width: 75vw;
-            margin-top: 25vh;
-            margin-bottom: 25vh;
-        }
     </style>
 
     <div class="page_container hide_scrollbars" id="main_page_container">
-        <div id="center_container">
-            <div id="typed_content"></div>
+        <div class="scrolling_container">
+            <div class="center_container">
+                <div id="typed_content"></div>
+            </div>
         </div>
     </div>
 

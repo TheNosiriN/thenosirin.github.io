@@ -115,93 +115,6 @@
             transform: translate(50%, 50%) rotate(-20deg);
         }
 
-
-        .jumping_text {
-            animation-name: jumping_text;
-            animation-duration: 2s;
-            animation-timing-function: linear;
-            animation-iteration-count: infinite;
-            position: relative;
-            top: 0;
-            left: 0;
-        }
-        @keyframes jumping_text {
-            0% {
-                top: 0;
-            }
-            50% {
-                top: -0.25em;
-            }
-            100% {
-                top: 0;
-            }
-        }
-
-        .scaling_text {
-            animation-name: scaling_text;
-            animation-duration: 1.5s;
-            animation-timing-function: ease-in-out;
-            animation-iteration-count: infinite;
-        }
-        @keyframes scaling_text {
-            0% {
-                transform: scale(1.1);
-            }
-            50% {
-                transform: scale(1);
-            }
-            100% {
-                transform: scale(1.1);
-            }
-        }
-
-        .rainbow_text {
-            animation-name: rainbow_text;
-            animation-duration: 2s;
-            animation-timing-function: linear;
-            animation-iteration-count: infinite;
-            position: relative;
-            top: 0;
-            left: 0;
-        }
-        @keyframes rainbow_text {
-            100%,0%{
-                color: rgb(255,0,0);
-            }
-            8%{
-                color: rgb(255,127,0);
-            }
-            16%{
-                color: rgb(255,255,0);
-            }
-            25%{
-                color: rgb(127,255,0);
-            }
-            33%{
-                color: rgb(0,255,0);
-            }
-            41%{
-                color: rgb(0,255,127);
-            }
-            50%{
-                color: rgb(0,255,255);
-            }
-            58%{
-                color: rgb(0,127,255);
-            }
-            66%{
-                color: rgb(0,0,255);
-            }
-            75%{
-                color: rgb(127,0,255);
-            }
-            83%{
-                color: rgb(255,0,255);
-            }
-            91%{
-                color: rgb(255,0,127);
-            }
-        }
     </style>
 
     <div class="page_container hide_scrollbars unselectable" id="main_page_container">
@@ -214,12 +127,12 @@
                 <div class="nav_buttons">
                     <div><a href="about.html" id="ref_about">who am I?</a></div>
                     <div><a href="#" id="ref_blog">serious stuffs</a></div>
-                    <div><a href="#" id="ref_projects">projects</a></div>
-                    <div><a href="#" id="ref_workx">work experience</a></div>
+                    <div><a href="projects.html" id="ref_projects">projects</a></div>
+                    <div><a href="work.html" id="ref_workx">work experience</a></div>
                     <div><a href="../onlinedemo/index.html" id="ref_demo">my awesome demo!</a></div>
                     <div><a href="#" id="ref_contact">contact</a></div>
                 </div>
-                <div id="menu_container_transition" class="animated_transition" data-speed=0.25 data-grid=0.6 data-start-time=0.25 data-stop-time=-10 data-type=7></div>
+                <div id="menu_container_transition" class="animated_transition" data-speed=0.25 data-grid=0.4 data-start-time=0.25 data-stop-time=-10 data-type=7></div>
             </div>
         </div>
     </div>

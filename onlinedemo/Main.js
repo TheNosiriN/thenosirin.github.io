@@ -1,7 +1,10 @@
 
+var ReadyToStart = false;
 function StartShaderDemo(){
     canvas = document.querySelector("#background_canvas");
-    toy = new ShaderToyLite(canvas);
+    toy = new ShaderToyLite(canvas, {
+        powerPreference: "high-performance"
+    });
     gl = toy.getContext();
 
     background.canvas = canvas;
@@ -34,7 +37,8 @@ function StartShaderDemo(){
         toy.setImage({
             source: PORTFOLIO_SHADER1_IMAGE, iChannel0: "A"
         });
-        toy.play();
+
+        ReadyToStart = true;
     });
 }
 StartShaderDemo();
@@ -42,9 +46,49 @@ StartShaderDemo();
 
 
 const SHOW_DEBUG_BORDERS = false;
+var warning_text;
 
 window.addEventListener("DOMContentLoaded", () => {
+
     if (SHOW_DEBUG_BORDERS){
-        AddDebugBorders(document.getElementById("home_page_container"));
+        AddDebugBorders(document.getElementById("main_page_container"));
     }
+
+    warning_text = document.getElementById("warning_text");
+
+    scheduler.addEvent(2, () => {
+        warning_text.children[0].innerHTML = "This scene is rendered in real-time";
+        warning_text.style.opacity = 1;
+    });
+    scheduler.addEvent(5, () => {
+        warning_text.style.opacity = 0;
+    });
+    scheduler.addEvent(6.5, () => {
+        warning_text.children[0].innerHTML = "Its not optimized to run on mobile devices";
+        warning_text.style.opacity = 1;
+    });
+    scheduler.addEvent(9.5, () => {
+        warning_text.style.opacity = 0;
+    });
+    scheduler.addEvent(11, () => {
+        warning_text.style.display = "none";
+        const waitfunc = () => {
+            if (ReadyToStart){
+                background.toy.play();
+                return;
+            }
+            requestAnimationFrame(waitfunc);
+        };
+        waitfunc();
+    });
+
+
+    update();
 });
+
+
+
+function update(){
+    scheduler.nextEvent();
+    requestAnimationFrame(update);
+}
