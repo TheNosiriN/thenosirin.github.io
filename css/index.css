@@ -1,0 +1,226 @@
+.frontpage .caps_bold {
+    color: #fffedd;
+    font-family: Undertale;
+    font-size: 6vmin;
+    font-weight: 100;
+    margin: 0;
+    padding: 1vmin;
+    padding-bottom: 0;
+    text-transform: uppercase;
+    text-align: center;
+    display: inline-block;
+}
+
+.frontpage #title_text_div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 100%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.frontpage #title_text_div > div {
+    /* display: grid; */
+    display: none;
+    justify-content: center;
+}
+
+
+
+
+.homepage #center_container {
+    max-height: 90vh;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+.homepage #title_text {
+    color: #fffedd;
+    font-family: Botsmatic;
+    text-align: center;
+    font-size: 7vmin;
+    text-transform: lowercase;
+}
+
+.homepage #menu_container {
+    position: relative;
+    display: inline-grid;
+    justify-content: center;
+    width: auto;
+    height: auto;
+}
+
+.homepage #menu_container_transition {
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+
+.homepage .nav_buttons {
+    text-align: center;
+    font-size: 1.5vmin;
+    font-family: QuinqueFive;
+    display: inline-grid;
+    grid-template-columns: 1fr;
+}
+
+.homepage .nav_buttons > div {
+    display: block;
+}
+
+.homepage .nav_buttons a {
+    color: #fffedd;
+    text-decoration: none;
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    padding-top: 1.5em;
+    padding-bottom: 1.5em;
+}
+
+.homepage a:after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    transform: scaleX(0);
+    height: 0.3em;
+    bottom: 0;
+    left: 0;
+    margin-bottom: 0.75em;
+    background-color: #fffedd;
+    transform-origin: center;
+    transition: transform 0.25s ease-out;
+}
+
+.homepage a:hover:after {
+    transform: scaleX(1);
+    transform-origin: center;
+}
+
+
+.homepage #splash_text_cont {
+    position: absolute;
+    bottom: 20%;
+    right: 20%;
+}
+
+.homepage #splash_text {
+    z-index: 2;
+    color: red;
+    font-family: QuinqueFive;
+    font-size: 0.5vmin;
+    transform: translate(50%, 50%) rotate(-20deg);
+}
+
+
+
+
+.aboutpage #typed_content {
+    color: #fffedd;
+    text-decoration: none;
+    text-align: left;
+    font-size: 1.8vmin;
+    font-family: QuinqueFive;
+    line-height: 1.8;
+
+    margin-top: 25vh;
+    margin-bottom: 25vh;
+}
+
+
+
+
+.projectspage .center_container {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.projectspage #title_text {
+    color: #fffedd;
+    font-family: Botsmatic;
+    text-align: center;
+    font-size: 7vmin;
+    text-transform: lowercase;
+
+    margin-top: 25vmin;
+    margin-bottom: 25vmin;
+}
+
+.projectspage .projects_entry {
+    text-decoration: none;
+
+    width: 100%;
+    height: 50vmin;
+    margin-top: 20px;
+    margin-bottom: 20px;
+
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    transition: transform 0.15s ease-in-out;
+}
+
+.projectspage .projects_entry .title {
+    color: #fffedd;
+    text-decoration: none;
+    text-align: left;
+    font-size: 1.8vmin;
+    font-family: QuinqueFive;
+    line-height: 1.8;
+}
+
+
+
+
+.workpage .pdfobject-container {
+    height: auto;
+}
+
+.workpage #main_content {
+    color: #fffedd;
+    text-decoration: none;
+    text-align: left;
+    font-size: 1.8vmin;
+    font-family: QuinqueFive;
+    line-height: 1.8;
+    margin-top: 1.8em;
+}
+
+.workpage #main_content a {
+    text-decoration-line: none;
+}
+
+
+
+
+.contactpage #typed_content {
+    color: #fffedd;
+    text-decoration: none;
+    text-align: left;
+    font-size: 2.5vmin;
+    font-family: QuinqueFive;
+    line-height: 1.8;
+
+    margin-top: 25vh;
+    margin-bottom: 25vh;
+}
+
+.contactpage #typed_content a {
+    text-decoration-line: none;
+}

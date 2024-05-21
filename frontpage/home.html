@@ -1,149 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <meta name="description" content="Chinomso Nosiri">
-    <title>Chinomso Nosiri (TheNosiriN)</title>
-
-    <link rel="stylesheet" href="../css/loadfonts.css">
-    <link rel="stylesheet" href="../css/universal.css">
-
-    <script src="../lib/ShaderToyLite.js"></script>
-    <script src="../utils/Utils.js"></script>
-    <script src="src/Constants.js"></script>
-    <script src="src/Renderer.js"></script>
-    <script src="src/Universal.js"></script>
-</head>
-
-<body>
-    <style>
-        #center_container {
-            max-height: 90vh;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-
-        #title_text {
-            color: #fffedd;
-            font-family: Botsmatic;
-            text-align: center;
-            font-size: 7vmin;
-            text-transform: lowercase;
-        }
-
-        #menu_container {
-            position: relative;
-            display: inline-grid;
-            justify-content: center;
-            width: auto;
-            height: auto;
-        }
-
-        #menu_container_transition {
-            position: absolute;
-            pointer-events: none;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-
-        .nav_buttons {
-            text-align: center;
-            font-size: 1.5vmin;
-            font-family: QuinqueFive;
-            display: inline-grid;
-            grid-template-columns: 1fr;
-        }
-
-        .nav_buttons > div {
-            display: block;
-        }
-
-        .nav_buttons a {
-            color: #fffedd;
-            text-decoration: none;
-            display: inline-block;
-            position: relative;
-            cursor: pointer;
-            padding-top: 1.5em;
-            padding-bottom: 1.5em;
-        }
-
-        a:after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            transform: scaleX(0);
-            height: 0.3em;
-            bottom: 0;
-            left: 0;
-            margin-bottom: 0.75em;
-            background-color: #fffedd;
-            transform-origin: center;
-            transition: transform 0.25s ease-out;
-        }
-
-        a:hover:after {
-            transform: scaleX(1);
-            transform-origin: center;
-        }
-
-
-        #splash_text_cont {
-            position: absolute;
-            bottom: 20%;
-            right: 20%;
-        }
-
-        #splash_text {
-            z-index: 2;
-            color: red;
-            font-family: QuinqueFive;
-            font-size: 0.5vmin;
-            transform: translate(50%, 50%) rotate(-20deg);
-        }
-
-    </style>
-
-    <div class="page_container hide_scrollbars unselectable" id="main_page_container">
-        <div id="center_container">
-            <div style="position: relative;">
-                <h1 id="title_text">Portfolio Site Version Two</h1>
-                <div id="splash_text_cont" class="scaling_text"><h1 id="splash_text"></h1></div>
-            </div>
-            <div id="menu_container" class="pixel_borders">
-                <div class="nav_buttons">
-                    <div><a href="about.html" id="ref_about">who am I?</a></div>
-                    <div><a href="#" id="ref_blog">serious stuffs</a></div>
-                    <div><a href="projects.html" id="ref_projects">projects</a></div>
-                    <div><a href="work.html" id="ref_workx">work experience</a></div>
-                    <div><a href="../onlinedemo/index.html" id="ref_demo">my awesome demo!</a></div>
-                    <div><a href="#" id="ref_contact">contact</a></div>
-                </div>
-                <div id="menu_container_transition" class="animated_transition" data-speed=0.25 data-grid=0.4 data-start-time=0.25 data-stop-time=-10 data-type=7></div>
-            </div>
-        </div>
+<div id="center_container" class="unselectable">
+    <div style="position: relative;">
+        <h1 id="title_text">Portfolio Site Version Two</h1>
+        <div id="splash_text_cont" class="scaling_text"><h1 id="splash_text"></h1></div>
     </div>
-
-    <div id="page_transition" class="animated_transition"></div>
-    <canvas id="foreground_canvas"></canvas>
-
-
-    <script src="src/Home.js"></script>
-
-</body>
-
-
-</html>
+    <div id="menu_container" class="pixel_borders">
+        <div class="nav_buttons">
+            <div><a data-link="aboutme" id="ref_about">who am I?</a></div>
+            <div><a data-link="#" id="ref_blog">serious stuffs</a></div>
+            <div><a data-link="projects" id="ref_projects">projects</a></div>
+            <div><a data-link="workex" id="ref_workex">work experience</a></div>
+            <div><a href="../onlinedemo/index.html" id="ref_demo">my awesome demo!</a></div>
+            <div><a data-link="contacts" id="ref_contact">contact</a></div>
+        </div>
+        <div id="menu_container_transition" class="animated_transition" data-speed=0.25 data-grid=0.4 data-start-time=0.25 data-stop-time=-10 data-type=7></div>
+    </div>
+</div>

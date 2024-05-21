@@ -10,6 +10,7 @@
 
     <link rel="stylesheet" href="css/loadfonts.css">
     <link rel="stylesheet" href="css/universal.css">
+    <link rel="stylesheet" href="css/index.css">
 
     <script src="lib/ShaderToyLite.js"></script>
     <script src="utils/Utils.js"></script>
@@ -19,62 +20,18 @@
 </head>
 
 <body>
-    <style>
-
-    .caps_bold {
-        color: #fffedd;
-        font-family: Undertale;
-        font-size: 6vmin;
-        font-weight: 100;
-        margin: 0;
-        padding: 1vmin;
-        padding-bottom: 0;
-        text-transform: uppercase;
-        text-align: center;
-        display: inline-block;
-    }
-
-    #title_text_div {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-
-        width: 100%;
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    #title_text_div > div {
-        /* display: grid; */
-        display: none;
-        justify-content: center;
-    }
-
-
-    </style>
-
-    <div class="page_container hide_scrollbars unselectable" id="main_page_container">
-        <div id="title_text_div">
-            <div class="animated_transition" data-speed=0.75>
-                <h1 class="caps_bold animated_transition" data-speed=0.75 data-start-time=1 data-stop-time=0>
-                    Chinomso Nosiri's
-                </h1>
-                <h1 style="letter-spacing: 0.23em; font-size: 2.9vmin; padding: 0.2vmin;" class="caps_bold animated_transition" data-speed=1 data-start-time=2.5 data-stop-time=0>
-                    Awesome Portfolio Website
-                </h1>
-            </div>
-            <div class="animated_transition" data-speed=1>
-                <h1 id="welcome_message" class="caps_bold" style="font-size: 4vmin; max-width: 75vw;">Click here to download more RAM!</h1>
-            </div>
-        </div>
+    <div class="page_container hide_scrollbars" id="main_page_container">
     </div>
 
     <div id="page_transition" class="animated_transition"></div>
     <canvas id="foreground_canvas"></canvas>
 
 
+    <script src="frontpage/src/About.js"></script>
+    <script src="frontpage/src/Contact.js"></script>
+    <script src="frontpage/src/Home.js"></script>
+    <script src="frontpage/src/Projects.js"></script>
+    <script src="frontpage/src/WorkEx.js"></script>
     <script src="frontpage/src/Frontpage.js"></script>
 </body>
 

@@ -1,4 +1,4 @@
-var toy, gl, canvas;
+var toy, gl, canvas, toyerror=false;
 
 
 class RenderContext {
@@ -87,7 +87,7 @@ function makeRectVerts(rect, start_time=0, stop_time=0, speed=1, type=0, grid_mu
 
 function ConfigureForegroundRenderer(){
     foreground.canvas = document.getElementById("foreground_canvas");
-    if (!foreground.canvas)return;
+    if (!foreground.canvas)return false;
 
     var toy = new ShaderToyLite(foreground.canvas, {
         alpha: true,
@@ -100,6 +100,8 @@ function ConfigureForegroundRenderer(){
         ]
     });
     var gl = toy.getContext();
+    if (!gl)return false;
+
 
     // toy.addTexture(SetupTexture2D(gl, "img/shader/pebbles.png", gl.LINEAR, gl.REPEAT), "pebbles");
     toy.addTexture(SetupTexture2D(gl, UTILS.getSitePath()+"img/shader/rgbanoise.png", gl.NEAREST, gl.REPEAT), "rgba_noise");
@@ -115,13 +117,18 @@ function ConfigureForegroundRenderer(){
 
     foreground.toy = toy;
     foreground.gl = gl;
+
+    return true;
 }
 
 
 function SetupForegroundRenderer(){
     if (!SHOW_ANIMATED_TRANSITIONS)return;
 
-    ConfigureForegroundRenderer();
+    if (!ConfigureForegroundRenderer()){
+        toyerror = true;
+        return;
+    }
     resizeRenderer(foreground);
     window.addEventListener('resize', (e) => resizeRenderer(foreground));
     window.addEventListener("mousemove", foreground.toy.bindMousemove);
@@ -147,13 +154,17 @@ function SetupForegroundRenderer(){
 }
 
 
-function StartForegroundRenderer(callback){
+function StartForegroundRenderer(callback, fallback){
     if (!SHOW_ANIMATED_TRANSITIONS){
-        if (callback){ callback(); }
+        if (fallback){ fallback(); }
         return;
     }
 
     const waitfunc = () => {
+        if (toyerror){
+            if (fallback){ fallback(); }
+            return;
+        }
         if (!foreground.toy){
             requestAnimationFrame(waitfunc);
             return;

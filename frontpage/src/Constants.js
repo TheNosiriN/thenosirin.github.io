@@ -1,3 +1,5 @@
+const IS_LOCAL_HOST = (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "");
+
 const SHOW_DEBUG_BORDERS = false;
 const SHOW_ANIMATED_TRANSITIONS = true;
 

@@ -13,46 +13,42 @@ class ForegroundRectData {
 
 class TimeoutHandler {
     constructor(){
-        this.ids = [];
-
-        window.addEventListener("beforeunload", () => {
-            this.clear();
-        });
-
-        const interval = setInterval(() => {
-            const pageAccessedByReload = (
-                (window.performance.navigation && window.performance.navigation.type === 1) ||
-                window.performance
-                .getEntriesByType('navigation')
-                .map((nav) => nav.type)
-                .includes('reload')
-            );
-            if (pageAccessedByReload){
-                console.log(this.ids);
-                this.clear();
-                clearInterval(interval);
-            }
-        }, 8);
+        this.timeouts = [];
+        this.intervals = [];
     }
 
     addTimeout(func, time){
-        const lastIndex = this.ids.length;
-        this.ids.push(setTimeout(() => {
+        const lastIndex = this.timeouts.length;
+        const id = setTimeout(() => {
             func();
-            this.ids.splice(lastIndex, 1);
-        }, time));
+            this.timeouts.splice(lastIndex, 1);
+        }, time);
+        this.timeouts.push(id);
+        return id;
+    }
+
+    addInterval(func, time){
+        const id = setInterval(func, time);
+        this.intervals.push(id);
+        return id;
     }
 
     clear(func, time){
-        for (var i=0; i<this.ids.length; ++i){
-            clearTimeout(this.ids.length);
+        for (var i=0; i<this.timeouts.length; ++i){
+            clearTimeout(this.timeouts.length);
+        }
+        for (var i=0; i<this.intervals.length; ++i){
+            clearTimeout(this.intervals.length);
         }
     }
 }
 
 var timeoutHandler = new TimeoutHandler();
 function setTimeoutH(func, time){
-    timeoutHandler.addTimeout(func, time);
+    return timeoutHandler.addTimeout(func, time);
+}
+function setIntervalH(func, time){
+    return timeoutHandler.addInterval(func, time);
 }
 
 
@@ -111,6 +107,8 @@ class TypeWriterEffect {
         this.index = 0;
         this.pos = 0;
         this.isPlaying = false;
+        this.insertTemp = false;
+        this.tempElement = null;
 
         this.element = element;
         this.element.innerHTML = "";
@@ -135,35 +133,48 @@ class TypeWriterEffect {
                     const char = txt.charAt(this.pos);
                     const span = document.createElement('span');
                     span.innerHTML = (char == '\n') ? "<br>" : char;
-                    this.element.appendChild(span);
+                    if (this.insertTemp){
+                        this.tempElement.appendChild(span);
+                    }else{
+                        this.element.appendChild(span);
+                    }
                     this.pos++;
                     if (this.onInserted) { this.onInserted(char, this); }
                 } else {
                     this.index++;
                     this.pos = 0;
+                    this.insertTemp = false;
                 }
             } else {
                 switch (txt.type) {
                     case 1: // Wait
-                        this.stop();
-                        setTimeout(() => {
-                            this.index++;
-                            this.play();
-                        }, txt.time);
-                        return;
+                    this.stop();
+                    setTimeoutH(() => {
+                        this.index++;
+                        this.play();
+                    }, txt.time);
+                    return;
                     case 2: // Set delay
-                        this.typeDelay = txt.time;
-                        this.index++;
-                        break;
+                    this.typeDelay = txt.time;
+                    this.index++;
+                    break;
                     case 3: // Callback
-                        txt.func(txt.args, this);
-                        this.index++;
-                        break;
+                    txt.func(txt.args, this);
+                    this.index++;
+                    break;
+                    case 4: // Links
+                    this.insertTemp = true;
+                    this.tempElement = txt.element || document.createElement("a");
+                    this.tempElement.href = txt.url;
+                    this.tempElement.target = txt.newtab ? "_blank" : "_self";
+                    this.element.appendChild(this.tempElement);
+                    this.index++;
+                    break;
                 }
             }
         };
 
-        this.interval = setInterval(write, this.typeDelay);
+        this.interval = setIntervalH(write, this.typeDelay);
     }
 
     stop(){
@@ -184,6 +195,9 @@ class TypeWriterEffect {
     static callback(f, a){
         return {type: 3, func:f, args:a};
     }
+    static setlink(url, newtab, element){
+        return {type: 4, url:url, newtab:newtab, element:element};
+    }
 }
 
 
@@ -201,28 +215,6 @@ function AddDebugBorders(element, level=0){
 }
 
 
-
-var scheduler = new TimeScheduler();
-var rect_array_list;
-var rect_div_list;
-
-
-
-function PixelPageHeader(){
-    const bg = `rgb(${BackgroundColor.x*255}, ${BackgroundColor.y*255}, ${BackgroundColor.z*255})`;
-    var mainpage = document.getElementById("main_page_container");
-    document.body.style.backgroundColor = bg;
-    mainpage.style.backgroundColor = bg;
-    mainpage.style.opacity = 0;
-
-    SetupForegroundRenderer();
-    scheduler.addEvent(1, () => {
-        mainpage.style.opacity = 1;
-    });
-}
-
-
-
 function animateText(id, animation_class, delay){
     let el = document.getElementById(id);
     el.innerHTML = el.innerHTML.split("").map(letter => {
@@ -236,7 +228,95 @@ function animateText(id, animation_class, delay){
 
 
 
-function leavePage(url, scheduler, time_entered){
+var scheduler;
+var rect_array_list;
+var rect_div_list;
+var currentPage;
+var pageClasses;
+var pageClassesMap;
+var pageClassesNamedMap;
+
+
+function LoadPageClasses(array, callback){
+    pageClassesMap = {};
+    var promises = [];
+    var names = [];
+
+    for (PageClass of array){
+        const props = new PageClass().getProps();
+        promises.push(fetch(props.html).then(response => response.text()));
+        names.push(props.name);
+    }
+
+    Promise.all(promises).then((data) => {
+        for (let i=0; i<data.length; ++i){
+            pageClassesMap[names[i]] = data[i];
+        }
+        callback();
+    });
+}
+
+function ResetPageResources(){
+    timeoutHandler.clear();
+
+    var mainpage = document.getElementById("main_page_container");
+    mainpage.innerHTML = "";
+    if (currentPage){
+        mainpage.classList.remove(currentPage.getProps().css);
+    }
+}
+
+function PixelPageHeader(){
+    SetupForegroundRenderer();
+    ResetPageResources();
+}
+
+function LoadContainedPage(PageClass, foreground_available){
+    scheduler = new TimeScheduler();
+
+    const bg = `rgb(${BackgroundColor.x*255}, ${BackgroundColor.y*255}, ${BackgroundColor.z*255})`;
+    var mainpage = document.getElementById("main_page_container");
+    mainpage.style.backgroundColor = bg;
+    document.body.style.backgroundColor = bg;
+
+    mainpage.style.opacity = 0;
+    scheduler.addEvent(1, () => {
+        mainpage.style.opacity = 1;
+    });
+
+    currentPage = new PageClass();
+    const props = currentPage.getProps();
+    mainpage.innerHTML = pageClassesMap[props.name];
+    mainpage.classList.add(props.css);
+    document.title = props.name + " - Portfolio site ver. 2";
+
+    currentPage.setup();
+    RefreshAnimatedRectDivs();
+    setIntervalH(updateAnimatedRectDivs, 8);
+    if (props.name != "frontpage"){
+        enterPage(scheduler, foreground.toy.getTime());
+    }
+
+    if (foreground_available){
+        foreground.toy.setOnDraw(() => {
+            if (foreground.toy){
+                scheduler.setTime(foreground.toy.getTime());
+            }
+            currentPage.update();
+        });
+    }else{
+        const updateWithFrame = () => {
+            currentPage.update();
+            requestAnimationFrame(updateWithFrame);
+        };
+    }
+
+    if (SHOW_DEBUG_BORDERS){
+        AddDebugBorders(mainpage);
+    }
+}
+
+function leavePage(PageClass, scheduler, time_entered){
     var div = document.getElementById("page_transition");
     div.style.display = "block";
     div.dataset.type = 4;
@@ -244,10 +324,28 @@ function leavePage(url, scheduler, time_entered){
     div.dataset.stopTime = time_entered;
     div.dataset.speed = 0.75;
     div.style.opacity = 0;
+
     scheduler.addEvent(time_entered+1, (time) => {
-        window.location.href = url;
+        if (typeof PageClass === "string"){
+            if (PageClass.length > 0){
+                window.location.href = PageClass;
+            }
+            ResetPageResources();
+            return;
+        }
+        ResetPageResources();
+        LoadContainedPage(PageClass, true);
+
+        const props = currentPage.getProps();
+        var newurl = UTILS.getSitePath();
+        if (props.name != "frontpage"){
+            newurl += "index" + (IS_LOCAL_HOST ? ".html" : "") + `?page=${props.name}`;
+        }
+
+        history.pushState(props, "", newurl);
     });
 }
+
 function enterPage(scheduler, time_entered){
     let div = document.getElementById("page_transition");
     div.style.display = "block";

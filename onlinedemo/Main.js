@@ -49,6 +49,7 @@ const SHOW_DEBUG_BORDERS = false;
 var warning_text;
 
 window.addEventListener("DOMContentLoaded", () => {
+    scheduler = new TimeScheduler();
 
     if (SHOW_DEBUG_BORDERS){
         AddDebugBorders(document.getElementById("main_page_container"));
