@@ -6,6 +6,7 @@ class RenderContext {
         this.toy = null;
         this.gl = null;
         this.canvas = null;
+        this.backgroundColor = {x:0, y:0, z:0};
     }
 }
 
@@ -70,18 +71,22 @@ var rects_buffer;
 const RectBufferStride = 9*4;
 const RectVertexCount = 6;
 
-function makeRectVerts(rect, start_time=0, stop_time=0, speed=1, type=0, grid_mult=1){
-    const x1 = rect.x;
-    const y1 = rect.y;
-    const x2 = rect.x+rect.w;
-    const y2 = rect.y+rect.h;
+function makeRectVerts(
+    rect, start_time=0, stop_time=0, speed=1, type=0, grid_mult=1, paddingx=0, paddingy=0
+){
+    const x1 = rect.x + paddingx;
+    const y1 = rect.y + paddingy;
+    const x2 = (x1+rect.w) - paddingx*2;
+    const y2 = (y1+rect.h) - paddingy*2;
+    const width = x2 - x1;
+    const height = y2 - y1;
     return new Float32Array([
-        x1, y1, rect.w, rect.h, start_time, stop_time, speed, type, grid_mult,
-        x2, y1, rect.w, rect.h, start_time, stop_time, speed, type, grid_mult,
-        x1, y2, rect.w, rect.h, start_time, stop_time, speed, type, grid_mult,
-        x2, y2, rect.w, rect.h, start_time, stop_time, speed, type, grid_mult,
-        x1, y2, rect.w, rect.h, start_time, stop_time, speed, type, grid_mult,
-        x2, y1, rect.w, rect.h, start_time, stop_time, speed, type, grid_mult
+        x1, y1, width, height, start_time, stop_time, speed, type, grid_mult,
+        x2, y1, width, height, start_time, stop_time, speed, type, grid_mult,
+        x1, y2, width, height, start_time, stop_time, speed, type, grid_mult,
+        x2, y2, width, height, start_time, stop_time, speed, type, grid_mult,
+        x1, y2, width, height, start_time, stop_time, speed, type, grid_mult,
+        x2, y1, width, height, start_time, stop_time, speed, type, grid_mult
     ]);
 }
 
@@ -148,7 +153,12 @@ function SetupForegroundRenderer(){
 
         foreground.toy.setOnUniforms((gl, uniforms) => {
             gl.uniform1f(uniforms["devicePixelRatio"], window.devicePixelRatio);
-            gl.uniform3f(uniforms["backgroundColor"], BackgroundColor.x, BackgroundColor.y, BackgroundColor.z);
+            gl.uniform3f(
+                uniforms["backgroundColor"],
+                foreground.backgroundColor.x,
+                foreground.backgroundColor.y,
+                foreground.backgroundColor.z
+            );
         });
     });
 }

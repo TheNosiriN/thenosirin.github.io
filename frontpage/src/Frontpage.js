@@ -75,7 +75,8 @@ pageClasses = [
     ContainedPage_Projects,
     ContainedPage_About,
     ContainedPage_Contact,
-    ContainedPage_Work
+    ContainedPage_Work,
+    ContainedPage_Blog
 ];
 pageClassesNamedMap = {};
 for (var i=0; i<pageClasses.length; ++i){
@@ -91,12 +92,12 @@ window.addEventListener("beforeunload", (e) => {
 window.addEventListener("pushstate", (e) => {
     if (!e.state.name)return;
     if (!pageClassesNamedMap[e.state.name])return;
-    leavePage(pageClassesNamedMap[e.state.name], scheduler, foreground.toy.getTime());
+    leavePage(pageClassesNamedMap[e.state.name], scheduler, foreground.toy.getTime(), false);
 });
 window.addEventListener("popstate", (e) => {
     if (!e.state.name)return;
     if (!pageClassesNamedMap[e.state.name])return;
-    leavePage(pageClassesNamedMap[e.state.name], scheduler, foreground.toy.getTime());
+    leavePage(pageClassesNamedMap[e.state.name], scheduler, foreground.toy.getTime(), true);
 });
 
 window.addEventListener("DOMContentLoaded", () => {

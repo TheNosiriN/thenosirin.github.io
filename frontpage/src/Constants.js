@@ -1,4 +1,8 @@
-const IS_LOCAL_HOST = (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "");
+const IS_LOCAL_HOST = (
+    location.hostname === "localhost" ||
+    location.hostname === "127.0.0.1" ||
+    location.hostname === ""
+);
 
 const SHOW_DEBUG_BORDERS = false;
 const SHOW_ANIMATED_TRANSITIONS = true;
@@ -6,6 +10,7 @@ const SHOW_ANIMATED_TRANSITIONS = true;
 // var BackgroundColor = {x:0.227, y:0.231, z:0.235};
 // var BackgroundColor = {x:0.145, y:0.149, z:0.153};
 var BackgroundColor = {x:0.184, y:0.188, z:0.196};
+var DarkerBackgroundColor = {x:0.145, y:0.149, z:0.152};
 
 
 var WelcomeMessages = [
@@ -31,7 +36,7 @@ var WelcomeMessages = [
 
 var SplashTexts = [
     "haha pixels go brrr...",
-    "download free RAM here!",
+    "Download free RAM!!",
     "You'd never guess where I got the fonts from...",
     "This site was made on a potato!",
     "Now in 4K HD!!",
@@ -40,6 +45,6 @@ var SplashTexts = [
     "Call me Chino",
     "Made with five percent A.I.",
     "Made with two percent C++",
-    "Ever wondered what version one was?",
+    "What happened to version one?",
     "You won't believe how long it took to make this!"
 ];

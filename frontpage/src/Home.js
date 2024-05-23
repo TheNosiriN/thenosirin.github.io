@@ -40,7 +40,9 @@ function ContainedPage_Home(){
         })`;
 
         scheduler.addEvent(1, () => {
-            document.getElementById("main_page_container").style.backgroundColor = "#252627";
+            document.getElementById("main_page_container").style.backgroundColor = `rgb(
+                ${DarkerBackgroundColor.x*255}, ${DarkerBackgroundColor.y*255}, ${DarkerBackgroundColor.z*255}
+            )`;
         });
     }
 

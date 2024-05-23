@@ -62,6 +62,7 @@ function ContainedPage_About(){
         writer.stop();
 
         universeVideo.addEventListener('play', () => {
+            universeVideo.muted = true;
             universeVideo.dataset.startTime = foreground.toy.getTime();
             updateAnimatedRectDivs();
             universeVideo.style.opacity = 1;

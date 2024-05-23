@@ -24,12 +24,12 @@ function ContainedPage_Projects(){
     this.setup = () => {
         center_cont = document.getElementsByClassName('center_container')[0];
 
-        addProject("#", false, "../img/projects/universe_bg2.jpg", "The Universe ver. 1");
+        addProject("", false, "../img/projects/universe_bg2.jpg", "The Universe ver. 1");
         addProject("#", false, "../img/projects/babylonjs_planets1.jpeg", "Babylon.JS Planets");
         addProject("https://www.shadertoy.com/user/TheNosiriN", true, "../img/projects/shadertoy_pt5.png", "Shadertoy");
         addProject("#", false, "../img/projects/marching_cubes1.png", "Iso Surface Extraction");
         addProject("https://grayscalegames.itch.io/", true, "../img/projects/pnp_game_1.png", "Gamedev Projects");
-        addProject("#", false, "", "The Physically Based Universe");
+        addProject("#", false, "", "The Universe ver. 2");
 
         animateText("title_text", "jumping_text", 0.25);
     }

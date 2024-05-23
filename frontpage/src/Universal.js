@@ -109,6 +109,7 @@ class TypeWriterEffect {
         this.isPlaying = false;
         this.insertTemp = false;
         this.tempElement = null;
+        this.currentSpan = null;
 
         this.element = element;
         this.element.innerHTML = "";
@@ -131,46 +132,63 @@ class TypeWriterEffect {
             if (typeof txt === "string") {
                 if (this.pos < txt.length) {
                     const char = txt.charAt(this.pos);
-                    const span = document.createElement('span');
-                    span.innerHTML = (char == '\n') ? "<br>" : char;
-                    if (this.insertTemp){
-                        this.tempElement.appendChild(span);
-                    }else{
-                        this.element.appendChild(span);
-                    }
                     this.pos++;
+
+                    if (char == '\n'){
+                        this.element.appendChild(document.createElement("br"));
+                        if (this.onInserted) { this.onInserted(char, this); }
+                        return;
+                    }
+
+                    if (!this.currentSpan){
+                        this.currentSpan = document.createElement("span");
+                        if (this.insertTemp){
+                            this.tempElement.appendChild(this.currentSpan);
+                        }else{
+                            this.element.appendChild(this.currentSpan);
+                        }
+                    }
+                    this.currentSpan.innerHTML += char;
                     if (this.onInserted) { this.onInserted(char, this); }
                 } else {
                     this.index++;
                     this.pos = 0;
                     this.insertTemp = false;
+                    this.currentSpan = null;
                 }
-            } else {
-                switch (txt.type) {
-                    case 1: // Wait
-                    this.stop();
-                    setTimeoutH(() => {
-                        this.index++;
-                        this.play();
-                    }, txt.time);
-                    return;
-                    case 2: // Set delay
-                    this.typeDelay = txt.time;
+                return;
+            }
+
+            switch (txt.type) {
+                case 1: // Wait
+                this.stop();
+                setTimeoutH(() => {
                     this.index++;
-                    break;
-                    case 3: // Callback
-                    txt.func(txt.args, this);
-                    this.index++;
-                    break;
-                    case 4: // Links
-                    this.insertTemp = true;
-                    this.tempElement = txt.element || document.createElement("a");
-                    this.tempElement.href = txt.url;
-                    this.tempElement.target = txt.newtab ? "_blank" : "_self";
-                    this.element.appendChild(this.tempElement);
-                    this.index++;
-                    break;
-                }
+                    this.play();
+                }, txt.time);
+                return;
+                case 2: // Set delay
+                this.typeDelay = txt.time;
+                this.index++;
+                break;
+                case 3: // Callback
+                txt.func(txt.args, this);
+                this.index++;
+                break;
+                case 4: // Links
+                this.insertTemp = true;
+                this.tempElement = txt.element || document.createElement("a");
+                this.element.appendChild(this.tempElement);
+                this.tempElement.href = txt.url;
+                this.tempElement.target = txt.newtab ? "_blank" : "_self";
+                this.index++;
+                break;
+                case 5: // Append element
+                this.insertTemp = true;
+                this.tempElement = txt.element;
+                this.element.appendChild(this.tempElement);
+                this.index++;
+                break;
             }
         };
 
@@ -198,7 +216,11 @@ class TypeWriterEffect {
     static setlink(url, newtab, element){
         return {type: 4, url:url, newtab:newtab, element:element};
     }
+    static setelement(element){
+        return {type: 5, element:element};
+    }
 }
+// groundhog day
 
 
 
@@ -258,6 +280,7 @@ function LoadPageClasses(array, callback){
 
 function ResetPageResources(){
     timeoutHandler.clear();
+    if (foreground.toy){ foreground.toy.reset(); }
 
     var mainpage = document.getElementById("main_page_container");
     mainpage.innerHTML = "";
@@ -269,6 +292,7 @@ function ResetPageResources(){
 function PixelPageHeader(){
     SetupForegroundRenderer();
     ResetPageResources();
+    foreground.backgroundColor = BackgroundColor;
 }
 
 function LoadContainedPage(PageClass, foreground_available){
@@ -316,7 +340,7 @@ function LoadContainedPage(PageClass, foreground_available){
     }
 }
 
-function leavePage(PageClass, scheduler, time_entered){
+function leavePage(PageClass, scheduler, time_entered, ispop=false){
     var div = document.getElementById("page_transition");
     div.style.display = "block";
     div.dataset.type = 4;
@@ -324,6 +348,7 @@ function leavePage(PageClass, scheduler, time_entered){
     div.dataset.stopTime = time_entered;
     div.dataset.speed = 0.75;
     div.style.opacity = 0;
+    if (currentPage.onexit){ currentPage.onexit(); }
 
     scheduler.addEvent(time_entered+1, (time) => {
         if (typeof PageClass === "string"){
@@ -342,7 +367,9 @@ function leavePage(PageClass, scheduler, time_entered){
             newurl += "index" + (IS_LOCAL_HOST ? ".html" : "") + `?page=${props.name}`;
         }
 
-        history.pushState(props, "", newurl);
+        if (!ispop){
+            history.pushState(props, "", newurl);
+        }
     });
 }
 
@@ -398,7 +425,9 @@ function updateRectData(div, div_rect, stored_rect, offset_index){
             div.dataset.stopTime || -1,
             div.dataset.speed || 1,
             div.dataset.type || 0,
-            div.dataset.grid || 1
+            div.dataset.grid || 1,
+            parseFloat(div.dataset.paddingX || div.dataset.padding || 0),
+            parseFloat(div.dataset.paddingY || div.dataset.padding || 0),
         )
     );
 }
