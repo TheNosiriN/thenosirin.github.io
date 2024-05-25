@@ -264,26 +264,27 @@
 
 .blogpage #main_content {
     width: 80vw;
-    margin-top: 25vh;
-    margin-bottom: 15vh;
+    margin-top: 15vh;
+    margin-bottom: 50vh;
     display: grid;
     grid-template-columns: 2fr 1fr;
     grid-gap: 25px;
 
     color: #fffedd;
     /* font-family: BPdots; */
-    font-family: Tahoma;
+    font-family: RobotoMono, monospace;
+    font-weight: lighter;
     text-decoration: none;
     text-align: left;
 }
 
 .blogpage #page_cont {
     color: lightgrey;
-    font-size: 2.5vmin;
+    font-size: 2.25vmin;
     /* font-weight: lighter; */
     /* letter-spacing: 1px; */
 
-    min-height: 100vh;
+    min-height: 50vh;
     padding-left: 2.267%;
     padding-right: 2.267%;
     padding-top: 2.267%;

@@ -97,133 +97,6 @@ class TimeScheduler {
 
 
 
-class TypeWriterEffect {
-    constructor(element, options){
-        this.content = options.content || [""];
-        this.typeDelay = options.typeDelay || 50;
-        this.onFinished = options.onFinished;
-        this.onInserted = options.onInserted;
-
-        this.index = 0;
-        this.pos = 0;
-        this.isPlaying = false;
-        this.insertTemp = false;
-        this.tempElement = null;
-        this.currentSpan = null;
-
-        this.element = element;
-        this.element.innerHTML = "";
-    }
-
-    play(){
-        this.isPlaying = true;
-
-        const write = () => {
-            if (!this.isPlaying) return;
-
-            if (this.index >= this.content.length) {
-                this.stop();
-                if (this.onFinished) { this.onFinished(this); }
-                return;
-            }
-
-            const txt = this.content[this.index];
-
-            if (typeof txt === "string") {
-                if (this.pos < txt.length) {
-                    const char = txt.charAt(this.pos);
-                    this.pos++;
-
-                    if (char == '\n'){
-                        this.element.appendChild(document.createElement("br"));
-                        if (this.onInserted) { this.onInserted(char, this); }
-                        return;
-                    }
-
-                    if (!this.currentSpan){
-                        this.currentSpan = document.createElement("span");
-                        if (this.insertTemp){
-                            this.tempElement.appendChild(this.currentSpan);
-                        }else{
-                            this.element.appendChild(this.currentSpan);
-                        }
-                    }
-                    this.currentSpan.innerHTML += char;
-                    if (this.onInserted) { this.onInserted(char, this); }
-                } else {
-                    this.index++;
-                    this.pos = 0;
-                    this.insertTemp = false;
-                    this.currentSpan = null;
-                }
-                return;
-            }
-
-            switch (txt.type) {
-                case 1: // Wait
-                this.stop();
-                setTimeoutH(() => {
-                    this.index++;
-                    this.play();
-                }, txt.time);
-                return;
-                case 2: // Set delay
-                this.typeDelay = txt.time;
-                this.index++;
-                break;
-                case 3: // Callback
-                txt.func(txt.args, this);
-                this.index++;
-                break;
-                case 4: // Links
-                this.insertTemp = true;
-                this.tempElement = txt.element || document.createElement("a");
-                this.element.appendChild(this.tempElement);
-                this.tempElement.href = txt.url;
-                this.tempElement.target = txt.newtab ? "_blank" : "_self";
-                this.index++;
-                break;
-                case 5: // Append element
-                this.insertTemp = true;
-                this.tempElement = txt.element;
-                this.element.appendChild(this.tempElement);
-                this.index++;
-                break;
-            }
-        };
-
-        this.interval = setIntervalH(write, this.typeDelay);
-    }
-
-    stop(){
-        this.isPlaying = false;
-        clearInterval(this.interval);
-    }
-
-    getIndex(){
-        return this.index;
-    }
-
-    static wait(t){
-        return {type: 1, time:t};
-    }
-    static setdelay(t){
-        return {type: 2, time:t};
-    }
-    static callback(f, a){
-        return {type: 3, func:f, args:a};
-    }
-    static setlink(url, newtab, element){
-        return {type: 4, url:url, newtab:newtab, element:element};
-    }
-    static setelement(element){
-        return {type: 5, element:element};
-    }
-}
-// groundhog day
-
-
-
 
 
 function AddDebugBorders(element, level=0){
@@ -253,6 +126,7 @@ function animateText(id, animation_class, delay){
 var scheduler;
 var rect_array_list;
 var rect_div_list;
+var rect_buffer_extra = 0;
 var currentPage;
 var pageClasses;
 var pageClassesMap;
@@ -279,6 +153,7 @@ function LoadPageClasses(array, callback){
 }
 
 function ResetPageResources(){
+    rect_buffer_extra = 0;
     timeoutHandler.clear();
     if (foreground.toy){ foreground.toy.reset(); }
 
@@ -394,18 +269,23 @@ function enterPage(scheduler, time_entered){
 
 function RefreshAnimatedRectDivs(){
     rect_div_list = document.getElementsByClassName("animated_transition");
+    const total_length = rect_div_list.length + rect_buffer_extra;
     rect_array_list = [];
-    for (var i=0; i<rect_div_list.length; rect_array_list.push(new ForegroundRectData()), ++i);
+    for (var i=0; i<total_length; rect_array_list.push(new ForegroundRectData()), ++i);
 
     const gl = foreground.gl;
     gl.bindBuffer(gl.ARRAY_BUFFER, rects_buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, RectBufferStride * RectVertexCount * rect_div_list.length, gl.DYNAMIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, RectBufferStride * RectVertexCount * total_length, gl.DYNAMIC_DRAW);
     foreground.toy.setDrawCount(rect_div_list.length * RectVertexCount);
 
     for (var i=0; i<rect_div_list.length; ++i){
         const div_rect = rect_div_list[i].getBoundingClientRect();
         updateRectData(rect_div_list[i], div_rect, rect_array_list[i], i);
     }
+}
+
+function SetExtraRects(amount){
+    rect_buffer_extra = amount;
 }
 
 function updateRectData(div, div_rect, stored_rect, offset_index){

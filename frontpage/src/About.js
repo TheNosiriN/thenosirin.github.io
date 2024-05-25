@@ -43,12 +43,19 @@ function ContainedPage_About(){
 
         RefreshAnimatedRectDivs();
         writer.stop();
-        // console.log(image.parentElement.id);
 
         image.onload = () => {
             image.dataset.startTime = foreground.toy.getTime();
             updateAnimatedRectDivs();
             image.style.opacity = 1;
+            writer.play();
+        };
+
+        image.onerror = () => {
+            var sp = document.createElement("span");
+            sp.style.color = "red";
+            sp.innerHTML = "<br><strong>Failed to load image: "+args+"</strong><br>";
+            writer.element.appendChild(sp);
             writer.play();
         };
     }

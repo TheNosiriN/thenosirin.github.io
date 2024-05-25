@@ -1,22 +1,222 @@
-function ContainedPage_Blog(){
-    var typer = null;
 
-    const Content = [
-        TypeWriterEffect.setelement(document.createElement("strong")), "The standard Lorem Ipsum passage, used since the 1500s",
-        "\n", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-        "\n",
-        "\n", TypeWriterEffect.setelement(document.createElement("strong")), 'Section 1.10.32 of "de Finibus Bonorum et Malorum", written by Cicero in 45 BC',
-        "\n", "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?",
-        "\n",
-        "\n", TypeWriterEffect.setelement(document.createElement("strong")), "1914 translation by H. Rackham",
-        "\n", "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?",
-        "\n",
-        "\n", TypeWriterEffect.setelement(document.createElement("strong")), 'Section 1.10.33 of "de Finibus Bonorum et Malorum", written by Cicero in 45 BC',
-        "\n", "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.",
-        "\n",
-        "\n", TypeWriterEffect.setelement(document.createElement("strong")), "1914 translation by H. Rackham",
-        "\n", "On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our power of choice is untrammelled and when nothing prevents our being able to do what we like best, every pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to the claims of duty or the obligations of business it will frequently occur that pleasures have to be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures pains to avoid worse pains.",
-    ];
+function insertImage(args, writer){
+    const path = UTILS.getSitePath() + "" + args;
+
+    var image = document.createElement("img");
+    image.src = path;
+    image.style.opacity = 0;
+    image.style.width = "100%";
+    image.style.height = "auto";
+    image.style.display = "block";
+    image.style.marginLeft = "auto";
+    image.style.marginRight = "auto";
+    image.dataset.speed = 0.5;
+    image.dataset.type = 7;
+    image.dataset.grid = 1;
+    image.dataset.startTime = -11;
+    image.dataset.stopTime = -10;
+    image.classList.add("animated_transition", "unselectable", "uninteractable");
+    writer.element.appendChild(image);
+
+    RefreshAnimatedRectDivs();
+    writer.stop();
+
+    image.onload = () => {
+        image.dataset.startTime = foreground.toy.getTime();
+        updateAnimatedRectDivs();
+        image.style.opacity = 1;
+        writer.play();
+    };
+
+    image.onerror = () => {
+        var sp = document.createElement("span");
+        sp.style.color = "red";
+        sp.innerHTML = "<br><strong>Failed to load image: "+args+"</strong><br>";
+        writer.element.appendChild(sp);
+        writer.play();
+    };
+}
+
+function ParsePageFile(id, text, props={}){
+    var content = [];
+    var ptr = 0;
+
+    props.wait_fullstop = props.wait_fullstop || 0;
+    props.wait_comma = props.wait_comma || 0;
+
+    const getCommandStr = () => {
+        var cmd = "";
+        var value = "";
+        var isvalue = false;
+        for (; ptr<text.length;){
+            const char = text.charAt(ptr);
+            ptr += 1;
+            if (char == ']'){   // end of command
+                isvalue = false;
+                break;
+            }
+            if (char == '='){   // command has a value
+                isvalue = true;
+                continue;
+            }
+            if (!isvalue && (char == '\n' || char == '\t')){   // error case
+                cmd = "";
+                break;
+            }
+            if (isvalue){
+                value += char;
+            }else{
+                cmd += char;
+            }
+        }
+
+        return [cmd.trim(), value.trim()];
+    };
+
+    const addCommand = (cmd, value) => {
+        if (cmd.length == 0){   // error
+            console.error("Error when parsing page file: "); // TODO: print the line or around the area where the error is
+            return;
+        }
+
+        switch (cmd) {
+            case "bold": {
+                content.push(TypeWriterEffect.setelement(document.createElement("strong")));
+                if (value.length > 0)content.push(value);
+            } break;
+            case "wait": content.push(TypeWriterEffect.wait(parseFloat(value))); break;
+            case "image": content.push(TypeWriterEffect.callback(insertImage, `blog/${id}/${value}`)); break;
+            case ".": content.push(".", TypeWriterEffect.wait(props.wait_fullstop)); break;
+            case ",": content.push(",", TypeWriterEffect.wait(props.wait_comma)); break;
+            default: console.error(`Error command "${cmd}" not found`); break;
+        }
+    };
+
+    for (var line = ""; ptr<text.length;){
+        const char = text.charAt(ptr);
+        ptr += 1;
+
+        if (char == '[' && text.charAt(ptr) == '!'){
+            ptr += 1;
+            if (line.length > 0){
+                content.push(`${line}`);
+                line = "";
+            }
+            const [cmd, value] = getCommandStr();
+            addCommand(cmd, value);
+            continue;
+        }
+
+        if (char == '\n' && line.length > 0){
+            content.push(`${line+char}`);
+            line = "";
+            continue;
+        }
+
+        line += char;
+    }
+
+    // if content was empty after the loop, or last char was a regular char then the line it was not pushed
+    if (content.length == 0 || text.charAt(ptr) == '\n'){
+        content.push(`${line}`);
+    }
+
+    return content;
+}
+
+
+var ContentHtmlStr = `
+<h1 id="sample-markdown">Sample Markdown</h1>
+<p>This is some basic, sample markdown.</p>
+<h2 id="second-heading">Second Heading</h2>
+<ul>
+<li>Unordered lists, and:<ol>
+<li>One</li>
+<li>Two</li>
+<li>Three</li>
+</ol>
+</li>
+<li>More</li>
+</ul>
+<blockquote>
+<p>Blockquote</p>
+</blockquote>
+<p>And <strong>bold</strong>, <em>italics</em>, and even <em>italics and later <strong>bold</strong></em>. Even <del>strikethrough</del>. <a href="https://markdowntohtml.com">A link</a> to somewhere.</p>
+<p>And code highlighting:</p>
+<pre><code class="lang-js"><span class="hljs-keyword">var</span> foo = <span class="hljs-string">'bar'</span>;
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">baz</span><span class="hljs-params">(s)</span> </span>{
+    <span class="hljs-keyword">return</span> foo + <span class="hljs-string">':'</span> + s;
+}
+</code></pre>
+<p>Or inline code like <code>var foo = &#39;bar&#39;;</code>.</p>
+<p>Or an image of bears</p>
+<p><img src="http://placebear.com/200/200" alt="bears"></p>
+<p>The end ...</p>
+`;
+
+var ContentHtmlStr2 = `
+<p>this is a bold test, this text should be <strong>bold</strong> and inline, oh and <a href="#">heres a link</a></p>
+<p><img src="http://placebear.com/200/200" alt="bears"></p>
+`;
+// <p>this is a bold test, this text should be <strong>bold</strong> and inline, oh and <a href="#">heres a link</a></p>
+// <p>Heres another test <a href="#">and another link</a> <strong>and another bold</strong>, does it work?</p>
+
+var ContentHtmlStr3 = `
+<ul>
+<li>Unordered lists, and:
+<ol>
+<li>One</li>
+<li>Two</li>
+<li>Three</li>
+</ol>
+</li>
+<li>More</li>
+</ul>
+`;
+
+
+// from: https://github.com/showdownjs/showdown/issues/577
+showdown.extension('highlight', function () {
+    return [{
+        type: "output",
+        filter: function (text, converter, options) {
+            var left = "<pre><code\\b[^>]*>",
+            right = "</code></pre>",
+            flags = "g";
+
+            var replacement = function (wholeMatch, match, left, right) {
+                var lang = (left.match(/class=\"([^ \"]+)/) || [])[1];
+                left = left.slice(0, 18) + 'hljs ' + left.slice(18);
+                if (lang && hljs.getLanguage(lang)) {
+                    return left + hljs.highlight(match, {language: lang}).value + right;
+                } else {
+                    return left + hljs.highlightAuto(match).value + right;
+                }
+            };
+
+            return showdown.helper.replaceRecursiveRegExp(text, replacement, left, right, flags);
+        }
+    }];
+});
+
+
+function ContainedPage_Blog(){
+    var typer;
+    var pagediv;
+    var mdConverter;
+
+    function ResetPage(){
+        typer.reset();
+        pagediv.innerHTML = ""; // idk if images will be removed too
+    }
+
+    function LoadPageFile(url, callback){
+        fetch(UTILS.getSitePath()+url).then((r) => {
+            if (r.ok) return r.text();
+            throw new Error("Error: Failed to load blog page: "+url);
+        }).then(txt => callback(txt)).catch(e => callback(e.message));
+    }
 
     this.setup = () => {
         scheduler.addEvent(1, () => {
@@ -28,30 +228,89 @@ function ContainedPage_Blog(){
             foreground.backgroundColor = DarkerBackgroundColor;
         });
 
+        // 1.5 + (viewHeight * css_container_height_in_vh * anim_speed) / (24 milliseconds_per_frame)
+        scheduler.addEvent(1.5 + (window.innerHeight*0.50*0.2)/24, () => {
+            foreground.backgroundColor = BackgroundColor;
+            document.querySelectorAll(".blogpage .content_background>.animated_transition").forEach((el) => {
+                el.style.display = "none";
+            });
+        });
+
         document.querySelectorAll(".blogpage .content_background").forEach((el) => {
             el.style.backgroundColor = `rgb(
                 ${BackgroundColor.x*255}, ${BackgroundColor.y*255}, ${BackgroundColor.z*255}
             )`;
+            el.style.position = "relative";
 
-            el.dataset.speed = 0.2;
-            el.dataset.grid = 1.5;
-            el.dataset.startTime = 0;
-            el.dataset.stopTime = -10;
-            el.dataset.type = 7;
-            el.dataset.padding = -1;
+            const border_width = "24";
+            var div = document.createElement("div");
+            div.classList.add("animated_transition");
+            div.style.position = "absolute";
+            div.style.height = `calc(100% + ${border_width}px * 2)`;
+            div.style.width = `calc(100% + ${border_width}px * 2)`;
+            div.style.left = `-${border_width}px`;
+            div.style.top = `-${border_width}px`;
+            div.dataset.speed = 0.2;
+            div.dataset.grid = 1.5;
+            div.dataset.startTime = 0;
+            div.dataset.stopTime = -10;
+            div.dataset.type = 7;
+            div.dataset.padding = -1;
+            el.appendChild(div);
         });
 
-        typer = new TypeWriterEffect(document.getElementById("page_cont"), {
-            content: Content,
-            typeDelay: 40
+        // see this for options: https://github.com/showdownjs/showdown/wiki/Showdown-Options
+        mdConverter = new showdown.Converter({
+            extensions: ['highlight'],
+            strikethrough: true,
+            // tables: true,
         });
-        typer.play();
+        pagediv = document.querySelector("#page_cont .page");
+        typer = new TypeWriterEffectHTML(pagediv, {
+            typeDelay: 30
+        });
 
+        var postid = "welcome";
         const postParams = new URLSearchParams(window.location.search);
         if (postParams.has("post")){
-            const postid = postParams.get("post");
-
+            var postid = postParams.get("post");
         }
+
+        LoadPageFile(`blog/${postid}/${postid}.bpage`, (text) => {
+            let dom = new DOMParser().parseFromString(mdConverter.makeHtml(text), "text/html").body;
+            let elements = dom.getElementsByTagName("img");
+
+            for (image of elements){
+                image.style.opacity = 0;
+                image.style.maxWidth = "100%";
+                image.style.height = "auto";
+                image.style.display = "block";
+                image.style.marginLeft = "auto";
+                image.style.marginRight = "auto";
+                image.dataset.speed = 0.5;
+                image.dataset.type = 7;
+                image.dataset.grid = 1;
+                image.dataset.startTime = -11;
+                image.dataset.stopTime = -10;
+                image.classList.add("animated_transition", "unselectable", "uninteractable");
+
+                image.typeWriterCallback = (el) => {
+                    typer.stop();
+                    const waitInt = setIntervalH(() => {
+                        if (!el.complete){ return; }
+                        typer.play();
+                        el.dataset.startTime = foreground.toy.getTime();
+                        updateAnimatedRectDivs();
+                        el.style.opacity = 1;
+                        clearInterval(waitInt);
+                    }, 1);
+                    RefreshAnimatedRectDivs();
+                };
+            }
+
+            typer.setContent(dom);
+            typer.play();
+        });
     }
 
     this.update = () => {
