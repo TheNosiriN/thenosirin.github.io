@@ -270,7 +270,7 @@
     grid-template-columns: 2fr 1fr;
     grid-gap: 25px;
 
-    color: #fffedd;
+    color: lightgrey;
     /* font-family: BPdots; */
     font-family: RobotoMono, monospace;
     font-weight: lighter;
@@ -279,18 +279,27 @@
 }
 
 .blogpage #page_cont {
-    color: lightgrey;
-    font-size: 2.25vmin;
-    /* font-weight: lighter; */
-    /* letter-spacing: 1px; */
-
+    font-size: 2.2vmin;
     min-height: 50vh;
-    padding-left: 2.267%;
-    padding-right: 2.267%;
-    padding-top: 2.267%;
-    padding-bottom: 2.267%;
+    padding: 2.267%;
 }
 
 .blogpage #index_cont {
-    height: 100vh;
+    font-size: 2.2vmin;
+    height: 50vh;
+    padding: 2.267%;
+}
+
+.blogpage #post_page h1, .blogpage #index_cont h1 {
+    font-family: QuinqueFive;
+    text-transform: uppercase;
+    line-height: 1.5;
+    font-size: 1.5em;
+}
+
+.blogpage #post_page :is(h2, h3) {
+    margin: 0;
+    margin-top: 1.66em;
+    padding-bottom: 0.25em;
+    border-bottom: 1px solid #fffedd;
 }

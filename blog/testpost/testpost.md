@@ -12,7 +12,7 @@ This is some basic, sample markdown.
 
 > Blockquote
 
-And **bold**, *italics*, and even *italics and later **bold***. Even ~~strikethrough~~. [A link](https://markdowntohtml.com) to somewhere.
+And **bold**, *italics*, and even *italics and later **bold***. Even ~~strikethrough~~. [A link](https://github.com/TheNosiriN) to somewhere.
 
 And code highlighting:
 
@@ -26,8 +26,12 @@ function baz(s) {
 
 Or inline code like `var foo = 'bar';`.
 
-Or an image of bears
+Or an image of bears online
 
 ![bears](http://placebear.com/200/200)
+
+Or a local image
+
+![a nebula thing](bg1.jpg)
 
 The end ...

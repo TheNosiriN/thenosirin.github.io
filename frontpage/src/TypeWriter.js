@@ -131,6 +131,8 @@ class TypeWriterEffect {
 
 
 
+
+
 class TypeWriterEffectHTML {
     constructor(element, options){
         this.setContent(options.content);
@@ -226,6 +228,14 @@ class TypeWriterEffectHTML {
             return newnode;
         }
 
+        const checkIsOpenTag = (name) => {
+            return (
+                name == "img" ||
+                name == "hr" ||
+                name == "br"
+            );
+        }
+
         const addChildren = (el, entry) => {
             // if there were no children then just push the html
             if (!el.children.length){
@@ -239,25 +249,34 @@ class TypeWriterEffectHTML {
             var normaltext = "";
 
             for (
-                let i=0, name="", childIndex=0,
-                reachedEnd=false, curStartPos=-1, isOpenElement=false;
+                let i=0, name="", childIndex=0, curStartPos=-1;
                 i<html.length; ++i
             ){
                 const char = html.charAt(i);
 
                 if (localstack.length > 0){
                     let lasttag = localstack[localstack.length-1];
-                    let endpos = i + lasttag.name.length + 3;
-                    let closingtag = `</${lasttag.name}>`;
+                    let endpos = i;
+                    let closingtag = "";
 
-                    if (lasttag.isopen){
+                    switch (lasttag.type) {
+                        case 0:     // this is a normal tag
+                        endpos = i + lasttag.name.length + 3;
+                        closingtag = `</${lasttag.name}>`;
+                        break;
+                        case 1:     // this is a tag that is not closed and has attributes defined: <img src="">
                         endpos = i+1;
                         closingtag = ">";
+                        break;
+                        case 2:     // this is a tag that is not closed but has no attributes: <hr>, <br>, etc
+                        endpos = i;
+                        closingtag = "";
+                        break;
                     }
 
                     if (html.substring(i, endpos) == closingtag){
                         localstack.pop();
-                        i = endpos-1;
+                        i = endpos - 1;
                         curStartPos = -1;
                         normaltext = "";
                         name = "";
@@ -285,11 +304,11 @@ class TypeWriterEffectHTML {
 
                 if (curStartPos >= 0){
                     if (char == '>' || char == ' '){
-                        let isopen = false;
-                        if (name == "img"){
-                            isopen = true;
-                        }
-                        localstack.push({ name: `${name}`, startpos: curStartPos, isopen: isopen });
+                        let isopen = checkIsOpenTag(name);
+                        let type = 0;
+                        if (isopen){ type = 1; }
+                        if (isopen && char == '>'){ type = 2; }
+                        localstack.push({ name: `${name}`, startpos: curStartPos, type: type });
                         curStartPos = -1;
                         name = "";
                     }else{

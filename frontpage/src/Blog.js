@@ -157,6 +157,7 @@ var ContentHtmlStr = `
 
 var ContentHtmlStr2 = `
 <p>this is a bold test, this text should be <strong>bold</strong> and inline, oh and <a href="#">heres a link</a></p>
+<hr>
 <p><img src="http://placebear.com/200/200" alt="bears"></p>
 `;
 // <p>this is a bold test, this text should be <strong>bold</strong> and inline, oh and <a href="#">heres a link</a></p>
@@ -211,12 +212,68 @@ function ContainedPage_Blog(){
         pagediv.innerHTML = ""; // idk if images will be removed too
     }
 
-    function LoadPageFile(url, callback){
-        fetch(UTILS.getSitePath()+url).then((r) => {
+    function LoadPageFile(postid, callback){
+        const pageurl = `blog/${postid}/${postid}.md`;
+        fetch(UTILS.getSitePath()+pageurl).then((r) => {
             if (r.ok) return r.text();
-            throw new Error("Error: Failed to load blog page: "+url);
-        }).then(txt => callback(txt)).catch(e => callback(e.message));
+            throw new Error("Error: Failed to load blog page: "+pageurl);
+        }).then((text) => callback(text)).catch(e => callback(e.message));
     }
+
+    function PostprocessPage(postid, dom){
+        let images = dom.getElementsByTagName("img");
+        for (image of images){
+            const src = image.src;
+            const sitepath = UTILS.getSitePath();
+            const srcsite = src.substring(0, sitepath.length);
+            if (srcsite == sitepath){
+                const srcfilepath = src.substring(sitepath.length);
+                image.src = UTILS.getSitePath() + `blog/${postid}/${srcfilepath}`;
+                console.log(image.src);
+            }
+
+            image.style.opacity = 0;
+            image.style.maxWidth = "100%";
+            image.style.height = "auto";
+            image.style.display = "block";
+            image.style.marginLeft = "auto";
+            image.style.marginRight = "auto";
+            image.dataset.speed = 0.5;
+            image.dataset.type = 7;
+            image.dataset.grid = 1;
+            image.dataset.startTime = -11;
+            image.dataset.stopTime = -10;
+            image.classList.add("animated_transition", "unselectable", "uninteractable");
+
+            image.typeWriterCallback = (el) => {
+                typer.stop();
+                const waitInt = setIntervalH(() => {
+                    if (!el.complete){ return; }
+                    typer.play();
+                    el.dataset.startTime = foreground.toy.getTime();
+                    updateAnimatedRectDivs();
+                    el.style.opacity = 1;
+                    clearInterval(waitInt);
+                }, 1);
+                RefreshAnimatedRectDivs();
+            };
+        }
+
+        let links = dom.getElementsByTagName("a");
+        for (link of links){
+            link.target = "_blank";
+        }
+    }
+
+    function BuildIndex(url, callback){
+        fetch(UTILS.getSitePath()+url).then((r) => {
+            if (r.ok) return r.json();
+            throw new Error("Error: Failed to load blog page: "+pageurl);
+        }).then((json) => {
+            callback(json);
+        });
+    }
+
 
     this.setup = () => {
         scheduler.addEvent(1, () => {
@@ -262,12 +319,14 @@ function ContainedPage_Blog(){
         // see this for options: https://github.com/showdownjs/showdown/wiki/Showdown-Options
         mdConverter = new showdown.Converter({
             extensions: ['highlight'],
+            simpleLineBreaks: true,
             strikethrough: true,
+            noHeaderId: true,
             // tables: true,
         });
-        pagediv = document.querySelector("#page_cont .page");
+        pagediv = document.querySelector("#post_page");
         typer = new TypeWriterEffectHTML(pagediv, {
-            typeDelay: 30
+            typeDelay: 40
         });
 
         var postid = "welcome";
@@ -276,41 +335,34 @@ function ContainedPage_Blog(){
             var postid = postParams.get("post");
         }
 
-        LoadPageFile(`blog/${postid}/${postid}.bpage`, (text) => {
-            let dom = new DOMParser().parseFromString(mdConverter.makeHtml(text), "text/html").body;
-            let elements = dom.getElementsByTagName("img");
+        BuildIndex("blog/index.json", (json) => {
 
-            for (image of elements){
-                image.style.opacity = 0;
-                image.style.maxWidth = "100%";
-                image.style.height = "auto";
-                image.style.display = "block";
-                image.style.marginLeft = "auto";
-                image.style.marginRight = "auto";
-                image.dataset.speed = 0.5;
-                image.dataset.type = 7;
-                image.dataset.grid = 1;
-                image.dataset.startTime = -11;
-                image.dataset.stopTime = -10;
-                image.classList.add("animated_transition", "unselectable", "uninteractable");
-
-                image.typeWriterCallback = (el) => {
-                    typer.stop();
-                    const waitInt = setIntervalH(() => {
-                        if (!el.complete){ return; }
-                        typer.play();
-                        el.dataset.startTime = foreground.toy.getTime();
-                        updateAnimatedRectDivs();
-                        el.style.opacity = 1;
-                        clearInterval(waitInt);
-                    }, 1);
-                    RefreshAnimatedRectDivs();
-                };
+            const props = json[postid];
+            if (!props){
+                var dom = new DOMParser().parseFromString(`<p>Cannot find "${postid}" page in index.json file</p>`, "text/html").body;
+                typer.setContent(dom);
+                typer.play();
+                return;
             }
 
-            typer.setContent(dom);
-            typer.play();
+            LoadPageFile(postid, (text) => {
+                // use json props
+                document.getElementById("title_text").innerText = props.title;
+                document.getElementById("subtitle_text").innerText = props.subtitle ? props.subtitle : "";
+
+                // parse page text
+                var dom = new DOMParser().parseFromString(mdConverter.makeHtml(text), "text/html").body;
+                PostprocessPage(postid, dom);
+
+                // play
+                typer.setContent(dom);
+                scheduler.addEvent(foreground.toy.getTime()+3, () => {
+                    typer.play();
+                })
+            });
+
         });
+
     }
 
     this.update = () => {

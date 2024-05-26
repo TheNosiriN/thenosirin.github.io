@@ -97,6 +97,7 @@ function ConfigureForegroundRenderer(){
     var toy = new ShaderToyLite(foreground.canvas, {
         alpha: true,
         premultipliedAlpha: true,
+        powerPreference: "low-power",
         vertexBufferProps: [
             { size: 2, stride: RectBufferStride },
             { size: 3, stride: RectBufferStride, offset: 2*4 },
