@@ -47,7 +47,7 @@ function ContainedPage_Frontpage(scheduler){
 
         // from text to transition
         scheduler.addEvent(9.5, (time) => {
-            leavePage(ContainedPage_Home, scheduler, time);
+            leavePage(ContainedPage_Home, main_scheduler, time);
         });
     }
 
