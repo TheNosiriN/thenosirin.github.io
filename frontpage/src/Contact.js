@@ -1,4 +1,4 @@
-function ContainedPage_Contact(){
+function ContainedPage_Contact(scheduler){
     const Content = [
         TypeWriterEffect.wait(3000),
 

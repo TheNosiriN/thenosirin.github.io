@@ -133,7 +133,8 @@ function animateText(id, animation_class, delay){
 
 
 
-var scheduler;
+var main_scheduler;
+var page_scheduler;
 var rect_array_list;
 var rect_div_list;
 var rect_buffer_extra = 0;
@@ -184,7 +185,7 @@ function PixelPageHeader(){
 }
 
 function LoadContainedPage(PageClass, foreground_available){
-    scheduler = new TimeScheduler();
+    page_scheduler = new TimeScheduler();
 
     const bg = `rgb(${BackgroundColor.x*255}, ${BackgroundColor.y*255}, ${BackgroundColor.z*255})`;
     var mainpage = document.getElementById("main_page_container");
@@ -192,11 +193,11 @@ function LoadContainedPage(PageClass, foreground_available){
     document.body.style.backgroundColor = bg;
 
     mainpage.style.opacity = 0;
-    scheduler.addEvent(1, () => {
+    page_scheduler.addEvent(1, () => {
         mainpage.style.opacity = 1;
     });
 
-    currentPage = new PageClass();
+    currentPage = new PageClass(page_scheduler);
     const props = currentPage.getProps();
     mainpage.innerHTML = pageClassesMap[props.name];
     mainpage.classList.add(props.css);
@@ -206,15 +207,17 @@ function LoadContainedPage(PageClass, foreground_available){
     RefreshAnimatedRectDivs();
     setIntervalH(updateAnimatedRectDivs, 8);
     if (props.name != "frontpage"){
-        enterPage(scheduler, GetCurrentTime());
+        enterPage(page_scheduler, GetCurrentTime());
     }
 
     if (foreground_available){
         foreground.toy.setOnDraw(() => {
             if (foreground.toy){
-                scheduler.setTime(foreground.toy.getTime());
+                main_scheduler.setTime(foreground.toy.getTime());
+                page_scheduler.setTime(foreground.toy.getTime());
             }
             currentPage.update();
+            main_scheduler.nextEvent();
         });
     }else{
         const updateWithFrame = () => {
@@ -224,19 +227,24 @@ function LoadContainedPage(PageClass, foreground_available){
     }
 
     if (SHOW_DEBUG_BORDERS){
-        scheduler.addEvent(5, () => AddDebugBorders(mainpage));
+        page_scheduler.addEvent(5, () => AddDebugBorders(mainpage));
     }
 }
 
 function historyStateCallback(e, ispop){
-    if (!e.state || !e.state.name)return;
-    if (!pageClassesNamedMap[e.state.name])return;
-    let pagename = currentPage ? currentPage.name : "";
-
-    if (e.state.blog_postid && currentPage && currentPage.getProps().name=="blog"){
-        currentPage.leaveBlogPage(e.state.blog_postid, scheduler, GetCurrentTime(), ispop);
+    const pageParams = new URLSearchParams(window.location.search);
+    let name = "";
+    if (!e.state || !e.state.name){
+        name = pageParams.has("page") ? pageParams.get("page") : "";
     }else{
-        leavePage(pageClassesNamedMap[e.state.name], scheduler, GetCurrentTime(), "", ispop);
+        name = e.state.name;
+    }
+    if (!pageClassesNamedMap[name])return;
+
+    if (pageParams.has("post") && currentPage && name=="blog"){
+        currentPage.leaveBlogPage(pageParams.get("post"), page_scheduler, GetCurrentTime(), ispop);
+    }else{
+        leavePage(pageClassesNamedMap[name], main_scheduler, GetCurrentTime(), "", ispop);
     }
 }
 
@@ -250,6 +258,7 @@ function leavePage(PageClass, scheduler, time_entered, searchqueries="", ispop=f
     div.style.opacity = 0;
     foreground.backgroundColor = BackgroundColor;
     if (currentPage.onexit){ currentPage.onexit(); }
+    if (currentPage){ page_scheduler.clear(); }
 
     scheduler.addEvent(time_entered+1, (time) => {
         if (typeof PageClass === "string"){
@@ -260,8 +269,9 @@ function leavePage(PageClass, scheduler, time_entered, searchqueries="", ispop=f
             return;
         }
         ResetPageResources();
+        LoadContainedPage(PageClass, true);
 
-        const props = new PageClass().getProps();
+        const props = currentPage.getProps();
         var newurl = UTILS.getSitePath();
         if (props.name != "frontpage"){
             newurl += `index${IS_LOCAL_HOST ? ".html" : ""}?page=${props.name}`;
@@ -271,7 +281,6 @@ function leavePage(PageClass, scheduler, time_entered, searchqueries="", ispop=f
             history.pushState(props, "", newurl);
         }
 
-        LoadContainedPage(PageClass, true);
     });
 }
 

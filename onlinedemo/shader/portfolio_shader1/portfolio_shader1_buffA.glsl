@@ -199,14 +199,14 @@ vec4 makePixel(vec2 C){
         if (dist.z == 1.0){
             eye = P;
             gdir = normalize(reflect(gdir, N));
-            col -= 1.0-vec3(0.9+pulse*0.8,0.05,0.2);
+            col -= 1.0-vec3(0.9+pulse*0.8,0.05,0);
             continue;
         }
 
         vec3 sh = vec3(shade(eye, dist.x, maxd, P, N, i==0));
     #ifdef POINT_LIGHT_SHADOWS
         sh -= (1.0-vec3(1.,0,0.4)*0.6) * (0.5/max(length(P-focusPoint), 0.));
-        sh -= (1.0-vec3(pulse*8.,0,0.4*pulse*3.2)) * shade_pointlight(eye, dist.x, maxd, P, N, focusPoint, pulse);
+        sh -= (1.0-vec3(pulse*8.,0,0)) * shade_pointlight(eye, dist.x, maxd, P, N, focusPoint, pulse);
     #else
         sh -= (1.0-vec3(pulse*0.75+1.0,0,0.4)) * (0.5/max(length(P-focusPoint), 0.));
     #endif

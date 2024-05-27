@@ -1,4 +1,4 @@
-function ContainedPage_About(){
+function ContainedPage_About(scheduler){
     var universeVideo;
     function PreloadUniverseVideos(){
         const path = UTILS.getSitePath() + "img/videos/universe_ex1.mp4";

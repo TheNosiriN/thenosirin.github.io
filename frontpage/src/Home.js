@@ -1,4 +1,4 @@
-function ContainedPage_Home(){
+function ContainedPage_Home(scheduler){
     this.setup = () => {
         // splash text
         var splashtext = document.getElementById("splash_text");

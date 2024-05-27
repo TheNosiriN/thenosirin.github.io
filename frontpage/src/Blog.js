@@ -202,7 +202,7 @@ showdown.extension('highlight', function () {
 });
 
 
-function ContainedPage_Blog(){
+function ContainedPage_Blog(scheduler){
     var typer;
     var pagediv;
     var indexjson;
@@ -477,9 +477,7 @@ function ContainedPage_Blog(){
 
         currentPostid = "welcome";
         const postParams = new URLSearchParams(window.location.search);
-        if (postParams.has("post")){
-            currentPostid = postParams.get("post");
-        }
+        currentPostid = postParams.has("post") ? postParams.get("post") : "welcome";
 
         BuildIndex("blog/index.json", (json) => {
             indexjson = json;

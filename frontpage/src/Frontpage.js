@@ -1,4 +1,4 @@
-function ContainedPage_Frontpage(){
+function ContainedPage_Frontpage(scheduler){
     function setupWelcomeScheduledAnimation(){
         var welcome = document.getElementById("welcome_message");
         welcome.innerHTML = WelcomeMessages[Math.floor(Math.random()*WelcomeMessages.length)];
@@ -103,6 +103,7 @@ window.addEventListener("DOMContentLoaded", () => {
         PageClass = pageClassesNamedMap[pageParams.get("page")];
     }
 
+    main_scheduler = new TimeScheduler();
     LoadPageClasses(pageClasses, () => {
         StartForegroundRenderer(() => {
             ResetPageResources();

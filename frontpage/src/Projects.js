@@ -1,4 +1,4 @@
-function ContainedPage_Projects(){
+function ContainedPage_Projects(scheduler){
     var center_cont;
     function addProject(url, newtab, image_url, title){
         var link = document.createElement("a");

@@ -1,4 +1,4 @@
-function ContainedPage_Work(){
+function ContainedPage_Work(scheduler){
     const resume_url = UTILS.getSitePath()+"work/resume.pdf";
 
     function StartPdfViewer(args, writer){
