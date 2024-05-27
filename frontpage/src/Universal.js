@@ -269,18 +269,18 @@ function leavePage(PageClass, scheduler, time_entered, searchqueries="", ispop=f
             return;
         }
         ResetPageResources();
-        LoadContainedPage(PageClass, true);
 
-        const props = currentPage.getProps();
-        var newurl = UTILS.getSitePath();
-        if (props.name != "frontpage"){
-            newurl += `index${IS_LOCAL_HOST ? ".html" : ""}?page=${props.name}`;
-            newurl += searchqueries.length ? ("&"+searchqueries) : "";
-        }
         if (!ispop){
+            const props = new PageClass().getProps();
+            var newurl = UTILS.getSitePath();
+            if (props.name != "frontpage"){
+                newurl += `index${IS_LOCAL_HOST ? ".html" : ""}?page=${props.name}`;
+                newurl += searchqueries.length ? ("&"+searchqueries) : "";
+            }
             history.pushState(props, "", newurl);
         }
 
+        LoadContainedPage(PageClass, true);
     });
 }
 
