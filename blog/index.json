@@ -1,7 +1,7 @@
 {
     "babylon_planets": {
         "author": "Chinomso Nosiri",
-        "backgroundImage": "",
+        "backgroundImage": "planet2.jpg",
         "category": "Projects",
         "id": "babylon_planets",
         "subtitle": "My first ever procedural planet",
@@ -24,7 +24,7 @@
         "backgroundImage": "",
         "category": "Programming",
         "id": "testpost",
-        "subtitle": "Congrats, you found this page",
+        "subtitle": "",
         "time": "2024-05-27T15:58:54Z",
         "title": "Markdown tests",
         "titleImage": ""

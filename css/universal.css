@@ -216,4 +216,7 @@ body, html {
 
 .center_container {
     width: 75vw;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
 }

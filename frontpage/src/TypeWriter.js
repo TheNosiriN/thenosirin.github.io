@@ -187,6 +187,7 @@ class TypeWriterEffectHTML {
             const el = this.map[stackelement.mapindex];
 
             if (stackelement.wordindex >= el.words.length){
+                this.wait(this.autowaits[el.node.tagName]);
                 this.stack.pop();
                 return;
             }
@@ -212,7 +213,6 @@ class TypeWriterEffectHTML {
                     mapentry.node.typeWriterCallback(mapentry.node);
                 }
                 stackelement.wordindex++;
-                this.wait(this.autowaits[mapentry.node.tagName]);
             }
         };
 

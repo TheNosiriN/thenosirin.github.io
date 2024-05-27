@@ -308,11 +308,18 @@ function ContainedPage_Blog(){
         }
 
         const sitepath = UTILS.getSitePath();
-        let div = document.querySelector(".blogpage .title_div");
+        let forediv = document.querySelector(".blogpage .title_div");
         if (props.titleImage.length){
-            div.style.backgroundImage = `url(${sitepath}/blog/${props.id}/${props.titleImage})`;
+            forediv.style.backgroundImage = `url(${sitepath}/blog/${props.id}/${props.titleImage})`;
         }else{
-            div.style.backgroundImage = "none";
+            forediv.style.backgroundImage = "none";
+        }
+
+        let backdiv = document.getElementById("blogpage_container");
+        if (props.backgroundImage.length){
+            backdiv.style.backgroundImage = `url(${sitepath}/blog/${props.id}/${props.backgroundImage})`;
+        }else{
+            backdiv.style.backgroundImage = "none";
         }
 
         promise.then((text) => {
@@ -462,9 +469,8 @@ function ContainedPage_Blog(){
         typer = new TypeWriterEffectHTML(pagediv, {
             typeDelay: 45,
             autowaits: {
-                ',': 500,
-                ':': 500,
-                '.': 850,
+                ',': 500, '.': 850, ':': 500,
+                "H1": 500, "H2": 500,
                 "IMG": 2000,
             }
         });
