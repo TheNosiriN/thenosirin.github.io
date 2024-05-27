@@ -137,6 +137,7 @@ class TypeWriterEffectHTML {
     constructor(element, options){
         this.setContent(options.content);
         this.typeDelay = options.typeDelay || 50;
+        this.autowaits = options.autowaits || {};
         this.onFinished = options.onFinished;
         this.onInserted = options.onInserted;
 
@@ -146,6 +147,7 @@ class TypeWriterEffectHTML {
 
     reset(){
         this.pos = 0;
+        this.pauses = 0;
         this.stack = [];
         this.map = [];
         this.isPlaying = false;
@@ -158,7 +160,13 @@ class TypeWriterEffectHTML {
             this.isPlaying = false;
             return;
         }
-        this.isPlaying = true;
+        this.pauses -= 1;
+        if (this.pauses <= 0){
+            this.pauses = 0;
+            this.isPlaying = true;
+        }else{
+            return;
+        }
 
         if (this.firsttime){
             this.stack.push({ wordindex: 0, mapindex: 0 });
@@ -190,6 +198,7 @@ class TypeWriterEffectHTML {
                     const char = txt.charAt(this.pos);
                     this.pos++;
                     el.node.innerHTML += char;
+                    this.wait(this.autowaits[char]);
                     if (this.onInserted) { this.onInserted(char, this); }
                 } else {
                     this.pos = 0;
@@ -203,6 +212,7 @@ class TypeWriterEffectHTML {
                     mapentry.node.typeWriterCallback(mapentry.node);
                 }
                 stackelement.wordindex++;
+                this.wait(this.autowaits[mapentry.node.tagName]);
             }
         };
 
@@ -211,7 +221,14 @@ class TypeWriterEffectHTML {
 
     stop(){
         this.isPlaying = false;
+        this.pauses += 1;
         clearInterval(this.interval);
+    }
+
+    wait(time){
+        if (!time || time <= 0)return;
+        this.stop();
+        setTimeoutH(() => this.play(), time);
     }
 
     getIndex(){

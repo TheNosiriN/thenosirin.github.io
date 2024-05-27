@@ -46,7 +46,7 @@ function ContainedPage_Frontpage(){
         });
 
         // from text to transition
-        scheduler.addEvent(10, (time) => {
+        scheduler.addEvent(9.5, (time) => {
             leavePage(ContainedPage_Home, scheduler, time);
         });
     }

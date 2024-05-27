@@ -1,13 +1,43 @@
 {
+    "babylon_planets": {
+        "author": "Chinomso Nosiri",
+        "backgroundImage": "",
+        "category": "Projects",
+        "id": "babylon_planets",
+        "subtitle": "My first ever procedural planet",
+        "time": "2024-05-27T16:36:41Z",
+        "title": "Babylon.js Planets",
+        "titleImage": ""
+    },
+    "marchingcubes": {
+        "author": "Chinomso Nosiri",
+        "backgroundImage": "",
+        "category": "Projects",
+        "id": "marchingcubes",
+        "subtitle": "Procedural Generation Level 2",
+        "time": "2024-05-27T16:51:04Z",
+        "title": "Iso Surface Extraction",
+        "titleImage": ""
+    },
     "testpost": {
         "author": "Chinomso Nosiri",
         "backgroundImage": "",
         "category": "Programming",
         "id": "testpost",
         "subtitle": "Congrats, you found this page",
-        "time": "2024-05-27T05:42:55Z",
+        "time": "2024-05-27T15:58:54Z",
         "title": "Markdown tests",
         "titleImage": ""
+    },
+    "universe1": {
+        "author": "Chinomso Nosiri",
+        "backgroundImage": "",
+        "category": "Projects",
+        "id": "universe1",
+        "subtitle": "The dive into Astronomy",
+        "time": "2024-05-27T16:37:09Z",
+        "title": "The Universe ver. 1",
+        "titleImage": "universe_bg2.jpg"
     },
     "welcome": {
         "author": "Chinomso Nosiri",
@@ -15,7 +45,7 @@
         "category": "Uncategorized",
         "id": "welcome",
         "subtitle": "",
-        "time": "2024-05-27T05:42:53Z",
+        "time": "2024-05-27T15:56:47Z",
         "title": "Chino's Programming Blog",
         "titleImage": ""
     }

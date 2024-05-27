@@ -57,14 +57,13 @@ class TimeScheduler {
     constructor(){
         this.events = [];
         this.time = 0;
-        this.iter = 0;
         this.firstDrawTime = 0;
     }
 
     nextEvent(){
-        while (this.iter < this.events.length && this.events[this.iter].time <= this.time){
-            this.events[this.iter].callback(this.time);
-            this.iter++;
+        while (this.events.length > 0 && this.events[this.events.length-1].time <= this.time){
+            this.events[this.events.length-1].callback(this.time);
+            this.events.pop();
         }
 
         var now = Date.now();
@@ -78,7 +77,8 @@ class TimeScheduler {
 
     addEvent(time, callback){
         this.events.push({time: time, callback: callback});
-        this.events.sort((a, b) => a.time - b.time);
+        // this.events.sort((a, b) => a.time - b.time);
+        this.events.sort((a, b) => b.time - a.time);
     }
 
     addEventNoSort(time, callback){
@@ -93,6 +93,16 @@ class TimeScheduler {
     setTime(t){
         this.time = t;
     }
+
+    clear(){
+        this.events = [];
+    }
+
+    reset(){
+        this.clear();
+        this.time = 0;
+        this.firstDrawTime = 0;
+    }
 }
 
 
@@ -101,7 +111,7 @@ class TimeScheduler {
 
 function AddDebugBorders(element, level=0){
     const colors = ["red", "blue", "lime"];
-    element.style.border = "2.5px solid";
+    element.style.border = "2px solid";
     element.style.borderColor = colors[level % colors.length];
     for (const child of element.children) {
         // if (child.tagName != "DIV")continue;
@@ -214,23 +224,23 @@ function LoadContainedPage(PageClass, foreground_available){
     }
 
     if (SHOW_DEBUG_BORDERS){
-        AddDebugBorders(mainpage);
+        scheduler.addEvent(5, () => AddDebugBorders(mainpage));
     }
 }
 
 function historyStateCallback(e, ispop){
-    if (!e.state.name)return;
+    if (!e.state || !e.state.name)return;
     if (!pageClassesNamedMap[e.state.name])return;
     let pagename = currentPage ? currentPage.name : "";
 
     if (e.state.blog_postid && currentPage && currentPage.getProps().name=="blog"){
         currentPage.leaveBlogPage(e.state.blog_postid, scheduler, GetCurrentTime(), ispop);
     }else{
-        leavePage(pageClassesNamedMap[e.state.name], scheduler, GetCurrentTime(), ispop);
+        leavePage(pageClassesNamedMap[e.state.name], scheduler, GetCurrentTime(), "", ispop);
     }
 }
 
-function leavePage(PageClass, scheduler, time_entered, ispop=false){
+function leavePage(PageClass, scheduler, time_entered, searchqueries="", ispop=false){
     var div = document.getElementById("page_transition");
     div.style.display = "block";
     div.dataset.type = 4;
@@ -238,6 +248,7 @@ function leavePage(PageClass, scheduler, time_entered, ispop=false){
     div.dataset.stopTime = time_entered;
     div.dataset.speed = 0.75;
     div.style.opacity = 0;
+    foreground.backgroundColor = BackgroundColor;
     if (currentPage.onexit){ currentPage.onexit(); }
 
     scheduler.addEvent(time_entered+1, (time) => {
@@ -249,17 +260,18 @@ function leavePage(PageClass, scheduler, time_entered, ispop=false){
             return;
         }
         ResetPageResources();
-        LoadContainedPage(PageClass, true);
 
-        const props = currentPage.getProps();
+        const props = new PageClass().getProps();
         var newurl = UTILS.getSitePath();
         if (props.name != "frontpage"){
-            newurl += "index" + (IS_LOCAL_HOST ? ".html" : "") + `?page=${props.name}`;
+            newurl += `index${IS_LOCAL_HOST ? ".html" : ""}?page=${props.name}`;
+            newurl += searchqueries.length ? ("&"+searchqueries) : "";
         }
-
         if (!ispop){
             history.pushState(props, "", newurl);
         }
+
+        LoadContainedPage(PageClass, true);
     });
 }
 
@@ -321,8 +333,10 @@ function updateRectData(div, div_rect, stored_rect, offset_index){
             div.dataset.speed || 1,
             div.dataset.type || 0,
             div.dataset.grid || 1,
-            parseFloat(div.dataset.paddingX || div.dataset.padding || 0),
-            parseFloat(div.dataset.paddingY || div.dataset.padding || 0),
+            parseFloat(div.dataset.paddingTop || div.dataset.padding || 0),
+            parseFloat(div.dataset.paddingLeft || div.dataset.padding || 0),
+            parseFloat(div.dataset.paddingBottom || div.dataset.padding || 0),
+            parseFloat(div.dataset.paddingRight || div.dataset.padding || 0),
         )
     );
 }

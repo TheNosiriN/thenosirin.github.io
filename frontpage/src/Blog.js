@@ -209,8 +209,9 @@ function ContainedPage_Blog(){
     var mdConverter;
     var currentPostid;
 
-    function ResetPage(){
+    function resetBlogPage(){
         typer.reset();
+        scheduler.clear();
         pagediv.innerHTML = ""; // idk if images will be removed too
     }
 
@@ -256,7 +257,7 @@ function ContainedPage_Blog(){
                 const waitInt = setIntervalH(() => {
                     if (!el.complete){ return; }
                     typer.play();
-                    el.dataset.startTime = foreground.toy.getTime();
+                    el.dataset.startTime = GetCurrentTime();
                     updateAnimatedRectDivs();
                     el.style.opacity = 1;
                     clearInterval(waitInt);
@@ -277,6 +278,7 @@ function ContainedPage_Blog(){
             if (!code.classList.contains("hljs"))continue;
             code.classList.add("pixel_borders");
             code.style.boxShadow = "none";
+            code.style.padding = "0.5em";
         }
     }
 
@@ -305,25 +307,32 @@ function ContainedPage_Blog(){
             return;
         }
 
+        const sitepath = UTILS.getSitePath();
+        let div = document.querySelector(".blogpage .title_div");
+        if (props.titleImage.length){
+            div.style.backgroundImage = `url(${sitepath}/blog/${props.id}/${props.titleImage})`;
+        }else{
+            div.style.backgroundImage = "none";
+        }
+
         promise.then((text) => {
             var transition = document.querySelector(".blogpage #page_cont>.animated_transition");
             transition.style.display = "block";
-            transition.dataset.speed = 0.25;
-            transition.dataset.grid = 1.0;
+            transition.dataset.speed = 0.5;
             transition.dataset.startTime = time_entered;
             transition.dataset.stopTime = -10;
-            transition.dataset.type = 7;
-            transition.dataset.padding = -1;
+            updateAnimatedRectDivs();
 
-            // 1.5 + (viewHeight * css_container_height_in_vh * anim_speed) / (24 milliseconds_per_frame)
-            scheduler.addEvent(time_entered + 1.5 + (window.innerHeight*0.50*0.2)/24, (time) => {
+            // (rect_height * speed) / (32 milliseconds_per_frame)
+            const time_to_go = (transition.getBoundingClientRect().height/transition.dataset.speed) * 0.0001 * 24;
+            scheduler.addEvent(time_entered + time_to_go, () => {
                 foreground.backgroundColor = BackgroundColor;
                 transition.style.display = "none";
             });
 
             // use json props
             document.getElementById("title_text").innerText = props.title;
-            document.getElementById("subtitle_text").innerText = props.subtitle ? props.subtitle : "";
+            document.getElementById("subtitle_text").innerText = props.subtitle.length ? props.subtitle : "---";
 
             // parse page text
             let dom = new DOMParser().parseFromString(mdConverter.makeHtml(text), "text/html").body;
@@ -340,24 +349,28 @@ function ContainedPage_Blog(){
     function leaveBlogPage(postid, scheduler, time_entered, ispop=false){
         if (!indexjson)return;
 
+        let time_to_go = 0;
+        scheduler.clear();
+
         // remove old page
         if (currentPostid){
+            foreground.backgroundColor = DarkerBackgroundColor;
             let transition = document.querySelector(".blogpage #page_cont>.animated_transition");
             transition.style.display = "block";
             transition.dataset.speed = 0.75;
-            transition.dataset.grid = 1.0;
             transition.dataset.startTime = -10;
             transition.dataset.stopTime = time_entered;
-            transition.dataset.type = 7;
-            transition.dataset.padding = -1;
+            updateAnimatedRectDivs();
             if (typer){ typer.stop(); }
+            // (rect_height * speed) / (32 milliseconds_per_frame)
+            time_to_go = (transition.getBoundingClientRect().height/transition.dataset.speed) * 0.0001 * 24;
         }
 
         currentPostid = postid;
         var promise = LoadPageFile(currentPostid);
 
-        scheduler.addEvent(time_entered+1, (time) => {
-            ResetPage();
+        scheduler.addEvent(time_entered + time_to_go, (time) => {
+            resetBlogPage();
             enterBlogPage(promise, scheduler, time);
 
             let pageprops = new ContainedPage_Blog().getProps();
@@ -406,16 +419,27 @@ function ContainedPage_Blog(){
             div.style.width = `calc(100% + ${border_width}px * 2)`;
             div.style.left = `-${border_width}px`;
             div.style.top = `-${border_width}px`;
+            div.style.pointerEvents = "none";
+            div.dataset.grid = 1.0;
+            div.dataset.type = 7;
+            div.dataset.paddingTop = -1;
+            div.dataset.paddingLeft = -10;
+            div.dataset.paddingBottom = -10;
+            div.dataset.paddingRight = -1;
             el.appendChild(div);
         }); {
             let transition = document.querySelector(".blogpage #index_cont>.animated_transition");
-            transition.dataset.speed = 0.25;
-            transition.dataset.grid = 1.0;
+            transition.dataset.speed = 0.4;
             transition.dataset.startTime = 0;
             transition.dataset.stopTime = -10;
-            transition.dataset.type = 7;
-            transition.dataset.padding = -1;
+
+            // (rect_height / speed) / (32 milliseconds_per_frame)
+            scheduler.addEvent((transition.getBoundingClientRect().height/transition.dataset.speed) * 0.0001 * 24, () => {
+                foreground.backgroundColor = BackgroundColor;
+                document.querySelector(".blogpage #index_cont>.animated_transition").style.display = "none";
+            });
         }
+        RefreshAnimatedRectDivs();
 
         scheduler.addEvent(1, () => {
             document.getElementById("main_page_container").style.backgroundColor = `rgb(
@@ -424,12 +448,6 @@ function ContainedPage_Blog(){
         });
         scheduler.addEvent(1.5, () => {
             foreground.backgroundColor = DarkerBackgroundColor;
-        });
-
-        // 1.5 + (viewHeight * css_container_height_in_vh * anim_speed) / (24 milliseconds_per_frame)
-        scheduler.addEvent(1.5 + (window.innerHeight*0.50*0.2)/24, () => {
-            foreground.backgroundColor = BackgroundColor;
-            document.querySelector(".blogpage #index_cont>.animated_transition").style.display = "none";
         });
 
         // see this for options: https://github.com/showdownjs/showdown/wiki/Showdown-Options
@@ -442,7 +460,13 @@ function ContainedPage_Blog(){
         });
         pagediv = document.querySelector("#post_page");
         typer = new TypeWriterEffectHTML(pagediv, {
-            typeDelay: 40
+            typeDelay: 45,
+            autowaits: {
+                ',': 500,
+                ':': 500,
+                '.': 850,
+                "IMG": 2000,
+            }
         });
 
         currentPostid = "welcome";
@@ -463,15 +487,16 @@ function ContainedPage_Blog(){
                     let link = document.createElement("a");
                     let txt = document.createElement("p");
 
-                    txt.textContent = `${item.shortdate}, ${item.category}`;
+                    txt.textContent = `${item.subtitle.length ? item.subtitle : item.category}, ${item.shortdate}`;
+                    txt.style.width = "100%";
                     link.textContent = item.title;
                     link.onclick = (e) => {
                         e.preventDefault();
                         if (item.id == currentPostid)return;
                         leaveBlogPage(item.id, scheduler, GetCurrentTime());
                     };
-                    link.appendChild(txt);
                     div.appendChild(link);
+                    link.appendChild(txt);
                     results.appendChild(div);
                 });
             };

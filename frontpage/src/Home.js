@@ -23,7 +23,7 @@ function ContainedPage_Home(){
                 b.onclick = (e) => {
                     leavePage(
                         b.dataset.link ? pageClassesNamedMap[b.dataset.link] : b.href,
-                        scheduler, foreground.toy.getTime()
+                        scheduler, GetCurrentTime()
                     );
                     b.style.pointerEvents = "none";
                     e.preventDefault();

@@ -45,7 +45,7 @@ function ContainedPage_About(){
         writer.stop();
 
         image.onload = () => {
-            image.dataset.startTime = foreground.toy.getTime();
+            image.dataset.startTime = GetCurrentTime();
             updateAnimatedRectDivs();
             image.style.opacity = 1;
             writer.play();
@@ -70,7 +70,7 @@ function ContainedPage_About(){
 
         universeVideo.addEventListener('play', () => {
             universeVideo.muted = true;
-            universeVideo.dataset.startTime = foreground.toy.getTime();
+            universeVideo.dataset.startTime = GetCurrentTime();
             updateAnimatedRectDivs();
             universeVideo.style.opacity = 1;
             writer.play();

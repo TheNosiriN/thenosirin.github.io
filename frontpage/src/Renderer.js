@@ -72,12 +72,13 @@ const RectBufferStride = 9*4;
 const RectVertexCount = 6;
 
 function makeRectVerts(
-    rect, start_time=0, stop_time=0, speed=1, type=0, grid_mult=1, paddingx=0, paddingy=0
+    rect, start_time, stop_time, speed, type, grid_mult,
+    padtop, padleft, padbottom, padright
 ){
-    const x1 = rect.x + paddingx;
-    const y1 = rect.y + paddingy;
-    const x2 = (x1+rect.w) - paddingx*2;
-    const y2 = (y1+rect.h) - paddingy*2;
+    const x1 = rect.x + padleft;
+    const y1 = rect.y + padtop;
+    const x2 = (x1+rect.w) - padright - padleft;
+    const y2 = (y1+rect.h) - padbottom - padtop;
     const width = x2 - x1;
     const height = y2 - y1;
     return new Float32Array([

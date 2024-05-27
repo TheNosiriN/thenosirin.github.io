@@ -3,7 +3,7 @@ This is the blog I use to rant about whatever I want. I talk about programming, 
 
 
 ## Controls
-At the top of the page, you can find a semi-transparent control bar where you can play/pause, rewind, set your reading speed, and fast forward.
+At the top of the page, you can find a control bar where you can play/pause, rewind, set your reading speed, and fast forward.
 
 You can also find an index on the left (on wide screens), or at the top (on tall screens). Use it to navigate and search for pages to read.
 
