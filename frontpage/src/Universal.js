@@ -132,6 +132,9 @@ var pageClasses;
 var pageClassesMap;
 var pageClassesNamedMap;
 
+function GetCurrentTime(){
+    return foreground.toy.getTime();
+}
 
 function LoadPageClasses(array, callback){
     pageClassesMap = {};
@@ -193,7 +196,7 @@ function LoadContainedPage(PageClass, foreground_available){
     RefreshAnimatedRectDivs();
     setIntervalH(updateAnimatedRectDivs, 8);
     if (props.name != "frontpage"){
-        enterPage(scheduler, foreground.toy.getTime());
+        enterPage(scheduler, GetCurrentTime());
     }
 
     if (foreground_available){
@@ -212,6 +215,18 @@ function LoadContainedPage(PageClass, foreground_available){
 
     if (SHOW_DEBUG_BORDERS){
         AddDebugBorders(mainpage);
+    }
+}
+
+function historyStateCallback(e, ispop){
+    if (!e.state.name)return;
+    if (!pageClassesNamedMap[e.state.name])return;
+    let pagename = currentPage ? currentPage.name : "";
+
+    if (e.state.blog_postid && currentPage && currentPage.getProps().name=="blog"){
+        currentPage.leaveBlogPage(e.state.blog_postid, scheduler, GetCurrentTime(), ispop);
+    }else{
+        leavePage(pageClassesNamedMap[e.state.name], scheduler, GetCurrentTime(), ispop);
     }
 }
 

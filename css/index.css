@@ -1,5 +1,5 @@
 .frontpage .caps_bold {
-    color: #fffedd;
+    color: var(--white-col);
     font-family: Undertale;
     font-size: 6vmin;
     font-weight: 100;
@@ -46,7 +46,7 @@
 
 
 .homepage #title_text {
-    color: #fffedd;
+    color: var(--white-col);
     font-family: Botsmatic;
     text-align: center;
     font-size: 7vmin;
@@ -84,7 +84,7 @@
 }
 
 .homepage .nav_buttons a {
-    color: #fffedd;
+    color: var(--white-col);
     text-decoration: none;
     display: inline-block;
     position: relative;
@@ -102,7 +102,7 @@
     bottom: 0;
     left: 0;
     margin-bottom: 0.75em;
-    background-color: #fffedd;
+    background-color: var(--white-col);
     transform-origin: center;
     transition: transform 0.25s ease-out;
 }
@@ -121,7 +121,7 @@
 
 .homepage #splash_text {
     z-index: 2;
-    color: red;
+    color: var(--alt-tone-col);
     font-family: QuinqueFive;
     font-size: 0.5vmin;
     transform: translate(50%, 50%) rotate(-20deg);
@@ -131,7 +131,7 @@
 
 
 .aboutpage #typed_content {
-    color: #fffedd;
+    color: var(--white-col);
     text-decoration: none;
     text-align: left;
     font-size: 1.8vmin;
@@ -151,7 +151,7 @@
 }
 
 .projectspage #title_text {
-    color: #fffedd;
+    color: var(--white-col);
     font-family: Botsmatic;
     text-align: center;
     font-size: 7vmin;
@@ -177,7 +177,7 @@
 }
 
 .projectspage .projects_entry .title {
-    color: #fffedd;
+    color: var(--white-col);
     text-decoration: none;
     text-align: left;
     font-size: 1.8vmin;
@@ -193,7 +193,7 @@
 }
 
 .workpage #main_content {
-    color: #fffedd;
+    color: var(--white-col);
     text-decoration: none;
     text-align: left;
     font-size: 1.8vmin;
@@ -210,7 +210,7 @@
 
 
 .contactpage #typed_content {
-    color: #fffedd;
+    color: var(--white-col);
     text-decoration: none;
     text-align: left;
     font-size: 2.5vmin;
@@ -233,12 +233,12 @@
     padding-top: 25vh;
     padding-bottom: 3vh;
     padding-left: 25%;
-    border-bottom: 2.5px solid #fffedd;
+    border-bottom: 2.5px solid var(--white-col);
     background-color: black;
 }
 
 .blogpage #title_text {
-    color: #fffedd;
+    color: var(--white-col);
     text-decoration: none;
     text-align: left;
     font-size: calc(2.5vmin * 2);
@@ -247,7 +247,7 @@
 }
 
 .blogpage #subtitle_text {
-    color: red;
+    color: var(--alt-tone-col);
     text-decoration: none;
     text-align: left;
     font-size: calc(1.24vmin * 2);
@@ -270,12 +270,13 @@
     grid-template-columns: 2fr 1fr;
     grid-gap: 25px;
 
-    color: lightgrey;
+    color: var(--reading-text-col);
     /* font-family: BPdots; */
     font-family: RobotoMono, monospace;
     font-weight: lighter;
     text-decoration: none;
     text-align: left;
+    /* text-rendering: optimizeLegibility; */
 }
 
 .blogpage #page_cont {
@@ -286,8 +287,12 @@
 
 .blogpage #index_cont {
     font-size: 2.2vmin;
-    height: 50vh;
     padding: 2.267%;
+}
+
+.blogpage #post_page {
+    width: 100%;
+    height: 100%;
 }
 
 .blogpage #post_page h1, .blogpage #index_cont h1 {
@@ -301,5 +306,78 @@
     margin: 0;
     margin-top: 1.66em;
     padding-bottom: 0.25em;
-    border-bottom: 1px solid #fffedd;
+    border-bottom: 1px solid var(--white-col);
+}
+
+.blogpage #index_page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.blogpage #search_bar {
+    width: 100%;
+    background-color: transparent;
+    border-bottom: 1px solid var(--white-col);
+    padding: 5px 0px 5px 0px;
+    margin-bottom: 10px;
+    font-size: 2.2vmin;
+}
+.blogpage #search_bar:focus {
+    font-size: 2.2vmin;
+}
+
+.blogpage #search_results {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 25vh;
+    padding: 4px;
+    margin-top: 5px;
+    border-bottom: 1px solid var(--white-col);
+}
+
+.blogpage #search_results a {
+    font-weight: normal;
+    font-size: 0.9em;
+    padding-top: 0.25em;
+    padding-bottom: 0.25em;
+    margin: 0.1em;
+    text-decoration: none;
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+}
+.blogpage #search_results a:after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    transform: scaleX(0);
+    height: 0.1em;
+    bottom: 0;
+    left: 0;
+    margin-bottom: 0.1em;
+    background-color: var(--white-col);
+    transform-origin: left;
+    transition: transform 0.25s ease-out;
+}
+.blogpage #search_results a:hover:after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+.blogpage #search_results a>p {
+    font-size: 0.7em;
+    line-height: 0;
+    color: var(--white-col);
+}
+
+.blogpage .text_field {
+    border: none;
+    outline: none;
+    box-shadow: none;
+    font-family: RobotoMono, monospace;
+    color: var(--reading-text-col);
+}
+.blogpage .text_field:focus {
+    color: var(--reading-text-col);
 }

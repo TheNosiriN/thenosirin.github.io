@@ -87,17 +87,13 @@ for (var i=0; i<pageClasses.length; ++i){
 
 
 window.addEventListener("beforeunload", (e) => {
-    leavePage("", scheduler, foreground.toy.getTime());
+    leavePage("", scheduler, GetCurrentTime());
 });
 window.addEventListener("pushstate", (e) => {
-    if (!e.state.name)return;
-    if (!pageClassesNamedMap[e.state.name])return;
-    leavePage(pageClassesNamedMap[e.state.name], scheduler, foreground.toy.getTime(), false);
+    historyStateCallback(e, false);
 });
 window.addEventListener("popstate", (e) => {
-    if (!e.state.name)return;
-    if (!pageClassesNamedMap[e.state.name])return;
-    leavePage(pageClassesNamedMap[e.state.name], scheduler, foreground.toy.getTime(), true);
+    historyStateCallback(e, true);
 });
 
 window.addEventListener("DOMContentLoaded", () => {

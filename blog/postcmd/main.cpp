@@ -8,7 +8,7 @@
 
 int main(int argc, const char* argv[]) {
     if (argc < 4){
-        std::cout << "Usage: postcmd \"profile_name\" name \"title\" \"subtitle\"" << '\n';
+        std::cout << "Usage: postcmd \"author\" name \"title\" \"subtitle\"" << '\n';
         return 0;
     }
 
@@ -24,7 +24,7 @@ int main(int argc, const char* argv[]) {
     index.seekg(0, std::ios::beg);
     index.close();
 
-    std::string user = argv[1];
+    std::string author = argv[1];
     std::string name = argv[2];
     std::string title = argv[3];
 
@@ -35,7 +35,8 @@ int main(int argc, const char* argv[]) {
 
     nlohmann::json block = {
         {"time", buf},
-        {"user", user.c_str()},
+        {"author", author.c_str()},
+        {"id", name.c_str()},
         {"title", title.c_str()},
         {"subtitle", (argc > 4) ? argv[4] : ""},
         {"backgroundImage", (argc > 5) ? argv[5] : ""},

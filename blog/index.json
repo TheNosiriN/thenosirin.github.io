@@ -1,20 +1,22 @@
 {
     "testpost": {
+        "author": "Chinomso Nosiri",
         "backgroundImage": "",
-        "category": "Uncategorized",
+        "category": "Programming",
+        "id": "testpost",
         "subtitle": "Congrats, you found this page",
-        "time": "2024-05-26T19:16:45Z",
+        "time": "2024-05-27T05:42:55Z",
         "title": "Markdown tests",
-        "titleImage": "",
-        "user": "Chinomso Nosiri"
+        "titleImage": ""
     },
     "welcome": {
+        "author": "Chinomso Nosiri",
         "backgroundImage": "",
         "category": "Uncategorized",
+        "id": "welcome",
         "subtitle": "",
-        "time": "2024-05-26T19:16:47Z",
+        "time": "2024-05-27T05:42:53Z",
         "title": "Chino's Programming Blog",
-        "titleImage": "",
-        "user": "Chinomso Nosiri"
+        "titleImage": ""
     }
 }

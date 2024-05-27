@@ -205,7 +205,9 @@ showdown.extension('highlight', function () {
 function ContainedPage_Blog(){
     var typer;
     var pagediv;
+    var indexjson;
     var mdConverter;
+    var currentPostid;
 
     function ResetPage(){
         typer.reset();
@@ -214,13 +216,18 @@ function ContainedPage_Blog(){
 
     function LoadPageFile(postid, callback){
         const pageurl = `blog/${postid}/${postid}.md`;
-        fetch(UTILS.getSitePath()+pageurl).then((r) => {
+        let p =  fetch(UTILS.getSitePath()+pageurl).then((r) => {
             if (r.ok) return r.text();
             throw new Error("Error: Failed to load blog page: "+pageurl);
-        }).then((text) => callback(text)).catch(e => callback(e.message));
+        });
+        if (callback){
+            p.then((text) => callback(text)).catch(e => callback(e.message));
+        }
+        return p;
     }
 
     function PostprocessPage(postid, dom){
+        // images
         let images = dom.getElementsByTagName("img");
         for (image of images){
             const src = image.src;
@@ -229,7 +236,6 @@ function ContainedPage_Blog(){
             if (srcsite == sitepath){
                 const srcfilepath = src.substring(sitepath.length);
                 image.src = UTILS.getSitePath() + `blog/${postid}/${srcfilepath}`;
-                console.log(image.src);
             }
 
             image.style.opacity = 0;
@@ -259,9 +265,18 @@ function ContainedPage_Blog(){
             };
         }
 
+        // links
         let links = dom.getElementsByTagName("a");
         for (link of links){
             link.target = "_blank";
+        }
+
+        // code
+        let codes = dom.getElementsByTagName("code");
+        for (code of codes){
+            if (!code.classList.contains("hljs"))continue;
+            code.classList.add("pixel_borders");
+            code.style.boxShadow = "none";
         }
     }
 
@@ -270,29 +285,113 @@ function ContainedPage_Blog(){
             if (r.ok) return r.json();
             throw new Error("Error: Failed to load blog page: "+pageurl);
         }).then((json) => {
+
+            for (const [name, obj] of Object.entries(json)){
+                obj.time = new Date(obj.time);
+                obj.shortdate = obj.time.getDate()+' '+obj.time.toLocaleString('en-us', {month: "short"})+' '+obj.time.getFullYear();
+            }
+
             callback(json);
         });
     }
 
+    function enterBlogPage(promise, scheduler, time_entered){
+        // load new page
+        const props = indexjson[currentPostid];
+        if (!props){
+            var dom = new DOMParser().parseFromString(`<p>Cannot find "${currentPostid}" page in index.json file</p>`, "text/html").body;
+            typer.setContent(dom);
+            typer.play();
+            return;
+        }
 
-    this.setup = () => {
-        scheduler.addEvent(1, () => {
-            document.getElementById("main_page_container").style.backgroundColor = `rgb(
-                ${DarkerBackgroundColor.x*255}, ${DarkerBackgroundColor.y*255}, ${DarkerBackgroundColor.z*255}
-            )`;
-        });
-        scheduler.addEvent(1.5, () => {
-            foreground.backgroundColor = DarkerBackgroundColor;
-        });
+        promise.then((text) => {
+            var transition = document.querySelector(".blogpage #page_cont>.animated_transition");
+            transition.style.display = "block";
+            transition.dataset.speed = 0.25;
+            transition.dataset.grid = 1.0;
+            transition.dataset.startTime = time_entered;
+            transition.dataset.stopTime = -10;
+            transition.dataset.type = 7;
+            transition.dataset.padding = -1;
 
-        // 1.5 + (viewHeight * css_container_height_in_vh * anim_speed) / (24 milliseconds_per_frame)
-        scheduler.addEvent(1.5 + (window.innerHeight*0.50*0.2)/24, () => {
-            foreground.backgroundColor = BackgroundColor;
-            document.querySelectorAll(".blogpage .content_background>.animated_transition").forEach((el) => {
-                el.style.display = "none";
+            // 1.5 + (viewHeight * css_container_height_in_vh * anim_speed) / (24 milliseconds_per_frame)
+            scheduler.addEvent(time_entered + 1.5 + (window.innerHeight*0.50*0.2)/24, (time) => {
+                foreground.backgroundColor = BackgroundColor;
+                transition.style.display = "none";
+            });
+
+            // use json props
+            document.getElementById("title_text").innerText = props.title;
+            document.getElementById("subtitle_text").innerText = props.subtitle ? props.subtitle : "";
+
+            // parse page text
+            let dom = new DOMParser().parseFromString(mdConverter.makeHtml(text), "text/html").body;
+            PostprocessPage(currentPostid, dom);
+
+            // play
+            typer.setContent(dom);
+            scheduler.addEvent(time_entered+3, () => {
+                typer.play();
             });
         });
+    }
 
+    function leaveBlogPage(postid, scheduler, time_entered, ispop=false){
+        if (!indexjson)return;
+
+        // remove old page
+        if (currentPostid){
+            let transition = document.querySelector(".blogpage #page_cont>.animated_transition");
+            transition.style.display = "block";
+            transition.dataset.speed = 0.75;
+            transition.dataset.grid = 1.0;
+            transition.dataset.startTime = -10;
+            transition.dataset.stopTime = time_entered;
+            transition.dataset.type = 7;
+            transition.dataset.padding = -1;
+            if (typer){ typer.stop(); }
+        }
+
+        currentPostid = postid;
+        var promise = LoadPageFile(currentPostid);
+
+        scheduler.addEvent(time_entered+1, (time) => {
+            ResetPage();
+            enterBlogPage(promise, scheduler, time);
+
+            let pageprops = new ContainedPage_Blog().getProps();
+            pageprops.blog_postid = postid;
+
+            let newurl = UTILS.getSitePath();
+            newurl += "index" + (IS_LOCAL_HOST ? ".html" : "") + `?page=${pageprops.name}&post=${postid}`;
+
+            if (!ispop){
+                history.pushState(pageprops, "", newurl);
+            }
+        });
+    }
+    this.leaveBlogPage = leaveBlogPage;
+
+    function BuildSearchFilterScores(query, list){
+        var scores = {};
+        const criteria = ["title", "subtitle", "shortdate", "author", "category", "id"];
+
+        for (let i=0; i<list.length; ++i){
+            const item = list[i];
+            let score = 0;
+            for (let j=0; j<criteria.length; ++j){
+                if (item[criteria[j]].toUpperCase().indexOf(query) == -1)continue;
+                score += criteria.length - j;
+            }
+            scores[item.id] = score;
+        }
+
+        return scores;
+    }
+
+
+    this.setup = () => {
         document.querySelectorAll(".blogpage .content_background").forEach((el) => {
             el.style.backgroundColor = `rgb(
                 ${BackgroundColor.x*255}, ${BackgroundColor.y*255}, ${BackgroundColor.z*255}
@@ -307,13 +406,30 @@ function ContainedPage_Blog(){
             div.style.width = `calc(100% + ${border_width}px * 2)`;
             div.style.left = `-${border_width}px`;
             div.style.top = `-${border_width}px`;
-            div.dataset.speed = 0.2;
-            div.dataset.grid = 1.5;
-            div.dataset.startTime = 0;
-            div.dataset.stopTime = -10;
-            div.dataset.type = 7;
-            div.dataset.padding = -1;
             el.appendChild(div);
+        }); {
+            let transition = document.querySelector(".blogpage #index_cont>.animated_transition");
+            transition.dataset.speed = 0.25;
+            transition.dataset.grid = 1.0;
+            transition.dataset.startTime = 0;
+            transition.dataset.stopTime = -10;
+            transition.dataset.type = 7;
+            transition.dataset.padding = -1;
+        }
+
+        scheduler.addEvent(1, () => {
+            document.getElementById("main_page_container").style.backgroundColor = `rgb(
+                ${DarkerBackgroundColor.x*255}, ${DarkerBackgroundColor.y*255}, ${DarkerBackgroundColor.z*255}
+            )`;
+        });
+        scheduler.addEvent(1.5, () => {
+            foreground.backgroundColor = DarkerBackgroundColor;
+        });
+
+        // 1.5 + (viewHeight * css_container_height_in_vh * anim_speed) / (24 milliseconds_per_frame)
+        scheduler.addEvent(1.5 + (window.innerHeight*0.50*0.2)/24, () => {
+            foreground.backgroundColor = BackgroundColor;
+            document.querySelector(".blogpage #index_cont>.animated_transition").style.display = "none";
         });
 
         // see this for options: https://github.com/showdownjs/showdown/wiki/Showdown-Options
@@ -329,37 +445,62 @@ function ContainedPage_Blog(){
             typeDelay: 40
         });
 
-        var postid = "welcome";
+        currentPostid = "welcome";
         const postParams = new URLSearchParams(window.location.search);
         if (postParams.has("post")){
-            var postid = postParams.get("post");
+            currentPostid = postParams.get("post");
         }
 
         BuildIndex("blog/index.json", (json) => {
+            indexjson = json;
+            enterBlogPage(LoadPageFile(currentPostid), scheduler, GetCurrentTime());
 
-            const props = json[postid];
-            if (!props){
-                var dom = new DOMParser().parseFromString(`<p>Cannot find "${postid}" page in index.json file</p>`, "text/html").body;
-                typer.setContent(dom);
-                typer.play();
-                return;
-            }
+            const setuplist = (list) => {
+                let results = document.getElementById("search_results");
+                results.innerHTML = "";
+                list.forEach((item, i) => {
+                    let div = document.createElement("div");
+                    let link = document.createElement("a");
+                    let txt = document.createElement("p");
 
-            LoadPageFile(postid, (text) => {
-                // use json props
-                document.getElementById("title_text").innerText = props.title;
-                document.getElementById("subtitle_text").innerText = props.subtitle ? props.subtitle : "";
+                    txt.textContent = `${item.shortdate}, ${item.category}`;
+                    link.textContent = item.title;
+                    link.onclick = (e) => {
+                        e.preventDefault();
+                        if (item.id == currentPostid)return;
+                        leaveBlogPage(item.id, scheduler, GetCurrentTime());
+                    };
+                    link.appendChild(txt);
+                    div.appendChild(link);
+                    results.appendChild(div);
+                });
+            };
 
-                // parse page text
-                var dom = new DOMParser().parseFromString(mdConverter.makeHtml(text), "text/html").body;
-                PostprocessPage(postid, dom);
+            // setup search
+            const defaultListSetup = () => {
+                setuplist(Object.values(indexjson).sort((a,b) => {
+                    return b.time - a.time;
+                }));
+            };
+            defaultListSetup();
 
-                // play
-                typer.setContent(dom);
-                scheduler.addEvent(foreground.toy.getTime()+3, () => {
-                    typer.play();
-                })
-            });
+            let search = document.getElementById("search_bar");
+            search.oninput = (e) => {
+                if (!e.target.value || !e.target.value.length){
+                    defaultListSetup();
+                    return;
+                }
+
+                let list = Object.values(indexjson);
+                let scores = BuildSearchFilterScores(e.target.value.toUpperCase(), list);
+
+                list = list.filter((item) => scores[item.id] > 0);
+                if (!list.length){ defaultListSetup(); }
+
+                setuplist(list.sort((a,b) => {
+                    return scores[b.id] - scores[a.id];
+                }));
+            };
 
         });
 

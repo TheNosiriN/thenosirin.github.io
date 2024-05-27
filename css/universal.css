@@ -23,6 +23,13 @@ body, html {
 }
 
 
+:root {
+    --white-col: #fffedd;
+    --reading-text-col: lightgrey;
+    --alt-tone-col: red;
+}
+
+
 
 #foreground_canvas {
     width: 100%;
