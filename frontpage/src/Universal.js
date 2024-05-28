@@ -142,6 +142,9 @@ var currentPage;
 var pageClasses;
 var pageClassesMap;
 var pageClassesNamedMap;
+var timeoutObj;
+var rendertimeout = 8;
+
 
 function GetCurrentTime(){
     return foreground.toy.getTime();
@@ -249,6 +252,9 @@ function historyStateCallback(e, ispop){
 }
 
 function leavePage(PageClass, scheduler, time_entered, searchqueries="", ispop=false){
+    foreground.backgroundColor = BackgroundColor;
+    document.getElementById("main_page_container").style.pointerEvents = "none";
+
     var div = document.getElementById("page_transition");
     div.style.display = "block";
     div.dataset.type = 4;
@@ -256,7 +262,6 @@ function leavePage(PageClass, scheduler, time_entered, searchqueries="", ispop=f
     div.dataset.stopTime = time_entered;
     div.dataset.speed = 0.75;
     div.style.opacity = 0;
-    foreground.backgroundColor = BackgroundColor;
     if (currentPage.onexit){ currentPage.onexit(); }
     if (currentPage){ page_scheduler.clear(); }
 
@@ -285,6 +290,7 @@ function leavePage(PageClass, scheduler, time_entered, searchqueries="", ispop=f
 }
 
 function enterPage(scheduler, time_entered){
+    document.getElementById("main_page_container").style.pointerEvents = "auto";
     let div = document.getElementById("page_transition");
     div.style.display = "block";
     div.style.opacity = 1;
@@ -314,6 +320,7 @@ function RefreshAnimatedRectDivs(){
     gl.bufferData(gl.ARRAY_BUFFER, RectBufferStride * RectVertexCount * total_length, gl.DYNAMIC_DRAW);
     foreground.toy.setDrawCount(rect_div_list.length * RectVertexCount);
 
+    if (timeoutObj){ clearTimeout(timeoutObj); }
     for (var i=0; i<rect_div_list.length; ++i){
         const div_rect = rect_div_list[i].getBoundingClientRect();
         updateRectData(rect_div_list[i], div_rect, rect_array_list[i], i);
@@ -322,6 +329,10 @@ function RefreshAnimatedRectDivs(){
 
 function SetExtraRects(amount){
     rect_buffer_extra = amount;
+}
+
+function SetRenderTimout(t){
+    rendertimeout = t;
 }
 
 function updateRectData(div, div_rect, stored_rect, offset_index){
@@ -351,22 +362,40 @@ function updateRectData(div, div_rect, stored_rect, offset_index){
 }
 
 function checkRectData(div, div_rect, stored_rect){
-    return (
+    const dimupdate = (
         div_rect.x != stored_rect.x ||
         div_rect.y != stored_rect.y ||
         div_rect.width != stored_rect.w ||
-        div_rect.height != stored_rect.h ||
+        div_rect.height != stored_rect.h
+    );
+    const movupdate = (
         div.dataset.startTime != stored_rect.start ||
         div.dataset.stopTime != stored_rect.stop
     );
+    return [dimupdate || movupdate, movupdate];
 }
 
 function updateAnimatedRectDivs(){
     const time = foreground.toy.getTime();
+    var ctimeout = time;
+    var update_from_moving = false;
+
     for (var i=0; i<rect_div_list.length; ++i){
         const div_rect = rect_div_list[i].getBoundingClientRect();
-        if (checkRectData(rect_div_list[i], div_rect, rect_array_list[i])){
-            updateRectData(rect_div_list[i], div_rect, rect_array_list[i], i);
+        const [total, ismove] = checkRectData(rect_div_list[i], div_rect, rect_array_list[i]);
+        if (!total)continue;
+        updateRectData(rect_div_list[i], div_rect, rect_array_list[i], i, ismove);
+        update_from_moving = update_from_moving || ismove;
+        if (update_from_moving){
+            ctimeout = Math.max(Math.max(ctimeout, rect_div_list[i].dataset.startTime), rect_div_list[i].dataset.stopTime);
         }
+    }
+
+    if (update_from_moving){
+        if (timeoutObj){ clearTimeout(timeoutObj); console.log("cleared"); }
+        ctimeout -= time;
+        console.log((ctimeout + rendertimeout));
+        timeoutObj = setTimeoutH(() => { foreground.toy.pause(); console.log("paused"); }, (ctimeout + rendertimeout) * 1000);
+        if (!foreground.toy.getIsPlaying()){ foreground.toy.play(); }
     }
 }

@@ -187,3 +187,11 @@ function StartForegroundRenderer(callback, fallback){
     };
     waitfunc();
 }
+
+function PauseForegroundRenderer(){
+    foreground.toy.pause();
+}
+
+function ResumeForegroundRenderer(){
+    foreground.toy.play();
+}

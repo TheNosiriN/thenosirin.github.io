@@ -71,6 +71,10 @@ body, html {
     position: absolute;
 }
 
+.animated_transition {
+    pointer-events: none;
+}
+
 
 
 .page_container {
@@ -192,6 +196,38 @@ body, html {
     91%{
         color: rgb(255,0,127);
     }
+}
+
+
+
+.text_link_highlight {
+    text-decoration: none;
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+}
+.text_link_highlight:after {
+    content: '';
+    text-decoration: none;
+    position: absolute;
+    width: 100%;
+    transform: scaleX(0);
+    bottom: 0;
+    left: 0;
+    background-color: var(--white-col);
+    transform-origin: center;
+    transition: transform 0.25s ease-out;
+    height: 0.1em;
+    margin-bottom: 0.1em;
+}
+.text_link_highlight:hover:after {
+    transform: scaleX(1);
+    transform-origin: center;
+}
+.text_link_highlight:link,
+.text_link_highlight:active,
+.text_link_highlight:visited {
+  text-decoration: none;
 }
 
 
