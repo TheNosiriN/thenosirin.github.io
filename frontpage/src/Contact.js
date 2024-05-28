@@ -1,6 +1,6 @@
 function ContainedPage_Contact(scheduler){
     const Content = [
-        TypeWriterEffect.wait(3000),
+        TypeWriterEffect.wait(1500),
 
         "Github: ",
         TypeWriterEffect.setlink("https://github.com/TheNosiriN", true), "TheNosiriN", "\n\n",

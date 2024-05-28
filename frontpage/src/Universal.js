@@ -244,7 +244,7 @@ function historyStateCallback(e, ispop){
     }
     if (!pageClassesNamedMap[name])return;
 
-    if (pageParams.has("post") && currentPage && name=="blog"){
+    if (pageParams.has("post") && currentPage && currentPage.getProps().name=="blog" && name=="blog"){
         currentPage.leaveBlogPage(pageParams.get("post"), page_scheduler, GetCurrentTime(), ispop);
     }else{
         leavePage(pageClassesNamedMap[name], main_scheduler, GetCurrentTime(), "", ispop);
