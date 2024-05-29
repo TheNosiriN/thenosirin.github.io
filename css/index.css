@@ -32,8 +32,7 @@
 
 
 
-.homepage #center_container {
-    max-height: 90vh;
+.homepage .center_container {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -44,21 +43,32 @@
     align-items: center;
 }
 
+.homepage .grid_container {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
 
 .homepage #title_text {
     color: var(--white-col);
     font-family: Botsmatic;
     text-align: center;
-    font-size: 7vmin;
+    font-size: 3em;
     text-transform: lowercase;
 }
 
 .homepage #menu_container {
     position: relative;
-    display: inline-grid;
+    display: grid;
     justify-content: center;
-    width: auto;
-    height: auto;
+    max-width: 50vh;
+    height: 100%;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
 }
 
 .homepage #menu_container_transition {
@@ -73,14 +83,16 @@
 
 .homepage .nav_buttons {
     text-align: center;
-    font-size: 1.5vmin;
+    font-size: 0.8em;
     font-family: QuinqueFive;
     display: inline-grid;
     grid-template-columns: 1fr;
 }
 
 .homepage .nav_buttons > div {
-    display: block;
+    display: grid;
+    align-items: center;
+    justify-content: center;
 }
 
 .homepage .nav_buttons a {
@@ -88,6 +100,7 @@
     padding-top: 1.5em;
     padding-bottom: 1.5em;
 }
+
 
 .homepage .text_link_highlight:after {
     height: 0.2em;
@@ -98,14 +111,14 @@
 .homepage #splash_text_cont {
     position: absolute;
     bottom: 20%;
-    right: 20%;
+    right: 15%;
 }
 
 .homepage #splash_text {
     z-index: 2;
     color: var(--alt-tone-col);
     font-family: QuinqueFive;
-    font-size: 0.5vmin;
+    font-size: 0.3em;
     transform: translate(50%, 50%) rotate(-20deg);
 }
 
@@ -116,7 +129,7 @@
     color: var(--white-col);
     text-decoration: none;
     text-align: left;
-    font-size: 1.8vmin;
+    font-size: 0.8em;
     font-family: QuinqueFive;
     line-height: 1.8;
 
@@ -136,7 +149,7 @@
     color: var(--white-col);
     font-family: Botsmatic;
     text-align: center;
-    font-size: 7vmin;
+    font-size: 3em;
     text-transform: lowercase;
 
     margin-top: 25vmin;
@@ -162,7 +175,7 @@
     color: var(--white-col);
     text-decoration: none;
     text-align: left;
-    font-size: 1.8vmin;
+    font-size: 0.8em;
     font-family: QuinqueFive;
     line-height: 1.8;
 }
@@ -178,7 +191,7 @@
     color: var(--white-col);
     text-decoration: none;
     text-align: left;
-    font-size: 1.8vmin;
+    font-size: 0.8em;
     font-family: QuinqueFive;
     line-height: 1.8;
     margin-top: 1.8em;
@@ -192,10 +205,10 @@
 
 
 .contactpage #typed_content {
-    color: var(--white-col);
+    color: var(--reading-text-col);
     text-decoration: none;
     text-align: left;
-    font-size: 2.5vmin;
+    font-size: 0.9em;
     font-family: QuinqueFive;
     line-height: 1.8;
 
@@ -205,80 +218,37 @@
 
 .contactpage #typed_content a {
     text-decoration-line: none;
+    padding-bottom: 0.15em;
 }
-
-
-
-
-.blogpage .title_div {
-    width: 100%;
-    padding-top: 25vh;
-    padding-bottom: 3vh;
-    padding-left: 25%;
-    border-bottom: 2.5px solid var(--reading-text-col);
-    background-color: black;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.blogpage .title_div > .nav_buttons {
-    /* width: 100%; */
-}
-
-.blogpage .title_div > .nav_buttons div {
-    display: inline-block;
-    color: var(--white-col);
-    font-family: QuinqueFive;
-    margin-right: 2em;
-    font-size: 1.8vmin;
-}
-
-.blogpage .title_div > .nav_buttons a {
-    color: var(--white-col);
-    padding-top: 0.8em;
-    padding-bottom: 0.8em;
-}
-.blogpage .title_div > .nav_buttons a:link,
-.blogpage .title_div > .nav_buttons a:hover,
-.blogpage .title_div > .nav_buttons a:visited {
+.contactpage #typed_content a:link,
+.contactpage #typed_content a:hover,
+.contactpage #typed_content a:visited {
     color: var(--white-col);
 }
-.blogpage .title_div > .nav_buttons a:active {
+.contactpage #typed_content a:active {
     color: var(--alt-tone-col);
 }
-.blogpage .title_div > .nav_buttons .text_link_highlight:after {
+.contactpage #typed_content .text_link_highlight:after {
+    transform-origin: left;
     height: 0.2em;
 }
-
-.blogpage #title_text {
-    color: var(--white-col);
-    text-decoration: none;
-    text-align: left;
-    font-size: calc(2.5vmin * 2);
-    font-family: Undertale;
-    text-transform: uppercase;
+.contactpage #typed_content .text_link_highlight:hover:after {
+    transform-origin: left;
 }
 
-.blogpage #subtitle_text {
-    color: var(--alt-tone-col);
-    text-decoration: none;
-    text-align: left;
-    font-size: calc(1.24vmin * 2);
-    font-family: Undertale;
-    text-transform: uppercase;
-    margin-bottom: 1em;
-}
+
+
 
 .blogpage .center_container {
-    width: 100%;
+    /* width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: center; */
 }
 
 .blogpage #main_content {
-    width: 80vw;
+    position: relative;
+    width: 100%;
     margin-top: 15vh;
     margin-bottom: 50vh;
     display: grid;
@@ -294,16 +264,93 @@
     /* text-rendering: optimizeLegibility; */
 }
 
-.blogpage #page_cont {
-    font-size: 2.2vmin;
-    min-height: 50vh;
+.blogpage .title_div {
+    width: 100vw;
+    padding-top: 25vh;
+    padding-bottom: 3vh;
+    /* padding-left: 25%; */
+    border-bottom: 2.5px solid var(--reading-text-col);
+    background-color: black;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.blogpage #title_text {
+    color: var(--white-col);
+    text-decoration: none;
+    text-align: left;
+    font-size: 2.2em;
+    font-family: Undertale;
+    text-transform: uppercase;
+}
+
+.blogpage #subtitle_text {
+    color: var(--alt-tone-col);
+    text-decoration: none;
+    text-align: left;
+    font-size: 1.1em;
+    font-family: Undertale;
+    text-transform: uppercase;
+    margin-bottom: 1em;
+}
+
+.blogpage .title_div > div {
+    width: 75vmax;
+    max-width: 96vw;
+}
+
+.blogpage .title_div .nav_buttons {
+    /* width: 100%; */
+}
+
+.blogpage .title_div .nav_buttons div {
+    display: inline-block;
+    color: var(--white-col);
+    font-family: QuinqueFive;
+    margin-right: 2em;
+    font-size: 0.7em;
+}
+
+.blogpage .title_div .nav_buttons a {
+    color: var(--white-col);
+    padding-top: 0.8em;
+    padding-bottom: 0.8em;
+}
+.blogpage .title_div .nav_buttons a:link,
+.blogpage .title_div .nav_buttons a:hover,
+.blogpage .title_div .nav_buttons a:visited {
+    color: var(--white-col);
+}
+.blogpage .title_div .nav_buttons a:active {
+    color: var(--alt-tone-col);
+}
+.blogpage .title_div .nav_buttons .text_link_highlight:after {
+    height: 0.2em;
+}
+
+.blogpage #page_cont, .blogpage #index_cont {
     padding: 2.267%;
 }
 
-.blogpage #index_cont {
-    font-size: 2.2vmin;
-    padding: 2.267%;
+@media screen and (max-width: 600px) {
+    .blogpage #index_grid_div {
+        order: -1;
+    }
+    .blogpage #main_content {
+        grid-template-columns: 1fr;
+    }
 }
+
+/* .blogpage #index_cont {
+    max-height: 0;
+    overflow: hidden;
+    padding: 0;
+} */
 
 .blogpage #post_page {
     width: 100%;
@@ -336,10 +383,6 @@
     border-bottom: 1px solid var(--white-col);
     padding: 5px 0px 5px 0px;
     margin-bottom: 10px;
-    font-size: 2.2vmin;
-}
-.blogpage #search_bar:focus {
-    font-size: 2.2vmin;
 }
 
 .blogpage #search_results_parent {

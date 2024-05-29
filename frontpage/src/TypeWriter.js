@@ -82,6 +82,7 @@ class TypeWriterEffect {
                 case 4: // Links
                 this.insertTemp = true;
                 this.tempElement = txt.element || document.createElement("a");
+                if (txt.classes){ this.tempElement.classList = txt.classes; }
                 this.element.appendChild(this.tempElement);
                 this.tempElement.href = txt.url;
                 this.tempElement.target = txt.newtab ? "_blank" : "_self";
@@ -121,8 +122,8 @@ class TypeWriterEffect {
     static callback(f, a){
         return {type: 3, func:f, args:a};
     }
-    static setlink(url, newtab, element){
-        return {type: 4, url:url, newtab:newtab, element:element};
+    static setlink(url, newtab, element, classes){
+        return {type: 4, url:url, newtab:newtab, element:element, classes:classes};
     }
     static setelement(element){
         return {type: 5, element:element};

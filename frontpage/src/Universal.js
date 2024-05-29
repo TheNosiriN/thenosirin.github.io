@@ -392,10 +392,12 @@ function updateAnimatedRectDivs(){
     }
 
     if (update_from_moving){
-        if (timeoutObj){ clearTimeout(timeoutObj); console.log("cleared"); }
+        if (timeoutObj){ clearTimeout(timeoutObj); }
         ctimeout -= time;
-        console.log((ctimeout + rendertimeout));
-        timeoutObj = setTimeoutH(() => { foreground.toy.pause(); console.log("paused"); }, (ctimeout + rendertimeout) * 1000);
+        timeoutObj = setTimeoutH(() => {
+            foreground.toy.pause();
+            console.log("paused rendering");
+        }, (ctimeout + rendertimeout) * 1000);
         if (!foreground.toy.getIsPlaying()){ foreground.toy.play(); }
     }
 }
