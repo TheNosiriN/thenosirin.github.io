@@ -191,7 +191,7 @@
     color: var(--white-col);
     text-decoration: none;
     text-align: left;
-    font-size: 0.8em;
+    font-size: 1em;
     font-family: QuinqueFive;
     line-height: 1.8;
     margin-top: 1.8em;
@@ -208,7 +208,7 @@
     color: var(--reading-text-col);
     text-decoration: none;
     text-align: left;
-    font-size: 0.9em;
+    font-size: 1em;
     font-family: QuinqueFive;
     line-height: 1.8;
 

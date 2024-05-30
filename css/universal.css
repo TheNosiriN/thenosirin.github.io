@@ -88,11 +88,11 @@ body, html {
 /* https://css-tricks.com/snippets/css/fluid-typography/ */
 /* font-size: calc([minimum size] + ([maximum size] - [minimum size]) * ((100vw - [minimum viewport width]) / ([maximum viewport width] - [minimum viewport width]))); */
 .page_container {
-    font-size: 16px;
+    font-size: 14px;
 }
 @media screen and (min-width: 320px) {
     .page_container {
-        font-size: calc(16px + (22px - 16px) * ((100vw - 320px) / (1920 - 320)));
+        font-size: calc(14px + (22px - 14px) * ((100vw - 320px) / (1920 - 320)));
     }
 }
 @media screen and (min-width: 1920px) {
