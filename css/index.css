@@ -334,15 +334,32 @@
 }
 
 .blogpage #page_cont, .blogpage #index_cont {
-    padding: 2.267%;
+    padding: 2%;
+    overflow: hidden;
+    min-height: 50vh;
+    transition: min-height 0.25s ease-out;
+}
+.blogpage #page_cont.closed, .blogpage #index_cont.closed {
+    min-height: 0;
+    max-height: 0;
 }
 
 @media screen and (max-width: 600px) {
+    .blogpage .center_container {
+        max-width: 100vw;
+    }
     .blogpage #index_grid_div {
         order: -1;
     }
     .blogpage #main_content {
         grid-template-columns: 1fr;
+    }
+    .blogpage #page_cont, .blogpage #index_cont {
+        padding-left: 0;
+        padding-right: 0;
+        margin-left: 0;
+        margin-right: 0;
+        box-shadow: none;
     }
 }
 

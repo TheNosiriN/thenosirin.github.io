@@ -267,8 +267,6 @@ body, html {
 }
 
 .center_container {
-    /* width: 96vw;
-    max-width: 150vmin; */
     width: 75vmax;
     max-width: 96vw;
     background-size: cover;

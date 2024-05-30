@@ -44,7 +44,7 @@ function ContainedPage_Blog(scheduler){
     function resetBlogPage(){
         typer.reset();
         scheduler.clear();
-        pagediv.innerHTML = ""; // idk if images will be removed too
+        pagediv.innerHTML = "";
     }
 
     function LoadPageFile(postid, callback){
@@ -59,7 +59,7 @@ function ContainedPage_Blog(scheduler){
         return p;
     }
 
-    function PostprocessPage(postid, dom){
+    function PreprocessPage(postid, dom){
         // images
         let images = dom.getElementsByTagName("img");
         for (image of images){
@@ -156,11 +156,8 @@ function ContainedPage_Blog(scheduler){
         }
 
         promise.then((text) => {
-            let transition = document.querySelector(".blogpage #page_cont>.animated_transition");
-            transition.style.display = "block";
-            transition.dataset.speed = 0.5;
-            transition.dataset.startTime = time_entered;
-            transition.dataset.stopTime = -10;
+            let transition = document.querySelector(".blogpage #page_cont");
+            transition.classList.remove("closed");
 
             // use json props
             document.getElementById("title_text").innerText = props.title;
@@ -170,11 +167,19 @@ function ContainedPage_Blog(scheduler){
 
             // parse page text
             let dom = new DOMParser().parseFromString(mdConverter.makeHtml(text), "text/html").body;
-            PostprocessPage(currentPostid, dom);
+            PreprocessPage(currentPostid, dom);
 
             // play
-            typer.setContent(dom);
-            scheduler.addEvent(time_entered+3, () => {
+            typer = new TypeWriterEffectHTML(pagediv, {
+                content: dom,
+                typeDelay: 45,
+                autowaits: {
+                    ',': 500, '.': 850, ':': 500,
+                    "H1": 500, "H2": 500,
+                    "IMG": 2000,
+                }
+            });
+            scheduler.addEvent(time_entered+2, () => {
                 typer.play();
             });
         });
@@ -182,28 +187,21 @@ function ContainedPage_Blog(scheduler){
 
     function leaveBlogPage(postid, scheduler, time_entered, ispop=false){
         if (!indexjson)return;
-
-        let time_to_go = 0;
-        scheduler.clear();
         foreground.backgroundColor = DarkerBackgroundColor;
 
         // remove old page
         if (currentPostid){
-            let transition = document.querySelector(".blogpage #page_cont>.animated_transition");
-            transition.style.display = "block";
-            transition.dataset.speed = 0.75;
-            transition.dataset.startTime = -10;
-            transition.dataset.stopTime = time_entered;
+            let transition = document.querySelector(".blogpage #page_cont");
+            transition.classList.add("closed");
             if (typer){ typer.stop(); }
-            time_to_go = (transition.getBoundingClientRect().height/transition.dataset.speed) * 0.0001 * 24;
         }
 
         currentPostid = postid;
-        var promise = LoadPageFile(currentPostid);
+        let promise = LoadPageFile(currentPostid);
 
-        scheduler.addEvent(time_entered + time_to_go, (time) => {
+        scheduler.addEvent(time_entered + 1, (time) => {
             resetBlogPage();
-            enterBlogPage(promise, scheduler, time);
+            enterBlogPage(promise, scheduler, 0);
 
             let pageprops = new ContainedPage_Blog().getProps();
             pageprops.blog_postid = postid;
@@ -237,6 +235,8 @@ function ContainedPage_Blog(scheduler){
 
 
     this.setup = () => {
+        pagediv = document.querySelector("#post_page");
+
         scheduler.addEvent(1.5, () => {
             foreground.backgroundColor = DarkerBackgroundColor;
         });
@@ -249,15 +249,7 @@ function ContainedPage_Blog(scheduler){
             noHeaderId: true,
             // tables: true,
         });
-        pagediv = document.querySelector("#post_page");
-        typer = new TypeWriterEffectHTML(pagediv, {
-            typeDelay: 45,
-            autowaits: {
-                ',': 500, '.': 850, ':': 500,
-                "H1": 500, "H2": 500,
-                "IMG": 2000,
-            }
-        });
+
 
         currentPostid = "welcome";
         const postParams = new URLSearchParams(window.location.search);
@@ -340,16 +332,19 @@ function ContainedPage_Blog(scheduler){
             div.style.top = `-${border_width}px`;
             div.dataset.grid = 1.0;
             div.dataset.type = 7;
+            div.dataset.speed = 0.4;
+            div.dataset.startTime = 0;
+            div.dataset.stopTime = -10;
             div.dataset.paddingTop = -1;
             div.dataset.paddingLeft = -10;
             div.dataset.paddingBottom = -10;
             div.dataset.paddingRight = -1;
             el.appendChild(div);
         }); {
-            let transition = document.querySelector(".blogpage #index_cont>.animated_transition");
-            transition.dataset.speed = 0.4;
-            transition.dataset.startTime = 0;
-            transition.dataset.stopTime = -10;
+            // let transition = document.querySelector(".blogpage #index_cont>.animated_transition");
+            // transition.dataset.speed = 0.4;
+            // transition.dataset.startTime = 0;
+            // transition.dataset.stopTime = -10;
         }
 
         // configure nav buttons

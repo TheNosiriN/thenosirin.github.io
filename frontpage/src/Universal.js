@@ -77,7 +77,6 @@ class TimeScheduler {
 
     addEvent(time, callback){
         this.events.push({time: time, callback: callback});
-        // this.events.sort((a, b) => a.time - b.time);
         this.events.sort((a, b) => b.time - a.time);
     }
 
@@ -147,7 +146,12 @@ var rendertimeout = 8;
 
 
 function GetCurrentTime(){
-    return foreground.toy.getTime();
+    // return foreground.toy.getTime();
+    return page_scheduler ? page_scheduler.time : 0;
+}
+
+function GetMainCurrentTime(){
+    return main_scheduler ? main_scheduler.time : 0;
 }
 
 function LoadPageClasses(array, callback){
@@ -173,6 +177,8 @@ function ResetPageResources(){
     rect_buffer_extra = 0;
     timeoutHandler.clear();
     if (foreground.toy){ foreground.toy.reset(); }
+    if (main_scheduler){ main_scheduler.reset(); }
+    if (page_scheduler){ page_scheduler.reset(); }
 
     var mainpage = document.getElementById("main_page_container");
     mainpage.innerHTML = "";
@@ -213,24 +219,24 @@ function LoadContainedPage(PageClass, foreground_available){
         enterPage(page_scheduler, GetCurrentTime());
     }
 
-    if (foreground_available){
-        foreground.toy.setOnDraw(() => {
-            if (foreground.toy){
-                main_scheduler.setTime(foreground.toy.getTime());
-                page_scheduler.setTime(foreground.toy.getTime());
-            }
-            currentPage.update();
-            main_scheduler.nextEvent();
-        });
+    if (false){
+        // if (foreground.toy){
+        //     // main_scheduler.setTime(foreground.toy.getTime());
+        //     // page_scheduler.setTime(foreground.toy.getTime());
+        // }
+        // currentPage.update();
+        // main_scheduler.nextEvent();
     }else{
         const updateWithFrame = () => {
             currentPage.update();
+            main_scheduler.nextEvent();
             requestAnimationFrame(updateWithFrame);
         };
+        updateWithFrame();
     }
 
     if (SHOW_DEBUG_BORDERS){
-        page_scheduler.addEvent(5, () => AddDebugBorders(mainpage));
+        main_scheduler.addEvent(5, () => AddDebugBorders(mainpage));
     }
 }
 
@@ -247,7 +253,7 @@ function historyStateCallback(e, ispop){
     if (pageParams.has("post") && currentPage && currentPage.getProps().name=="blog" && name=="blog"){
         currentPage.leaveBlogPage(pageParams.get("post"), page_scheduler, GetCurrentTime(), ispop);
     }else{
-        leavePage(pageClassesNamedMap[name], main_scheduler, GetCurrentTime(), "", ispop);
+        leavePage(pageClassesNamedMap[name], main_scheduler, GetMainCurrentTime(), "", ispop);
     }
 }
 

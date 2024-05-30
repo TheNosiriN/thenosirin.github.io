@@ -16,6 +16,8 @@ class TypeWriterEffect {
         this.insertTemp = false;
         this.tempElement = null;
         this.currentSpan = null;
+        this.tempTimeout = null;
+        this.interval = null;
         this.stop();
     }
 
@@ -66,7 +68,7 @@ class TypeWriterEffect {
             switch (txt.type) {
                 case 1: // Wait
                 this.stop();
-                setTimeoutH(() => {
+                this.tempTimeout = setTimeoutH(() => {
                     this.index++;
                     this.play();
                 }, txt.time);
@@ -102,7 +104,8 @@ class TypeWriterEffect {
 
     stop(){
         this.isPlaying = false;
-        clearInterval(this.interval);
+        if (this.tempTimeout){ clearTimeout(this.tempTimeout); }
+        if (this.interval){ clearInterval(this.interval); }
     }
 
     getIndex(){
@@ -136,7 +139,6 @@ class TypeWriterEffect {
 
 class TypeWriterEffectHTML {
     constructor(element, options){
-        this.setContent(options.content);
         this.typeDelay = options.typeDelay || 50;
         this.autowaits = options.autowaits || {};
         this.onFinished = options.onFinished;
@@ -144,16 +146,19 @@ class TypeWriterEffectHTML {
 
         this.reset();
         this.element = element;
+        this.setContent(options.content);
     }
 
     reset(){
+        this.stop();
         this.pos = 0;
         this.pauses = 0;
         this.stack = [];
         this.map = [];
         this.isPlaying = false;
         this.firsttime = true;
-        this.stop();
+        this.tempTimeout = null;
+        this.interval = null;
     }
 
     play(){
@@ -165,9 +170,8 @@ class TypeWriterEffectHTML {
         if (this.pauses <= 0){
             this.pauses = 0;
             this.isPlaying = true;
-        }else{
-            return;
         }
+        if (!this.isPlaying) return;
 
         if (this.firsttime){
             this.stack.push({ wordindex: 0, mapindex: 0 });
@@ -223,7 +227,8 @@ class TypeWriterEffectHTML {
     stop(){
         this.isPlaying = false;
         this.pauses += 1;
-        clearInterval(this.interval);
+        if (this.tempTimeout){ clearTimeout(this.tempTimeout); }
+        if (this.interval){ clearInterval(this.interval); }
     }
 
     wait(time){
