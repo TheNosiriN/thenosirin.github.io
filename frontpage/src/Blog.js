@@ -90,7 +90,7 @@ function ContainedPage_Blog(scheduler){
                 const waitInt = setIntervalH(() => {
                     if (!el.complete){ return; }
                     typer.play();
-                    el.dataset.startTime = GetCurrentTime();
+                    el.dataset.startTime = GetCurrentRenderTime();
                     updateAnimatedRectDivs();
                     el.style.opacity = 1;
                     clearInterval(waitInt);
@@ -130,13 +130,23 @@ function ContainedPage_Blog(scheduler){
         });
     }
 
-    function enterBlogPage(promise, scheduler, time_entered){
-        // load new page
-        const props = indexjson[currentPostid];
-        if (!props){
-            var dom = new DOMParser().parseFromString(`<p>Cannot find "${currentPostid}" page in index.json file</p>`, "text/html").body;
+    function enterBlogPage(promise, props, scheduler, time_entered){
+        typer = new TypeWriterEffectHTML(pagediv, {
+            typeDelay: 45,
+            autowaits: {
+                ',': 500, ':': 500, '.': 850, '?': 850, '!':850,
+                "H1": 500, "H2": 500,
+                "IMG": 2000,
+            }
+        });
+
+        if (!promise){
+            document.querySelector(".blogpage #page_cont").classList.remove("closed");
+            var dom = new DOMParser().parseFromString(`<p>Cannot find "${currentPostid}" page in index file</p>`, "text/html").body;
             typer.setContent(dom);
-            typer.play();
+            scheduler.addEvent(time_entered+2, () => {
+                typer.play();
+            });
             return;
         }
 
@@ -156,9 +166,8 @@ function ContainedPage_Blog(scheduler){
         }
 
         promise.then((text) => {
-            let transition = document.querySelector(".blogpage #page_cont");
-            transition.classList.remove("closed");
-
+            document.querySelector(".blogpage #page_cont").classList.remove("closed");
+            
             // use json props
             document.getElementById("title_text").innerText = props.title;
             if (props.id != "welcome"){
@@ -168,17 +177,7 @@ function ContainedPage_Blog(scheduler){
             // parse page text
             let dom = new DOMParser().parseFromString(mdConverter.makeHtml(text), "text/html").body;
             PreprocessPage(currentPostid, dom);
-
-            // play
-            typer = new TypeWriterEffectHTML(pagediv, {
-                content: dom,
-                typeDelay: 45,
-                autowaits: {
-                    ',': 500, '.': 850, ':': 500,
-                    "H1": 500, "H2": 500,
-                    "IMG": 2000,
-                }
-            });
+            typer.setContent(dom);
             scheduler.addEvent(time_entered+2, () => {
                 typer.play();
             });
@@ -197,11 +196,15 @@ function ContainedPage_Blog(scheduler){
         }
 
         currentPostid = postid;
-        let promise = LoadPageFile(currentPostid);
+        const props = indexjson[currentPostid];
+        var promise = null;
+        if (props){
+            promise = LoadPageFile(currentPostid);
+        }
 
-        scheduler.addEvent(time_entered + 1, (time) => {
+        scheduler.addEvent(time_entered + 0.25, (time) => {
             resetBlogPage();
-            enterBlogPage(promise, scheduler, 0);
+            enterBlogPage(promise, props, scheduler, 0);
 
             let pageprops = new ContainedPage_Blog().getProps();
             pageprops.blog_postid = postid;
@@ -257,7 +260,14 @@ function ContainedPage_Blog(scheduler){
 
         BuildIndex("blog/index.json", (json) => {
             indexjson = json;
-            enterBlogPage(LoadPageFile(currentPostid), scheduler, GetCurrentTime());
+
+            const props = indexjson[currentPostid];
+            var promise = null;
+            if (props){
+                promise = LoadPageFile(currentPostid);
+            }
+
+            enterBlogPage(promise, props, scheduler, GetCurrentTime());
 
             const setuplist = (list) => {
                 let results = document.getElementById("search_results");
@@ -340,12 +350,7 @@ function ContainedPage_Blog(scheduler){
             div.dataset.paddingBottom = -10;
             div.dataset.paddingRight = -1;
             el.appendChild(div);
-        }); {
-            // let transition = document.querySelector(".blogpage #index_cont>.animated_transition");
-            // transition.dataset.speed = 0.4;
-            // transition.dataset.startTime = 0;
-            // transition.dataset.stopTime = -10;
-        }
+        });
 
         // configure nav buttons
         {

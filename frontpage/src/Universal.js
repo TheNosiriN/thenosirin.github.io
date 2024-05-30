@@ -146,11 +146,14 @@ var rendertimeout = 8;
 
 
 function GetCurrentTime(){
-    // return foreground.toy.getTime();
     return page_scheduler ? page_scheduler.time : 0;
 }
 
-function GetMainCurrentTime(){
+function GetCurrentRenderTime(){
+    return foreground.toy.getTime();
+}
+
+function GetCurrentMainTime(){
     return main_scheduler ? main_scheduler.time : 0;
 }
 
@@ -253,7 +256,7 @@ function historyStateCallback(e, ispop){
     if (pageParams.has("post") && currentPage && currentPage.getProps().name=="blog" && name=="blog"){
         currentPage.leaveBlogPage(pageParams.get("post"), page_scheduler, GetCurrentTime(), ispop);
     }else{
-        leavePage(pageClassesNamedMap[name], main_scheduler, GetMainCurrentTime(), "", ispop);
+        leavePage(pageClassesNamedMap[name], main_scheduler, GetCurrentMainTime(), "", ispop);
     }
 }
 
@@ -265,7 +268,7 @@ function leavePage(PageClass, scheduler, time_entered, searchqueries="", ispop=f
     div.style.display = "block";
     div.dataset.type = 4;
     div.dataset.startTime = 0;
-    div.dataset.stopTime = time_entered;
+    div.dataset.stopTime = GetCurrentRenderTime();
     div.dataset.speed = 0.75;
     div.style.opacity = 0;
     if (currentPage.onexit){ currentPage.onexit(); }
