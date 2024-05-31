@@ -1,5 +1,5 @@
 # Welcome Page
-This is the blog I use to rant about whatever I want. I talk about programming, projects, work, etc.
+This is the blog I use to rant about whatever I want. I talk about programming, projects, work, ideas, math, space, etc.
 
 
 ## Controls
@@ -9,4 +9,8 @@ You can also find an index on the left (on wide screens), or at the top (on tall
 
 
 ## How it works
-Every blog post is written in markdown, parsed to html, and dynamically inserted over time to this page you see here. It includes several pauses and transitions while being inserted over time to provide a nice reading experience.
+Every blog post is written in markdown, parsed to html, and then typed by me in real-time. I include several pauses and transitions while I'm typing to grab your attention and provide a nice reading experience.
+
+
+## Disclaimer
+I created this blog, or rather this website, quite late, so some blog post dates before "May 2024" may not reflect the actual date I made the post or project.

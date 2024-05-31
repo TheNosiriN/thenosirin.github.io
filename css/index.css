@@ -258,7 +258,7 @@
     color: var(--reading-text-col);
     /* font-family: BPdots; */
     font-family: RobotoMono, monospace;
-    font-weight: lighter;
+    font-weight: 200;
     text-decoration: none;
     text-align: left;
     /* text-rendering: optimizeLegibility; */
