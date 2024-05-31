@@ -3,7 +3,8 @@ var ReadyToStart = false;
 function StartShaderDemo(){
     canvas = document.querySelector("#background_canvas");
     toy = new ShaderToyLite(canvas, {
-        powerPreference: "high-performance"
+        powerPreference: "high-performance",
+        preserveDrawingBuffer: true
     });
     gl = toy.getContext();
 
@@ -58,7 +59,7 @@ window.addEventListener("DOMContentLoaded", () => {
     warning_text = document.getElementById("warning_text");
 
     scheduler.addEvent(2, () => {
-        warning_text.children[0].innerHTML = "This scene is rendered in real-time";
+        warning_text.children[0].innerHTML = "This scene is raytraced in real-time";
         warning_text.style.opacity = 1;
     });
     scheduler.addEvent(5, () => {
