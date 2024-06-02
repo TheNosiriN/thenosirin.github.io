@@ -47,7 +47,7 @@ function ContainedPage_Frontpage(scheduler){
 
         // from text to transition
         scheduler.addEvent(9.5, (time) => {
-            leavePage(ContainedPage_Home, main_scheduler, time);
+            leavePage(ContainedPage_Home, main_scheduler, GetCurrentMainTime());
         });
     }
 
@@ -86,17 +86,7 @@ for (var i=0; i<pageClasses.length; ++i){
 
 
 
-window.addEventListener("beforeunload", (e) => {
-    leavePage("", main_scheduler, GetCurrentMainTime(), "", false);
-});
-window.addEventListener("pushstate", (e) => {
-    historyStateCallback(e, false);
-});
-window.addEventListener("popstate", (e) => {
-    historyStateCallback(e, true);
-});
-
-window.addEventListener("DOMContentLoaded", () => {
+function StartPortfolioSite(){
     var PageClass = ContainedPage_Frontpage;
     const pageParams = new URLSearchParams(window.location.search);
     if (pageParams.has("page")){
@@ -113,4 +103,21 @@ window.addEventListener("DOMContentLoaded", () => {
             LoadContainedPage(PageClass, false);
         });
     });
+}
+
+
+
+window.addEventListener("pushstate", (e) => {
+    historyStateCallback(e, false);
 });
+window.addEventListener("popstate", (e) => {
+    historyStateCallback(e, true);
+});
+
+if (document.readyState === "loading") {
+    // Loading hasn't finished yet
+    document.addEventListener("DOMContentLoaded", StartPortfolioSite);
+} else {
+    // `DOMContentLoaded` has already fired
+    StartPortfolioSite();
+}

@@ -4,7 +4,7 @@ const IS_LOCAL_HOST = (
     location.hostname === ""
 );
 
-const SHOW_DEBUG_BORDERS = false;
+const SHOW_DEBUG_BORDERS = true;
 const SHOW_ANIMATED_TRANSITIONS = true;
 
 // var BackgroundColor = {x:0.227, y:0.231, z:0.235};

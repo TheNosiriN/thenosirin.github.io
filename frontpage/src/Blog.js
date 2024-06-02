@@ -54,14 +54,14 @@ function ContainedPage_Blog(scheduler){
         typer.play();
         if (!typer.isPlaying)return;
         document.getElementById("btn_play").style.display = "none";
-        document.getElementById("btn_pause").style.display = "initial";
+        document.getElementById("btn_pause").style.display = "flex";
     }
     function func_btn_pause(e){
         if (!typer)return;
         typer.stop();
         if (typer.isPlaying)return;
         document.getElementById("btn_pause").style.display = "none";
-        document.getElementById("btn_play").style.display = "initial";
+        document.getElementById("btn_play").style.display = "flex";
     }
     function func_btn_foward(){
         const counter = typer.counter;

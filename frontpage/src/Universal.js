@@ -110,8 +110,7 @@ class TimeScheduler {
 
 function AddDebugBorders(element, level=0){
     const colors = ["red", "blue", "lime"];
-    element.style.border = "2px solid";
-    element.style.borderColor = colors[level % colors.length];
+    element.style.border = `2px ${colors[level % colors.length]} solid`;
     for (const child of element.children) {
         // if (child.tagName != "DIV")continue;
         AddDebugBorders(child, level+1);
@@ -232,30 +231,23 @@ function LoadContainedPage(PageClass, foreground_available){
 
     currentPage.setup();
     RefreshAnimatedRectDivs();
-    // setIntervalH(updateAnimatedRectDivs, 8);
     if (props.name != "frontpage"){
         enterPage(page_scheduler, GetCurrentTime());
     }
 
-    if (false){
-        // if (foreground.toy){
-        //     // main_scheduler.setTime(foreground.toy.getTime());
-        //     // page_scheduler.setTime(foreground.toy.getTime());
-        // }
-        // currentPage.update();
-        // main_scheduler.nextEvent();
-    }else{
-        const updateWithFrame = () => {
-            currentPage.update();
-            main_scheduler.nextEvent();
-            updateAnimatedRectDivs();
-            requestAnimationFrame(updateWithFrame);
-        };
-        updateWithFrame();
-    }
+    const updateWithFrame = () => {
+        currentPage.update();
+        main_scheduler.nextEvent();
+        updateAnimatedRectDivs();
+        requestAnimationFrame(updateWithFrame);
+    };
+    updateWithFrame();
 
     if (SHOW_DEBUG_BORDERS){
-        main_scheduler.addEvent(5, () => AddDebugBorders(mainpage));
+        // main_scheduler.addEvent(5, () => AddDebugBorders(mainpage));
+        document.addEventListener("keypress", (event) => {
+            if (event.key === "D") { AddDebugBorders(mainpage); }
+        });
     }
 }
 
@@ -341,6 +333,7 @@ function RefreshAnimatedRectDivs(){
     for (var i=0; i<total_length; rect_array_list.push(new ForegroundRectData()), ++i);
 
     const gl = foreground.gl;
+    gl.finish();
     gl.bindBuffer(gl.ARRAY_BUFFER, rects_buffer);
     gl.bufferData(gl.ARRAY_BUFFER, RectBufferStride * RectVertexCount * total_length, gl.DYNAMIC_DRAW);
     foreground.toy.setDrawCount(rect_div_list.length * RectVertexCount);
@@ -422,6 +415,7 @@ function updateAnimatedRectDivs(){
         timeoutObj = setTimeoutH(() => {
             foreground.toy.pause();
             console.log("paused rendering");
+            foreground.gl.clear(foreground.gl.COLOR_BUFFER_BIT);
         }, (ctimeout + rendertimeout) * 1000);
         if (!foreground.toy.getIsPlaying()){ foreground.toy.play(); }
     }
