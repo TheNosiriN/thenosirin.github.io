@@ -144,24 +144,25 @@ class TypeWriterEffectHTML {
         this.onFinished = options.onFinished;
         this.onInserted = options.onInserted;
 
-        this.reset();
         this.element = element;
         this.setContent(options.content);
+        this.reset();
     }
 
     reset(){
         this.stop();
-        this.pos = 0;
-        this.pauses = 0;
         this.stack = [];
-        this.map = [];
+        this.pos = 0;
+        this.counter = 0;
+        this.pauses = 0;
         this.isPlaying = false;
         this.firsttime = true;
         this.tempTimeout = null;
         this.interval = null;
+        this.map.forEach(e => e.node.innerHTML="");
     }
 
-    play(){
+    play(startCounter=0){
         if (this.map.length==0){
             this.isPlaying = false;
             return;
@@ -179,7 +180,7 @@ class TypeWriterEffectHTML {
             this.firsttime = false;
         }
 
-        const write = () => {
+        const write = (nowait=false) => {
             if (!this.isPlaying) return;
 
             if (this.stack.length == 0){
@@ -190,9 +191,10 @@ class TypeWriterEffectHTML {
 
             var stackelement = this.stack[this.stack.length-1];
             const el = this.map[stackelement.mapindex];
+            this.counter += 1;
 
             if (stackelement.wordindex >= el.words.length){
-                this.wait(this.autowaits[el.node.tagName]);
+                if (!nowait){ this.wait(this.autowaits[el.node.tagName]); }
                 this.stack.pop();
                 return;
             }
@@ -204,7 +206,7 @@ class TypeWriterEffectHTML {
                     const char = txt.charAt(this.pos);
                     this.pos++;
                     el.node.innerHTML += char;
-                    this.wait(this.autowaits[char]);
+                    if (!nowait){ this.wait(this.autowaits[char]); }
                     if (this.onInserted) { this.onInserted(char, this); }
                 } else {
                     this.pos = 0;
@@ -220,6 +222,11 @@ class TypeWriterEffectHTML {
                 stackelement.wordindex++;
             }
         };
+
+        for (var i=0; i<startCounter; ++i){
+            write(true);
+            if (this.stack.length == 0)break;
+        }
 
         this.interval = setIntervalH(write, this.typeDelay);
     }
@@ -242,8 +249,9 @@ class TypeWriterEffectHTML {
     }
 
     setContent(c){
-        if (!c)return;
         this.content = c;
+        this.map = [];
+        if (!c)return;
 
         const cloneNode = (node) => {
             var newnode = node.cloneNode(false);

@@ -131,6 +131,20 @@ function animateText(id, animation_class, delay){
 }
 
 
+function ResolveHtmlAppends(element) {
+    const path = element.getAttribute("append-html");
+    if (path){
+        fetch(UTILS.getSitePath()+path).then(response => response.text()).then((html) => {
+            element.innerHTML += html;
+            Array.from(element.children).forEach(c => ResolveHtmlAppends(c));
+        });
+    }else{
+        Array.from(element.children).forEach(c => ResolveHtmlAppends(c));
+    }
+
+}
+
+
 
 var main_scheduler;
 var page_scheduler;
@@ -213,11 +227,12 @@ function LoadContainedPage(PageClass, foreground_available){
     const props = currentPage.getProps();
     mainpage.innerHTML = pageClassesMap[props.name];
     mainpage.classList.add(props.css);
+    ResolveHtmlAppends(mainpage);
     document.title = props.title + " - Portfolio site ver. 2";
 
     currentPage.setup();
     RefreshAnimatedRectDivs();
-    setIntervalH(updateAnimatedRectDivs, 8);
+    // setIntervalH(updateAnimatedRectDivs, 8);
     if (props.name != "frontpage"){
         enterPage(page_scheduler, GetCurrentTime());
     }
@@ -233,6 +248,7 @@ function LoadContainedPage(PageClass, foreground_available){
         const updateWithFrame = () => {
             currentPage.update();
             main_scheduler.nextEvent();
+            updateAnimatedRectDivs();
             requestAnimationFrame(updateWithFrame);
         };
         updateWithFrame();

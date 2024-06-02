@@ -239,13 +239,6 @@
 
 
 
-.blogpage .center_container {
-    /* width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center; */
-}
-
 .blogpage #main_content {
     position: relative;
     width: 100%;
@@ -253,15 +246,13 @@
     margin-bottom: 50vh;
     display: grid;
     grid-template-columns: 2fr 1fr;
-    grid-gap: 25px;
+    gap: 25px;
 
     color: var(--reading-text-col);
-    /* font-family: BPdots; */
     font-family: RobotoMono, monospace;
     font-weight: 200;
     text-decoration: none;
     text-align: left;
-    /* text-rendering: optimizeLegibility; */
 }
 
 .blogpage .title_div {
@@ -303,10 +294,6 @@
     max-width: 96vw;
 }
 
-.blogpage .title_div .nav_buttons {
-    /* width: 100%; */
-}
-
 .blogpage .title_div .nav_buttons div {
     display: inline-block;
     color: var(--white-col);
@@ -332,6 +319,44 @@
     height: 0.2em;
 }
 
+.blogpage #page_grid_div {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.blogpage #index_grid_div > div {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 25px;
+    top: 25px;
+    position: sticky;
+    z-index: 10;
+}
+
+.blogpage .playback_btn_grid {
+    width: 100%;
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+.blogpage .playback_btn {
+    /* border: 2px var(--white-col) solid; */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    color: var(--white-col);
+    cursor: pointer;
+}
+.blogpage .playback_btn:active {
+    color: var(--alt-tone-col);
+}
+.blogpage .playback_btn_grid svg {
+    width: min(100%, 4em);
+    height: auto;
+}
+
 .blogpage #page_cont, .blogpage #index_cont, .blogpage #comment_cont {
     padding: 2%;
     overflow: hidden;
@@ -349,6 +374,7 @@
     }
     .blogpage #index_grid_div {
         order: -1;
+        position: relative;
     }
     .blogpage #main_content {
         grid-template-columns: 1fr;
@@ -398,7 +424,6 @@
 .blogpage #search_results_parent {
     display: grid;
     width: calc(100% - 10px);
-    height: 50vh;
     padding: 0.5em;
     margin-top: 0.25em;
     padding-bottom: 1em;
@@ -412,7 +437,6 @@
     flex-direction: column;
     overflow-x: hidden;
     overflow-y: auto;
-    /* position: absolute; */
     left: 0%;
     top: 0%;
     width: 100%;

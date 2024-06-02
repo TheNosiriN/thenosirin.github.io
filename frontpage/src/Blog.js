@@ -42,6 +42,43 @@ function ContainedPage_Blog(scheduler){
     var mdConverter;
     var currentPostid;
 
+    function func_btn_rewind(){
+        const counter = typer.counter;
+        const wasplaying = typer.isPlaying;
+        typer.reset();
+        typer.play(counter-2);
+        if (!wasplaying){ typer.stop(); }
+    }
+    function func_btn_play(){
+        if (!typer)return;
+        typer.play();
+        if (!typer.isPlaying)return;
+        document.getElementById("btn_play").style.display = "none";
+        document.getElementById("btn_pause").style.display = "initial";
+    }
+    function func_btn_pause(e){
+        if (!typer)return;
+        typer.stop();
+        if (typer.isPlaying)return;
+        document.getElementById("btn_pause").style.display = "none";
+        document.getElementById("btn_play").style.display = "initial";
+    }
+    function func_btn_foward(){
+        const counter = typer.counter;
+        const wasplaying = typer.isPlaying;
+        typer.reset();
+        typer.play(counter+2);
+        if (!wasplaying){ typer.stop(); }
+    }
+    function func_btn_reset(){
+        if (!typer)return;
+        const wasplaying = typer.isPlaying;
+        typer.reset();
+        if (wasplaying){ typer.play(); }
+    }
+    function func_btn_setspeed(){
+    }
+
     function resetBlogPage(){
         typer.reset();
         scheduler.clear();
@@ -88,10 +125,8 @@ function ContainedPage_Blog(scheduler){
 
             image.typeWriterCallback = (el) => {
                 foreground.backgroundColor = BackgroundColor;
-                typer.stop();
                 const waitInt = setIntervalH(() => {
                     if (!el.complete){ return; }
-                    typer.play();
                     el.dataset.startTime = GetCurrentRenderTime();
                     updateAnimatedRectDivs();
                     el.style.opacity = 1;
@@ -127,7 +162,6 @@ function ContainedPage_Blog(scheduler){
                 obj.time = new Date(obj.time);
                 obj.shortdate = obj.time.getDate()+' '+obj.time.toLocaleString('en-us', {month: "short"})+' '+obj.time.getFullYear();
             }
-
             callback(json);
         });
     }
@@ -148,7 +182,7 @@ function ContainedPage_Blog(scheduler){
             var dom = new DOMParser().parseFromString(`<p>Cannot find "${currentPostid}" page in index file</p>`, "text/html").body;
             typer.setContent(dom);
             scheduler.addEvent(time_entered+2, () => {
-                typer.play();
+                func_btn_play();
             });
             return;
         }
@@ -183,19 +217,28 @@ function ContainedPage_Blog(scheduler){
             PreprocessPage(currentPostid, dom);
             typer.setContent(dom);
             scheduler.addEvent(time_entered+2, () => {
-                typer.play();
+                func_btn_play();
             });
 
             // comments
-            utterances = document.createElement("script");
-            utterances.setAttribute("src", "https://utteranc.es/client.js");
-            utterances.setAttribute("repo", "TheNosiriN/thenosirin.github.io");
-            utterances.setAttribute("issue-term", props.id);
-            utterances.setAttribute("label", "Comment");
-            utterances.setAttribute("theme", "github-dark-orange");
-            utterances.setAttribute("crossorigin", "anonymous");
-            utterances.setAttribute("async", true);
-            commentdiv.appendChild(utterances);
+            giscus = document.createElement("script");
+            giscus.setAttribute("src", "https://giscus.app/client.js");
+            giscus.setAttribute("data-repo", "TheNosiriN/thenosirin.github.io");
+            giscus.setAttribute("data-repo-id", "MDEwOlJlcG9zaXRvcnkzNzI2NTk4MTk=");
+            giscus.setAttribute("data-category", "Announcements");
+            giscus.setAttribute("data-category-id", "DIC_kwDOFjZWa84Cfy3L");
+            giscus.setAttribute("data-mapping", "specific");
+            giscus.setAttribute("data-term", props.title);
+            giscus.setAttribute("data-strict", "0");
+            giscus.setAttribute("data-reactions-enabled", "1");
+            giscus.setAttribute("data-emit-metadata", "0");
+            giscus.setAttribute("data-input-position", "top");
+            giscus.setAttribute("data-theme", "noborder_gray");
+            giscus.setAttribute("data-lang", "en");
+            giscus.setAttribute("data-loading", "lazy");
+            giscus.setAttribute("crossorigin", "anonymous");
+            giscus.setAttribute("async", true);
+            commentdiv.appendChild(giscus);
         });
     }
 
@@ -207,7 +250,7 @@ function ContainedPage_Blog(scheduler){
         if (currentPostid){
             let divs = document.querySelectorAll(".blogpage #page_cont, .blogpage #comment_cont");
             for (d of divs){ d.classList.add("closed"); }
-            if (typer){ typer.stop(); }
+            if (typer){ func_btn_pause(); }
         }
 
         currentPostid = postid;
@@ -346,7 +389,6 @@ function ContainedPage_Blog(scheduler){
             el.style.backgroundColor = `rgb(
                 ${BackgroundColor.x*255}, ${BackgroundColor.y*255}, ${BackgroundColor.z*255}
             )`;
-            el.style.position = "relative";
 
             const border_width = "24";
             var div = document.createElement("div");
@@ -379,6 +421,36 @@ function ContainedPage_Blog(scheduler){
                     e.preventDefault();
                 };
             });
+        }
+
+        // configure playback buttons
+        {
+            let funcs = [
+                func_btn_rewind,
+                func_btn_play,
+                func_btn_pause,
+                func_btn_foward,
+                func_btn_reset,
+                func_btn_setspeed
+            ];
+
+            // let buttons = document.querySelectorAll(".blogpage .playback_btn");
+            // buttons.forEach((b, i) => {
+            //     b.onclick = funcs[i];
+            // });
+
+            const setupLongClick = (e, func) => {
+                var interval;
+                e.onmousedown = () => { interval = setInterval(func, 16); }
+                e.onmouseup = () => { clearInterval(interval); }
+            };
+
+            setupLongClick(document.getElementById("btn_rewind"), func_btn_rewind);
+            document.getElementById("btn_play").onclick = func_btn_play;
+            document.getElementById("btn_pause").onclick = func_btn_pause;
+            setupLongClick(document.getElementById("btn_foward"), func_btn_foward);
+            document.getElementById("btn_reset").onclick = func_btn_reset;
+            document.getElementById("btn_setspeed").onclick = func_btn_setspeed;
         }
     }
 
