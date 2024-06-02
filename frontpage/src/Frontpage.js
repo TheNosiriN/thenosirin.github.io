@@ -98,10 +98,12 @@ function StartPortfolioSite(){
     if (SHOW_DEBUG_BORDERS){
         // main_scheduler.addEvent(5, () => AddDebugBorders(mainpage));
         document.addEventListener("keypress", (event) => {
-            if (event.key === "D") { AddDebugBorders(mainpage); }
+            if (event.key === "D") {
+                AddDebugBorders(document.getElementById("main_page_container"));
+            }
         });
     }
-    
+
     LoadPageClasses(pageClasses, () => {
         StartForegroundRenderer(() => {
             ResetPageResources();
