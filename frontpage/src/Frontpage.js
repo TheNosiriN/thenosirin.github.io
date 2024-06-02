@@ -87,7 +87,7 @@ for (var i=0; i<pageClasses.length; ++i){
 
 
 window.addEventListener("beforeunload", (e) => {
-    leavePage("", scheduler, GetCurrentTime());
+    leavePage("", main_scheduler, GetCurrentMainTime(), "", false);
 });
 window.addEventListener("pushstate", (e) => {
     historyStateCallback(e, false);
