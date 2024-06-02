@@ -242,13 +242,6 @@ function LoadContainedPage(PageClass, foreground_available){
         requestAnimationFrame(updateWithFrame);
     };
     updateWithFrame();
-
-    if (SHOW_DEBUG_BORDERS){
-        // main_scheduler.addEvent(5, () => AddDebugBorders(mainpage));
-        document.addEventListener("keypress", (event) => {
-            if (event.key === "D") { AddDebugBorders(mainpage); }
-        });
-    }
 }
 
 function historyStateCallback(e, ispop){

@@ -94,6 +94,14 @@ function StartPortfolioSite(){
     }
 
     main_scheduler = new TimeScheduler();
+
+    if (SHOW_DEBUG_BORDERS){
+        // main_scheduler.addEvent(5, () => AddDebugBorders(mainpage));
+        document.addEventListener("keypress", (event) => {
+            if (event.key === "D") { AddDebugBorders(mainpage); }
+        });
+    }
+    
     LoadPageClasses(pageClasses, () => {
         StartForegroundRenderer(() => {
             ResetPageResources();
