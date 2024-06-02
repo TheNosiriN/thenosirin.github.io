@@ -38,6 +38,7 @@ function ContainedPage_Blog(scheduler){
     var typer;
     var pagediv;
     var indexjson;
+    var commentdiv;
     var mdConverter;
     var currentPostid;
 
@@ -45,6 +46,7 @@ function ContainedPage_Blog(scheduler){
         typer.reset();
         scheduler.clear();
         pagediv.innerHTML = "";
+        commentdiv.innerHTML = "";
     }
 
     function LoadPageFile(postid, callback){
@@ -141,7 +143,8 @@ function ContainedPage_Blog(scheduler){
         });
 
         if (!promise){
-            document.querySelector(".blogpage #page_cont").classList.remove("closed");
+            let divs = document.querySelectorAll(".blogpage #page_cont, .blogpage #comment_cont");
+            for (d of divs){ d.classList.remove("closed"); }
             var dom = new DOMParser().parseFromString(`<p>Cannot find "${currentPostid}" page in index file</p>`, "text/html").body;
             typer.setContent(dom);
             scheduler.addEvent(time_entered+2, () => {
@@ -166,8 +169,9 @@ function ContainedPage_Blog(scheduler){
         }
 
         promise.then((text) => {
-            document.querySelector(".blogpage #page_cont").classList.remove("closed");
-            
+            let divs = document.querySelectorAll(".blogpage #page_cont, .blogpage #comment_cont");
+            for (d of divs){ d.classList.remove("closed"); }
+
             // use json props
             document.getElementById("title_text").innerText = props.title;
             if (props.id != "welcome"){
@@ -181,6 +185,17 @@ function ContainedPage_Blog(scheduler){
             scheduler.addEvent(time_entered+2, () => {
                 typer.play();
             });
+
+            // comments
+            utterances = document.createElement("script");
+            utterances.setAttribute("src", "https://utteranc.es/client.js");
+            utterances.setAttribute("repo", "TheNosiriN/thenosirin.github.io");
+            utterances.setAttribute("issue-term", props.id);
+            utterances.setAttribute("label", "Comment");
+            utterances.setAttribute("theme", "github-dark-orange");
+            utterances.setAttribute("crossorigin", "anonymous");
+            utterances.setAttribute("async", true);
+            commentdiv.appendChild(utterances);
         });
     }
 
@@ -190,8 +205,8 @@ function ContainedPage_Blog(scheduler){
 
         // remove old page
         if (currentPostid){
-            let transition = document.querySelector(".blogpage #page_cont");
-            transition.classList.add("closed");
+            let divs = document.querySelectorAll(".blogpage #page_cont, .blogpage #comment_cont");
+            for (d of divs){ d.classList.add("closed"); }
             if (typer){ typer.stop(); }
         }
 
@@ -239,6 +254,7 @@ function ContainedPage_Blog(scheduler){
 
     this.setup = () => {
         pagediv = document.querySelector("#post_page");
+        commentdiv = document.querySelector("#comment_page");
 
         scheduler.addEvent(1.5, () => {
             foreground.backgroundColor = DarkerBackgroundColor;
@@ -364,7 +380,6 @@ function ContainedPage_Blog(scheduler){
                 };
             });
         }
-
     }
 
     this.update = () => {

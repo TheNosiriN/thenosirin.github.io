@@ -332,13 +332,13 @@
     height: 0.2em;
 }
 
-.blogpage #page_cont, .blogpage #index_cont {
+.blogpage #page_cont, .blogpage #index_cont, .blogpage #comment_cont {
     padding: 2%;
     overflow: hidden;
     min-height: 50vh;
     transition: min-height 0.25s ease-out;
 }
-.blogpage #page_cont.closed, .blogpage #index_cont.closed {
+.blogpage #page_cont.closed, .blogpage #index_cont.closed, .blogpage #comment_cont.closed {
     min-height: 0;
     max-height: 0;
 }
@@ -353,7 +353,7 @@
     .blogpage #main_content {
         grid-template-columns: 1fr;
     }
-    .blogpage #page_cont, .blogpage #index_cont {
+    .blogpage #page_cont, .blogpage #index_cont, .blogpage #comment_cont {
         padding-left: 0;
         padding-right: 0;
         margin-left: 0;
@@ -362,18 +362,12 @@
     }
 }
 
-/* .blogpage #index_cont {
-    max-height: 0;
-    overflow: hidden;
-    padding: 0;
-} */
-
 .blogpage #post_page {
     width: 100%;
     height: 100%;
 }
 
-.blogpage #post_page h1, .blogpage #index_cont h1 {
+.blogpage #post_page h1, .blogpage #index_cont h1, .blogpage #comment_cont h1 {
     font-family: QuinqueFive;
     text-transform: uppercase;
     line-height: 1.5;
@@ -467,4 +461,9 @@
 }
 .blogpage .text_field:focus {
     color: var(--reading-text-col);
+}
+
+.utterances-frame {
+    width: 100%;
+    height: 100%;
 }
