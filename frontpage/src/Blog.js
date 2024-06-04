@@ -41,6 +41,7 @@ function ContainedPage_Blog(scheduler){
     var commentdiv;
     var mdConverter;
     var currentPostid;
+    var readingDetails;
 
     function func_btn_rewind(){
         const counter = typer.counter;
@@ -77,6 +78,12 @@ function ContainedPage_Blog(scheduler){
         if (wasplaying){ typer.play(); }
     }
     function func_btn_setspeed(){
+        let el = document.getElementById("reading_details_div");
+        if (el.classList.contains("closed")){
+            el.classList.remove("closed");
+        }else{
+            el.classList.add("closed");
+        }
     }
 
     function resetBlogPage(){
@@ -168,22 +175,28 @@ function ContainedPage_Blog(scheduler){
 
     function enterBlogPage(promise, props, scheduler, time_entered){
         typer = new TypeWriterEffectHTML(pagediv, {
-            typeDelay: 45,
+            typeDelay: readingDetails.speed,
             autowaits: {
                 ',': 500, ':': 500, '.': 850, '?': 850, '!':850,
                 "H1": 500, "H2": 500,
                 "IMG": 2000,
-            }
+            },
+            onFinished: func_btn_pause
         });
 
-        if (!promise){
+        const onerror = () => {
             let divs = document.querySelectorAll(".blogpage #page_cont, .blogpage #comment_cont");
             for (d of divs){ d.classList.remove("closed"); }
-            var dom = new DOMParser().parseFromString(`<p>Cannot find "${currentPostid}" page in index file</p>`, "text/html").body;
+            let dom = new DOMParser().parseFromString(`<p>Cannot find "${currentPostid}" page in index file</p>`, "text/html").body;
+            typer.autowaits = {};
             typer.setContent(dom);
             scheduler.addEvent(time_entered+2, () => {
                 func_btn_play();
             });
+        };
+
+        if (!promise){
+            onerror();
             return;
         }
 
@@ -216,6 +229,7 @@ function ContainedPage_Blog(scheduler){
             let dom = new DOMParser().parseFromString(mdConverter.makeHtml(text), "text/html").body;
             PreprocessPage(currentPostid, dom);
             typer.setContent(dom);
+
             scheduler.addEvent(time_entered+2, () => {
                 func_btn_play();
             });
@@ -239,7 +253,7 @@ function ContainedPage_Blog(scheduler){
             giscus.setAttribute("crossorigin", "anonymous");
             giscus.setAttribute("async", true);
             commentdiv.appendChild(giscus);
-        });
+        }).catch(e => onerror());
     }
 
     function leaveBlogPage(postid, scheduler, time_entered, ispop=false){
@@ -298,6 +312,14 @@ function ContainedPage_Blog(scheduler){
     this.setup = () => {
         pagediv = document.querySelector("#post_page");
         commentdiv = document.querySelector("#comment_page");
+
+        readingDetails = JSON.parse(window.localStorage.getItem("blog_readingDetails"));
+        if (!readingDetails){
+            readingDetails = {
+                speed: 60000 / (238 * 5) // 238 is average reading speed for adults
+            };
+            window.localStorage.setItem("blog_readingDetails", JSON.stringify(readingDetails));
+        }
 
         scheduler.addEvent(1.5, () => {
             foreground.backgroundColor = DarkerBackgroundColor;
@@ -434,11 +456,6 @@ function ContainedPage_Blog(scheduler){
                 func_btn_setspeed
             ];
 
-            // let buttons = document.querySelectorAll(".blogpage .playback_btn");
-            // buttons.forEach((b, i) => {
-            //     b.onclick = funcs[i];
-            // });
-
             const setupLongClick = (e, func) => {
                 var interval;
                 e.onmousedown = () => { interval = setInterval(func, 16); }
@@ -451,6 +468,39 @@ function ContainedPage_Blog(scheduler){
             setupLongClick(document.getElementById("btn_foward"), func_btn_foward);
             document.getElementById("btn_reset").onclick = func_btn_reset;
             document.getElementById("btn_setspeed").onclick = func_btn_setspeed;
+        }
+
+        // configure reading details
+        {
+            let num = document.getElementById("reading_speed_input");
+            num.value = (60000/readingDetails.speed)/5;
+            console.log(num.value);
+            num.oninput = (e) => {
+                if (!num.value || num.value==0)return;
+                // milliseconds_per_minute / reading_speed * average_letters_in_a_word
+                readingDetails.speed = 60000 / (num.value * 5);
+                window.localStorage.setItem("blog_readingDetails", JSON.stringify(readingDetails));
+                console.log(readingDetails.speed);
+                if (typer){
+                    typer.stop();
+                    typer.typeDelay = readingDetails.speed;
+                    typer.play();
+                }
+            };
+        };
+    }
+
+    this.onresize = (width, height) => {
+        const playback = document.getElementById("playback_cont");
+        let parent;
+        if (width <= 600){
+            parent = document.getElementById("main_page_container");
+        }else{
+            parent = document.querySelector("#index_grid_div > div");
+        }
+        if (playback.parentElement !== parent){
+            parent.appendChild(playback);
+            console.log(playback.parentElement);
         }
     }
 

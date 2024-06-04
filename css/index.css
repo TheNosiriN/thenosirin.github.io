@@ -243,13 +243,15 @@
     position: relative;
     width: 100%;
     margin-top: 15vh;
-    margin-bottom: 50vh;
+    margin-bottom: 25vh;
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 25px;
+}
 
+.blogpage .reading_text {
     color: var(--reading-text-col);
-    font-family: RobotoMono, monospace;
+    font-family: var(--reading-text-font);
     font-weight: 200;
     text-decoration: none;
     text-align: left;
@@ -326,11 +328,12 @@
 }
 
 .blogpage #index_grid_div > div {
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
     display: grid;
     grid-template-columns: 1fr;
     gap: 25px;
     top: 25px;
-    position: sticky;
     z-index: 10;
 }
 
@@ -353,8 +356,27 @@
     color: var(--alt-tone-col);
 }
 .blogpage .playback_btn_grid svg {
-    width: min(100%, 4em);
+    width: min(100%, 3em);
     height: auto;
+}
+
+.blogpage #playback_cont {
+    display: grid;
+    grid-template-columns: 1fr;
+    order: -1;
+}
+
+.blogpage #reading_details_div {
+    height: 50px;
+    transition: height 0.25s ease-out;
+    overflow: hidden;
+}
+.blogpage #reading_details_div.closed {
+    height: 0;
+}
+
+.blogpage #reading_details_div div > * {
+    display: inline-block;
 }
 
 .blogpage #page_cont, .blogpage #index_cont, .blogpage #comment_cont {
@@ -368,13 +390,35 @@
     max-height: 0;
 }
 
+
 @media screen and (max-width: 600px) {
     .blogpage .center_container {
         max-width: 100vw;
     }
+
+    .blogpage #playback_cont {
+        display: grid;
+        grid-template-columns: 1fr;
+        position: sticky;
+        width: 100vw;
+        z-index: 11;
+        bottom: 0;
+    }
+    .blogpage #reading_details_div {
+        order: -1;
+    }
+
+    .blogpage #index_grid_div > div {
+        position: relative;
+    }
+    .blogpage #index_cont {
+        height: 50vh;
+    }
+
     .blogpage #index_grid_div {
         order: -1;
         position: relative;
+        margin-bottom: 25px;
     }
     .blogpage #main_content {
         grid-template-columns: 1fr;
@@ -387,6 +431,7 @@
         box-shadow: none;
     }
 }
+
 
 .blogpage #post_page {
     width: 100%;
@@ -480,14 +525,9 @@
     border: none;
     outline: none;
     box-shadow: none;
-    font-family: RobotoMono, monospace;
+    font-family: var(--reading-text-font);
     color: var(--reading-text-col);
 }
 .blogpage .text_field:focus {
     color: var(--reading-text-col);
-}
-
-.utterances-frame {
-    width: 100%;
-    height: 100%;
 }

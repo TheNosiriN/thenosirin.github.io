@@ -30,21 +30,37 @@
                 <div id="page_cont" class="content_background pixel_borders reading_text">
                     <div id="post_page" class="page"></div>
                 </div>
-                <div id="comment_cont" class="content_background pixel_borders">
+                <div id="comment_cont" class="content_background pixel_borders reading_text">
                     <h1>Comments</h1>
                     <div id="comment_page"></div>
                 </div>
             </div>
             <div id="index_grid_div">
                 <div>
-                    <div id="playback_cont" class="content_background pixel_borders">
+                    <div id="playback_cont" class="content_background pixel_borders reading_text">
                         <div class="playback_btn_grid">
                             <div id="btn_rewind" class="playback_btn" append-html="img/sprites/play-backwards.svg"></div>
                             <div id="btn_play" class="playback_btn" append-html="img/sprites/play-button.svg"></div>
                             <div id="btn_pause" class="playback_btn" append-html="img/sprites/play-pause.svg"></div>
                             <div id="btn_foward" class="playback_btn" append-html="img/sprites/play-forwards.svg"></div>
                             <div id="btn_reset" class="playback_btn" append-html="img/sprites/undo.svg"></div>
-                            <div id="btn_setspeed" class="playback_btn" append-html="img/sprites/chevron-down.svg"></div>
+                            <div id="btn_setspeed" class="playback_btn" append-html="img/sprites/details-more.svg"></div>
+                        </div>
+                        <div id="reading_details_div" class="closed">
+                            <div style="width: 100%">
+                                <p>Reading Speed:
+                                    <input type="number" id="reading_speed_input" list="reading_speeds_presets" step="1" min="2" style="width: 6em;">
+                                    <datalist id="reading_speeds_presets">
+                                        <option value="50">
+                                        <option value="100">
+                                        <option value="150">
+                                        <option value="200">
+                                        <option value="250">
+                                        <option value="300">
+                                        <option value="350">
+                                    </datalist>
+                                wpm</p>
+                            </div>
                         </div>
                     </div>
                     <div id="index_cont" class="content_background pixel_borders reading_text">

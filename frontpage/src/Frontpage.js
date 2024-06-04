@@ -124,6 +124,8 @@ window.addEventListener("popstate", (e) => {
     historyStateCallback(e, true);
 });
 
+window.addEventListener("resize", resizeCallback);
+
 if (document.readyState === "loading") {
     // Loading hasn't finished yet
     document.addEventListener("DOMContentLoaded", StartPortfolioSite);

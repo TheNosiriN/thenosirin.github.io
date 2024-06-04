@@ -241,6 +241,8 @@ function LoadContainedPage(PageClass, foreground_available){
         updateAnimatedRectDivs();
         requestAnimationFrame(updateWithFrame);
     };
+
+    resizeCallback();
     updateWithFrame();
 }
 
@@ -259,6 +261,10 @@ function historyStateCallback(e, ispop){
     }else{
         leavePage(pageClassesNamedMap[name], main_scheduler, GetCurrentMainTime(), "", ispop);
     }
+}
+
+function resizeCallback(){
+    if (currentPage && currentPage.onresize){ currentPage.onresize(window.innerWidth, window.innerHeight); }
 }
 
 function leavePage(PageClass, scheduler, time_entered, searchqueries="", ispop=false){

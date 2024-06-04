@@ -27,6 +27,7 @@ body, html {
     --white-col: #fffedd;
     --reading-text-col: lightgrey;
     --alt-tone-col: red;
+    --reading-text-font: RobotoMono, monospace;
 }
 
 ::-webkit-scrollbar {
@@ -48,6 +49,27 @@ body, html {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
     background-color: rgba(0,0,0,0.5);
+}
+
+
+/* Chrome, Safari, Edge, Opera */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+input[type=number] {
+    background-color: rgba(0,0,0,0.2);
+    color: var(--reading-text-col);
+    text-align: right;
+    font-family: var(--reading-text-font);
+    border-radius: 4px;
+    border: 1px var(--reading-text-col) solid;
 }
 
 
@@ -243,7 +265,7 @@ body, html {
 .text_link_highlight:link,
 .text_link_highlight:active,
 .text_link_highlight:visited {
-  text-decoration: none;
+    text-decoration: none;
 }
 
 

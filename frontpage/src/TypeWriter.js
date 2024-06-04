@@ -27,7 +27,7 @@ class TypeWriterEffect {
         const write = () => {
             if (!this.isPlaying) return;
 
-            if (this.index >= this.content.length) {
+            if (this.isdone()) {
                 this.stop();
                 if (this.onFinished) { this.onFinished(this); }
                 return;
@@ -108,6 +108,10 @@ class TypeWriterEffect {
         if (this.interval){ clearInterval(this.interval); }
     }
 
+    isdone(){
+        return this.index >= this.content.length;
+    }
+
     getIndex(){
         return this.index;
     }
@@ -150,7 +154,7 @@ class TypeWriterEffectHTML {
     }
 
     reset(){
-        this.stop();
+        this.stop(true);
         this.stack = [];
         this.pos = 0;
         this.counter = 0;
@@ -178,12 +182,15 @@ class TypeWriterEffectHTML {
             this.stack.push({ wordindex: 0, mapindex: 0 });
             this.element.appendChild(this.map[0].node);
             this.firsttime = false;
+        }else if (this.isdone()){
+            this.isPlaying = false;
+            return;
         }
 
         const write = (nowait=false) => {
             if (!this.isPlaying) return;
 
-            if (this.stack.length == 0){
+            if (this.isdone()){
                 if (this.onFinished) { this.onFinished(this); }
                 this.stop();
                 return;
@@ -231,9 +238,9 @@ class TypeWriterEffectHTML {
         this.interval = setIntervalH(write, this.typeDelay);
     }
 
-    stop(){
+    stop(force=false){
         this.isPlaying = false;
-        this.pauses += 1;
+        this.pauses = force ? 0 : (this.pauses+1);
         if (this.tempTimeout){ clearTimeout(this.tempTimeout); }
         if (this.interval){ clearInterval(this.interval); }
     }
@@ -242,6 +249,10 @@ class TypeWriterEffectHTML {
         if (!time || time <= 0)return;
         this.stop();
         setTimeoutH(() => this.play(), time);
+    }
+
+    isdone(){
+        return this.stack.length == 0;
     }
 
     getIndex(){
