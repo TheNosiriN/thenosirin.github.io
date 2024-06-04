@@ -146,7 +146,8 @@ class TypeWriterEffectHTML {
         this.typeDelay = options.typeDelay || 50;
         this.autowaits = options.autowaits || {};
         this.onFinished = options.onFinished;
-        this.onInserted = options.onInserted;
+        this.onCharInserted = options.onCharInserted;
+        this.onNodeInserted = options.onNodeInserted;
 
         this.element = element;
         this.setContent(options.content);
@@ -201,6 +202,7 @@ class TypeWriterEffectHTML {
             this.counter += 1;
 
             if (stackelement.wordindex >= el.words.length){
+                if (this.onNodeInserted) { this.onNodeInserted(el.node, this); }
                 if (!nowait){ this.wait(this.autowaits[el.node.tagName]); }
                 this.stack.pop();
                 return;
@@ -214,7 +216,7 @@ class TypeWriterEffectHTML {
                     this.pos++;
                     el.node.innerHTML += char;
                     if (!nowait){ this.wait(this.autowaits[char]); }
-                    if (this.onInserted) { this.onInserted(char, this); }
+                    if (this.onCharInserted) { this.onCharInserted(char, this); }
                 } else {
                     this.pos = 0;
                     stackelement.wordindex++;

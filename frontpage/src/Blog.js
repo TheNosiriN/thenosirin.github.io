@@ -181,7 +181,22 @@ function ContainedPage_Blog(scheduler){
                 "H1": 500, "H2": 500,
                 "IMG": 2000,
             },
-            onFinished: func_btn_pause
+            onFinished: func_btn_pause,
+            onNodeInserted: (node, writer) => {
+                const isInViewport = (node) => {
+                    const rect = node.getBoundingClientRect();
+                    return rect.top >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight)
+                };
+
+                if (!isInViewport(node)){
+                    writer.stop();
+                    var interval = setIntervalH(() => {
+                        if (!isInViewport(node))return;
+                        writer.play();
+                        clearInterval(interval);
+                    }, 16);
+                }
+            }
         });
 
         const onerror = () => {
@@ -474,13 +489,11 @@ function ContainedPage_Blog(scheduler){
         {
             let num = document.getElementById("reading_speed_input");
             num.value = (60000/readingDetails.speed)/5;
-            console.log(num.value);
             num.oninput = (e) => {
                 if (!num.value || num.value==0)return;
                 // milliseconds_per_minute / reading_speed * average_letters_in_a_word
                 readingDetails.speed = 60000 / (num.value * 5);
                 window.localStorage.setItem("blog_readingDetails", JSON.stringify(readingDetails));
-                console.log(readingDetails.speed);
                 if (typer){
                     typer.stop();
                     typer.typeDelay = readingDetails.speed;
@@ -500,7 +513,6 @@ function ContainedPage_Blog(scheduler){
         }
         if (playback.parentElement !== parent){
             parent.appendChild(playback);
-            console.log(playback.parentElement);
         }
     }
 

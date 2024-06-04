@@ -85,12 +85,9 @@ function ContainedPage_About(scheduler){
 
     const Content = [
         TypeWriterEffect.wait(3000),
-        TypeWriterEffect.setdelay(50),
 
         "My name is Chinomso Nosiri, ", TypeWriterEffect.wait(1000), "I make cool stuff.\n",
         TypeWriterEffect.wait(700), "\n",
-
-        // TypeWriterEffect.setdelay(45),
 
         "I make pretty graphics, ", TypeWriterEffect.wait(500), "I make pretty games, ", TypeWriterEffect.wait(500), "I make pretty websites, ", TypeWriterEffect.wait(500), "and I make C++ look prettier than it already is.\n",
         TypeWriterEffect.wait(1500), "\n",
@@ -163,7 +160,7 @@ function ContainedPage_About(scheduler){
     function StartPageContent(){
         typer = new TypeWriterEffect(document.getElementById("typed_content"), {
             content: Content,
-            typeDelay: 33,
+            typeDelay: 50,
             onInserted: (lastchar, writer) => {
                 if (lastchar != '\n')return;
                 writer.element.parentElement.parentElement.scrollTop = writer.element.parentElement.parentElement.scrollHeight;
