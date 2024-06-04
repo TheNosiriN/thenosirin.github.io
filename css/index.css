@@ -356,7 +356,7 @@
     color: var(--alt-tone-col);
 }
 .blogpage .playback_btn_grid svg {
-    width: min(100%, 3em);
+    width: min(100%, 2em);
     height: auto;
 }
 
