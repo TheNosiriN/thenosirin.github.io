@@ -451,7 +451,7 @@
         padding-bottom: 50vh;
         margin-left: 0;
         margin-right: 0;
-        border-top: 0.2em var(--white-col) solid;
+        /* border-top: 0.2em var(--white-col) solid; */
     }
     .blogpage #index_cont {
         min-height: 0;
