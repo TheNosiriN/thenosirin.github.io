@@ -35,10 +35,10 @@ class TimeoutHandler {
 
     clear(func, time){
         for (var i=0; i<this.timeouts.length; ++i){
-            clearTimeout(this.timeouts.length);
+            clearTimeout(this.timeouts[i]);
         }
         for (var i=0; i<this.intervals.length; ++i){
-            clearTimeout(this.intervals.length);
+            clearInterval(this.intervals[i]);
         }
     }
 }
