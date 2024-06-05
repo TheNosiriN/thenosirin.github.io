@@ -193,10 +193,10 @@ function ContainedPage_Blog(scheduler){
                 };
 
                 if (!isInViewport(node)){
-                    writer.stop();
+                    func_btn_pause();
                     var interval = setIntervalH(() => {
                         if (!isInViewport(node))return;
-                        writer.play();
+                        func_btn_play();
                         clearInterval(interval);
                     }, 16);
                 }
