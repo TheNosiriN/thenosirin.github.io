@@ -180,8 +180,8 @@ function ContainedPage_Blog(scheduler){
             typeDelay: readingDetails.speed,
             autowaits: {
                 ',': 500, ':': 500, '.': 1000, '?': 1000, '!':1000,
-                "H1": 1000, "H2": 500,
-                "IMG": 2000,
+                "H1": 1000, "H2": 1000,
+                "IMG": 4000,
             },
             onFinished: func_btn_pause,
             onNodeInserted: (node, writer, nowait) => {
