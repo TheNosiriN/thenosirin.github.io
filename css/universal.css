@@ -13,13 +13,13 @@
 
 
 
-body {
+/* body {
     min-height: 100vh;
     min-height: -webkit-fill-available;
-}
+} */
 html {
     scroll-behavior: smooth;
-    height: -webkit-fill-available;
+    /* height: -webkit-fill-available; */
 }
 body, html {
     margin: 0;
