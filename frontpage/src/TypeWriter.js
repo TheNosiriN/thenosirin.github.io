@@ -144,6 +144,7 @@ class TypeWriterEffect {
 class TypeWriterEffectHTML {
     constructor(element, options){
         this.typeDelay = options.typeDelay || 50;
+        this.originalTypeDelay = this.typeDelay;
         this.autowaits = options.autowaits || {};
         this.onFinished = options.onFinished;
         this.onCharInserted = options.onCharInserted;
@@ -188,11 +189,13 @@ class TypeWriterEffectHTML {
             return;
         }
 
-        // const isNoWaitNode = (name) => {
-        //     return (
-        //         name == "CODE"
-        //     );
-        // };
+        var previousTypeDelay = this.typeDelay;
+
+        const isNoWaitNode = (name) => {
+            return (
+                name == "CODE"
+            );
+        };
 
         const write = (nowait=false) => {
             if (!this.isPlaying) return;
@@ -203,6 +206,12 @@ class TypeWriterEffectHTML {
                 return;
             }
 
+            if (previousTypeDelay != this.typeDelay){
+                previousTypeDelay = this.typeDelay;
+                clearInterval(this.interval);
+                this.interval = setIntervalH(write, this.typeDelay);
+            }
+
             var stackelement = this.stack[this.stack.length-1];
             const el = this.map[stackelement.mapindex];
             this.counter += 1;
@@ -211,9 +220,9 @@ class TypeWriterEffectHTML {
                 if (this.onNodeInserted) { this.onNodeInserted(el.node, this, nowait); }
                 if (!nowait){ this.wait(this.autowaits[el.node.tagName]); }
                 this.stack.pop();
-                // if (isNoWaitNode(el.node.tagName)){
-                //     nodeNoWait = nodeNoWait
-                // }
+                if (isNoWaitNode(el.node.tagName)){
+                    this.typeDelay = this.originalTypeDelay;
+                }
                 return;
             }
 
@@ -234,6 +243,10 @@ class TypeWriterEffectHTML {
                 this.stack.push({ wordindex: 0, mapindex: txt });
                 const mapentry = this.map[this.stack[this.stack.length-1].mapindex];
                 el.node.appendChild(mapentry.node);
+                if (isNoWaitNode(mapentry.node.tagName)){
+                    previousTypeDelay = this.typeDelay;
+                    this.typeDelay = Math.sqrt(this.originalTypeDelay);
+                }
                 if (mapentry.node.typeWriterCallback){
                     mapentry.node.typeWriterCallback(mapentry.node);
                 }
@@ -268,6 +281,11 @@ class TypeWriterEffectHTML {
 
     getIndex(){
         return this.index;
+    }
+
+    setdelay(t){
+        this.typeDelay = t;
+        this.originalTypeDelay = t;
     }
 
     setContent(c){

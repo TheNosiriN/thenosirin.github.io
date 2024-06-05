@@ -494,7 +494,7 @@ function ContainedPage_Blog(scheduler){
                 window.localStorage.setItem("blog_readingDetails", JSON.stringify(readingDetails));
                 if (typer){
                     typer.stop();
-                    typer.typeDelay = readingDetails.speed;
+                    typer.setdelay(readingDetails.speed);
                     typer.play();
                 }
             };
