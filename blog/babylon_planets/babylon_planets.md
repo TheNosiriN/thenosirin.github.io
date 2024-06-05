@@ -4,7 +4,7 @@ I've always been obsessed with voxels, terrain procedural generation, and just d
 ## Where it all started
 I remember the first thing I saw that started this idea of planet generation is from a certain shader I saw on [Shadertoy](https://www.shadertoy.com/view/lt3XDM).
 
-![planet_shader](shader1.png)
+![planet_shader](shader1.jpg)
 
 After I saw this I kept wondering, "how can I generate spherical terrain link this?" But that's not even where I started from, of course, as a graphics programmer, I started with making the atmosphere.
 
