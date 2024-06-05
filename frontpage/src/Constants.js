@@ -10,7 +10,7 @@ const SHOW_ANIMATED_TRANSITIONS = true;
 // var BackgroundColor = {x:0.227, y:0.231, z:0.235};
 // var BackgroundColor = {x:0.145, y:0.149, z:0.153};
 var BackgroundColor = {x:0.133, y:0.133, z:0.133};
-var DarkerBackgroundColor = {x:0.050, y:0.050, z:0.050};
+var DarkerBackgroundColor = {x:0.067, y:0.067, z:0.067};
 
 
 var WelcomeMessages = [
