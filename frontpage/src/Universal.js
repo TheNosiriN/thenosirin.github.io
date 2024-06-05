@@ -370,10 +370,10 @@ function updateRectData(div, div_rect, stored_rect, offset_index){
             div.dataset.speed || 1,
             div.dataset.type || 0,
             div.dataset.grid || 1,
-            parseFloat(div.dataset.paddingTop || div.dataset.padding || -1),
-            parseFloat(div.dataset.paddingLeft || div.dataset.padding || -1),
-            parseFloat(div.dataset.paddingBottom || div.dataset.padding || -1),
-            parseFloat(div.dataset.paddingRight || div.dataset.padding || -1),
+            parseFloat(div.dataset.paddingTop || div.dataset.padding || 0),
+            parseFloat(div.dataset.paddingLeft || div.dataset.padding || 0),
+            parseFloat(div.dataset.paddingBottom || div.dataset.padding || 0),
+            parseFloat(div.dataset.paddingRight || div.dataset.padding || 0),
         )
     );
 }

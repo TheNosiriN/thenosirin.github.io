@@ -123,6 +123,8 @@ function ContainedPage_Blog(scheduler){
             image.style.display = "block";
             image.style.marginLeft = "auto";
             image.style.marginRight = "auto";
+            image.style.marginTop = "2em";
+            image.style.marginBottom = "2em";
             image.dataset.speed = 0.5;
             image.dataset.type = 7;
             image.dataset.grid = 1;
@@ -182,7 +184,9 @@ function ContainedPage_Blog(scheduler){
                 "IMG": 2000,
             },
             onFinished: func_btn_pause,
-            onNodeInserted: (node, writer) => {
+            onNodeInserted: (node, writer, nowait) => {
+                if (nowait)return;
+
                 const isInViewport = (node) => {
                     const rect = node.getBoundingClientRect();
                     return rect.top >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight)
@@ -426,15 +430,10 @@ function ContainedPage_Blog(scheduler){
             el.style.backgroundColor = `rgb(
                 ${BackgroundColor.x*255}, ${BackgroundColor.y*255}, ${BackgroundColor.z*255}
             )`;
+        });
 
-            const border_width = "24";
-            var div = document.createElement("div");
-            div.classList.add("animated_transition");
-            div.style.position = "absolute";
-            div.style.height = `calc(100% + ${border_width}px * 2)`;
-            div.style.width = `calc(100% + ${border_width}px * 2)`;
-            div.style.left = `-${border_width}px`;
-            div.style.top = `-${border_width}px`;
+        document.querySelectorAll(".blogpage .animated_transition").forEach((div) => {
+            div.style.pointerEvents = "all";
             div.dataset.grid = 1.0;
             div.dataset.type = 7;
             div.dataset.speed = 0.4;
@@ -444,7 +443,6 @@ function ContainedPage_Blog(scheduler){
             div.dataset.paddingLeft = -10;
             div.dataset.paddingBottom = -10;
             div.dataset.paddingRight = -1;
-            el.appendChild(div);
         });
 
         // configure nav buttons
@@ -507,7 +505,8 @@ function ContainedPage_Blog(scheduler){
         const playback = document.getElementById("playback_cont");
         let parent;
         if (width <= 600){
-            parent = document.getElementById("main_page_container");
+            // parent = document.getElementById("main_page_container");
+            parent = document.body;
         }else{
             parent = document.querySelector("#index_grid_div > div");
         }

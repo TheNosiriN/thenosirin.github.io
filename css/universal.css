@@ -20,10 +20,29 @@ body, html {
     margin: 0;
     padding: 0;
     height: 100%;
+    overflow: hidden;
+}
+
+/* https://css-tricks.com/snippets/css/fluid-typography/ */
+/* font-size: calc([minimum size] + ([maximum size] - [minimum size]) * ((100vw - [minimum viewport width]) / ([maximum viewport width] - [minimum viewport width]))); */
+body {
+    font-size: 14px;
+}
+@media screen and (min-width: 320px) {
+    body {
+        font-size: calc(14px + (22px - 14px) * ((100vw - 320px) / (1920 - 320)));
+    }
+}
+@media screen and (min-width: 1920px) {
+    body {
+        font-size: 22px;
+    }
 }
 
 
 :root {
+    /* --min-font-size: 14px;
+    --max-font-size: 22px; */
     --white-col: #fffedd;
     --reading-text-col: lightgrey;
     --alt-tone-col: red;
@@ -75,20 +94,26 @@ input[type=number] {
 
 
 #foreground_canvas {
-    width: 100%;
-    height: 100%;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
     top: 0;
     left: 0;
+    margin: 0;
+    padding: 0;
     overflow: hidden;
     position: absolute;
     pointer-events: none;
 }
 
 #background_canvas {
-    width: 100%;
-    height: 100%;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
     top: 0;
     left: 0;
+    margin: 0;
+    padding: 0;
     overflow: hidden;
     position: absolute;
 }
@@ -101,34 +126,21 @@ input[type=number] {
 
 .page_container {
     position: fixed;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     top: 0;
     left: 0;
 }
 
-/* https://css-tricks.com/snippets/css/fluid-typography/ */
-/* font-size: calc([minimum size] + ([maximum size] - [minimum size]) * ((100vw - [minimum viewport width]) / ([maximum viewport width] - [minimum viewport width]))); */
-.page_container {
-    font-size: 14px;
-}
-@media screen and (min-width: 320px) {
-    .page_container {
-        font-size: calc(14px + (22px - 14px) * ((100vw - 320px) / (1920 - 320)));
-    }
-}
-@media screen and (min-width: 1920px) {
-    .page_container {
-        font-size: 22px;
-    }
-}
 
 #page_transition {
     position: fixed;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     top: 0;
     left: 0;
+    margin: 0;
+    padding: 0;
     display: none;
     pointer-events: none;
 }
@@ -289,9 +301,18 @@ input[type=number] {
 }
 
 .center_container {
-    width: 75vmax;
+    width: 80vmax;
     max-width: 96vw;
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
+}
+
+
+.reading_text {
+    color: var(--reading-text-col);
+    font-family: var(--reading-text-font);
+    font-weight: 200;
+    text-decoration: none;
+    text-align: left;
 }

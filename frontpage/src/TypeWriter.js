@@ -188,6 +188,12 @@ class TypeWriterEffectHTML {
             return;
         }
 
+        // const isNoWaitNode = (name) => {
+        //     return (
+        //         name == "CODE"
+        //     );
+        // };
+
         const write = (nowait=false) => {
             if (!this.isPlaying) return;
 
@@ -202,9 +208,12 @@ class TypeWriterEffectHTML {
             this.counter += 1;
 
             if (stackelement.wordindex >= el.words.length){
-                if (this.onNodeInserted) { this.onNodeInserted(el.node, this); }
+                if (this.onNodeInserted) { this.onNodeInserted(el.node, this, nowait); }
                 if (!nowait){ this.wait(this.autowaits[el.node.tagName]); }
                 this.stack.pop();
+                // if (isNoWaitNode(el.node.tagName)){
+                //     nodeNoWait = nodeNoWait
+                // }
                 return;
             }
 
@@ -215,8 +224,8 @@ class TypeWriterEffectHTML {
                     const char = txt.charAt(this.pos);
                     this.pos++;
                     el.node.innerHTML += char;
-                    if (!nowait){ this.wait(this.autowaits[char]); }
-                    if (this.onCharInserted) { this.onCharInserted(char, this); }
+                    if (!nowait && el.node.tagName == "P"){ this.wait(this.autowaits[char]); }
+                    if (this.onCharInserted) { this.onCharInserted(char, this, nowait); }
                 } else {
                     this.pos = 0;
                     stackelement.wordindex++;

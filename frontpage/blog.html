@@ -27,10 +27,10 @@
     <div class="center_container">
         <div id="main_content">
             <div id="page_grid_div">
-                <div id="page_cont" class="content_background pixel_borders reading_text">
+                <div id="page_cont" class="content_background animated_transition pixel_borders reading_text">
                     <div id="post_page" class="page"></div>
                 </div>
-                <div id="comment_cont" class="content_background pixel_borders reading_text">
+                <div id="comment_cont" class="content_background animated_transition pixel_borders reading_text">
                     <h1>Comments</h1>
                     <div id="comment_page"></div>
                 </div>
@@ -48,22 +48,15 @@
                         </div>
                         <div id="reading_details_div" class="closed">
                             <div style="width: 100%">
-                                <p>Reading Speed:
-                                    <input type="number" id="reading_speed_input" list="reading_speeds_presets" step="1" min="2" style="width: 6em;">
-                                    <datalist id="reading_speeds_presets">
-                                        <option value="50">
-                                        <option value="100">
-                                        <option value="150">
-                                        <option value="200">
-                                        <option value="250">
-                                        <option value="300">
-                                        <option value="350">
-                                    </datalist>
-                                wpm</p>
+                                <p>Reading Speed: </p>
+                                <div>
+                                    <input type="number" id="reading_speed_input" step="1" min="2">
+                                    <label for="reading_speed_input">wpm</label>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div id="index_cont" class="content_background pixel_borders reading_text">
+                    <div id="index_cont" class="content_background animated_transition pixel_borders reading_text">
                         <h1>Index</h1>
                         <div id="index_page">
                             <input id="search_bar" type="text" class="text_field reading_text" placeholder="Search...">

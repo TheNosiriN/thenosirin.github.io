@@ -245,16 +245,8 @@
     margin-top: 15vh;
     margin-bottom: 25vh;
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: minmax(0, 2.25fr) minmax(0, 1fr);
     gap: 25px;
-}
-
-.blogpage .reading_text {
-    color: var(--reading-text-col);
-    font-family: var(--reading-text-font);
-    font-weight: 200;
-    text-decoration: none;
-    text-align: left;
 }
 
 .blogpage .title_div {
@@ -292,7 +284,7 @@
 }
 
 .blogpage .title_div > div {
-    width: 75vmax;
+    width: 80vmax;
     max-width: 96vw;
 }
 
@@ -337,7 +329,7 @@
     z-index: 10;
 }
 
-.blogpage #playback_cont {
+#playback_cont {
     display: grid;
     grid-template-columns: 1fr;
     order: -1;
@@ -345,7 +337,7 @@
     /* min-height: 1em; */
 }
 
-.blogpage .playback_btn_grid {
+.playback_btn_grid {
     width: 100%;
     display: grid;
     grid-template-rows: 1fr;
@@ -354,7 +346,7 @@
     top: 50%;
     transform: translateY(-50%); */
 }
-.blogpage .playback_btn {
+.playback_btn {
     /* border: 2px var(--white-col) solid; */
     display: flex;
     flex-direction: row;
@@ -363,25 +355,30 @@
     color: var(--white-col);
     cursor: pointer;
 }
-.blogpage .playback_btn:active {
+.playback_btn:active {
     color: var(--alt-tone-col);
 }
-.blogpage .playback_btn_grid svg {
-    width: min(100%, 2em);
+.playback_btn_grid svg {
+    width: min(100%, 2.5em);
     height: auto;
 }
 
-.blogpage #reading_details_div {
-    height: 50px;
-    transition: height 0.25s ease-out;
+#reading_details_div {
+    max-height: calc(2.5em * 3);
+    transition: max-height 0.25s ease-out;
     overflow: hidden;
 }
-.blogpage #reading_details_div.closed {
-    height: 0;
+#reading_details_div.closed {
+    max-height: 0;
 }
 
-.blogpage #reading_details_div div > * {
+#reading_details_div div > * {
     display: inline-block;
+}
+
+#reading_speed_input {
+    width: 4em;
+    font-size: 0.9em;
 }
 
 .blogpage #page_cont, .blogpage #index_cont, .blogpage #comment_cont {
@@ -401,16 +398,32 @@
         max-width: 100vw;
     }
 
-    .blogpage #playback_cont {
+    #playback_cont {
         display: grid;
         grid-template-columns: 1fr;
-        position: sticky;
-        width: 100vw;
+        position: absolute;
+        width: 100%;
         z-index: 11;
         bottom: 0;
+        left: 0;
+
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 0;
+        margin: 0;
+        padding-top: 0.5em;
+        padding-bottom: 0.5em;
     }
-    .blogpage #reading_details_div {
+    #reading_details_div {
         order: -1;
+        padding-left: 2em;
+        padding-right: 2em;
+        font-size: 1.4em;
+    }
+    #reading_speed_input {
+        width: 4em;
+        font-size: 0.9em;
     }
 
     .blogpage #index_grid_div > div {
@@ -441,6 +454,8 @@
 .blogpage #post_page {
     width: 100%;
     height: 100%;
+    font-size: 1.15em;
+    line-height: 1.5;
 }
 
 .blogpage #post_page h1, .blogpage #index_cont h1, .blogpage #comment_cont h1 {
