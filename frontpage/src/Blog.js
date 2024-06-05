@@ -505,8 +505,8 @@ function ContainedPage_Blog(scheduler){
         const playback = document.getElementById("playback_cont");
         let parent;
         if (width <= 600){
-            parent = document.getElementById("main_page_container");
-            // parent = document.body;
+            // parent = document.getElementById("main_page_container");
+            parent = document.body;
         }else{
             parent = document.querySelector("#index_grid_div > div");
         }
@@ -521,6 +521,7 @@ function ContainedPage_Blog(scheduler){
 
     this.onexit = () => {
         foreground.backgroundColor = BackgroundColor;
+        document.body.removeChild(document.getElementById("playback_cont"));
     }
 
     this.getProps = () => {
