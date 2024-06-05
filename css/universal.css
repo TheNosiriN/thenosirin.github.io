@@ -13,10 +13,10 @@
 
 
 
-/* body {
-    min-height: 100vh;
+body {
+    min-height: 100dvh;
     min-height: -webkit-fill-available;
-} */
+}
 html {
     scroll-behavior: smooth;
     /* height: -webkit-fill-available; */
