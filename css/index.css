@@ -439,7 +439,7 @@
         margin-bottom: 25px;
     }
     .blogpage #main_content {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
     .blogpage #page_cont, .blogpage #index_cont, .blogpage #comment_cont {
         padding-left: 0;
