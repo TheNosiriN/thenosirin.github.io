@@ -179,8 +179,8 @@ function ContainedPage_Blog(scheduler){
         typer = new TypeWriterEffectHTML(pagediv, {
             typeDelay: readingDetails.speed,
             autowaits: {
-                ',': 500, ':': 500, '.': 850, '?': 850, '!':850,
-                "H1": 500, "H2": 500,
+                ',': 500, ':': 500, '.': 1000, '?': 1000, '!':1000,
+                "H1": 1000, "H2": 500,
                 "IMG": 2000,
             },
             onFinished: func_btn_pause,

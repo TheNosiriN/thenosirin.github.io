@@ -208,7 +208,7 @@ class TypeWriterEffectHTML {
 
             if (previousTypeDelay != this.typeDelay){
                 previousTypeDelay = this.typeDelay;
-                clearInterval(this.interval);
+                if (this.interval){ clearInterval(this.interval); }
                 this.interval = setIntervalH(write, this.typeDelay);
             }
 
@@ -259,6 +259,7 @@ class TypeWriterEffectHTML {
             if (this.stack.length == 0)break;
         }
 
+        if (this.interval){ clearInterval(this.interval); }
         this.interval = setIntervalH(write, this.typeDelay);
     }
 

@@ -55,7 +55,7 @@ Spherical Quadtrees wasn't the implementation I settled with in the end because 
 
 ### Problem 1: Stitching
 Although there are solid solutions to this problem, it's very tricky and complex to implement right. At the edge of a quadtree child node, that has a higher LOD right next to it, the node with lower vertex count may have a few triangles that connect two similar height offsets, but in reality between these offsets, there is an offset much lower in the middle, like a valley between two mountains.
-Because the lower LOD doesn't have enough vertices to represent it, it creates a very visible gap at the edge of the node.
+Because the lower LOD doesn't have enough vertices to represent the lower offset, so it creates a very visible gap at the edge of the node.
 
 It's such a tricky problem that even well published games like No Man's Sky and many others just left the gap but lowered the height of the entire node a bit just so you won't notice. Some did fade in transitions, while others actually stitched the two LODs together, like what I did, but it was too complex to maintain.
 
@@ -64,7 +64,9 @@ Look at this picture:
 
 ![quadtree](quadtree2.png)
 
-This is where 3 planes meet. On a spherical planet it shouldn't a significant point, but do you notice something around that point? It looks weird. That's distortion. Seed of Andromeda's devlogs go more in depth about this, but the problem here is that when the observer goes to that point, they're not going to have an even distribution of LOD vertices around them, up to the point that they would only have high detail terrain only on a small path around them while the rest will look lowpoly.
+This is where 3 planes meet. On a spherical planet it shouldn't a significant point, but do you notice something around that point? It looks weird. That's distortion.
+
+Seed of Andromeda's devlogs go more in depth about this problem, but the problem here is that when the observer goes to that point, they're not going to have an even distribution of LOD vertices around them, up to the point that they would only have high detail terrain only on a small path around them while the rest will look lowpoly.
 
 Unfortunately, there is no solid solution for this, only workarounds like increasing the vertex count when arriving near that point which will impact performance.
 
