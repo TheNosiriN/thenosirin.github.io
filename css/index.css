@@ -446,12 +446,16 @@
         gap: 0;
     }
     .blogpage #page_cont, .blogpage #index_cont, .blogpage #comment_cont {
+        padding-top: 5em;
         padding-left: 1.5em;
         padding-right: 1.5em;
-        padding-bottom: 50vh;
+        margin-bottom: 100vh;
         margin-left: 0;
         margin-right: 0;
         /* border-top: 0.2em var(--white-col) solid; */
+    }
+    .blogpage #page_cont {
+        padding-bottom: 25vh;
     }
     .blogpage #index_cont {
         min-height: 0;

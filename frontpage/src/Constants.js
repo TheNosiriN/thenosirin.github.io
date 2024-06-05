@@ -9,8 +9,8 @@ const SHOW_ANIMATED_TRANSITIONS = true;
 
 // var BackgroundColor = {x:0.227, y:0.231, z:0.235};
 // var BackgroundColor = {x:0.145, y:0.149, z:0.153};
-var BackgroundColor = {x:0.145, y:0.145, z:0.145};
-var DarkerBackgroundColor = {x:0.100, y:0.100, z:0.100};
+var BackgroundColor = {x:0.133, y:0.133, z:0.133};
+var DarkerBackgroundColor = {x:0.050, y:0.050, z:0.050};
 
 
 var WelcomeMessages = [
