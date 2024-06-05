@@ -406,7 +406,8 @@
         position: absolute;
         width: 100%;
         z-index: 11;
-        bottom: 0;
+        top: 100%;
+        transform: translateY(-100%);
         left: 0;
 
         border: none;
