@@ -14,8 +14,8 @@
 
 
 body {
-    min-height: 100dvh;
-    min-height: -webkit-fill-available;
+    /* min-height: 100dvh;
+    min-height: -webkit-fill-available; */
 }
 html {
     scroll-behavior: smooth;

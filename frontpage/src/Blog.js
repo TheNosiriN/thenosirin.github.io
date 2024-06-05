@@ -521,7 +521,9 @@ function ContainedPage_Blog(scheduler){
 
     this.onexit = () => {
         foreground.backgroundColor = BackgroundColor;
-        document.body.removeChild(document.getElementById("playback_cont"));
+        if (window.innerWidth <= 600){
+            document.body.removeChild(document.getElementById("playback_cont"));
+        }
     }
 
     this.getProps = () => {

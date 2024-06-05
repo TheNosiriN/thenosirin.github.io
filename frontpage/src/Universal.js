@@ -201,12 +201,21 @@ function ResetPageResources(){
     if (currentPage){
         mainpage.classList.remove(currentPage.getProps().css);
     }
+
+    currentPage = null;
 }
 
 function PixelPageHeader(){
     SetupForegroundRenderer();
     ResetPageResources();
     foreground.backgroundColor = BackgroundColor;
+}
+
+function UpdateWithFrame(){
+    if (currentPage){ currentPage.update(); }
+    main_scheduler.nextEvent();
+    updateAnimatedRectDivs();
+    requestAnimationFrame(UpdateWithFrame);
 }
 
 function LoadContainedPage(PageClass, foreground_available){
@@ -235,15 +244,7 @@ function LoadContainedPage(PageClass, foreground_available){
         enterPage(page_scheduler, GetCurrentTime());
     }
 
-    const updateWithFrame = () => {
-        currentPage.update();
-        main_scheduler.nextEvent();
-        updateAnimatedRectDivs();
-        requestAnimationFrame(updateWithFrame);
-    };
-
     resizeCallback();
-    updateWithFrame();
 }
 
 function historyStateCallback(e, ispop){

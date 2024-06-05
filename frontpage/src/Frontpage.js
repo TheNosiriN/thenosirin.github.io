@@ -108,9 +108,11 @@ function StartPortfolioSite(){
         StartForegroundRenderer(() => {
             ResetPageResources();
             LoadContainedPage(PageClass, true);
+            UpdateWithFrame();
         }, () => {
             ResetPageResources();
             LoadContainedPage(PageClass, false);
+            UpdateWithFrame();
         });
     });
 }
