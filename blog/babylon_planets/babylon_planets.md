@@ -1,5 +1,5 @@
 # Planets on the Web
-This is how I created planets using Babylon.js
+This is how I created planets using Babylon.js, see the project on my [Github](https://github.com/TheNosiriN/BabylonJS-Planets)
 
 Let me show you some pictures first:
 
