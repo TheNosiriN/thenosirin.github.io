@@ -181,7 +181,7 @@ function ContainedPage_Blog(scheduler){
             autowaits: {
                 ',': 500, ':': 500, '.': 1000, '?': 1000, '!':1000,
                 "H1": 1000, "H2": 1000,
-                "IMG": 4000,
+                "IMG": 2500,
             },
             onFinished: func_btn_pause,
             onNodeInserted: (node, writer, nowait) => {

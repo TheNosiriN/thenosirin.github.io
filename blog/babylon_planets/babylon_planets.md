@@ -135,4 +135,4 @@ I'll just say it. Modelling terrain is hard. Whether its procedural or not.
 ## Conclusion
 ![babylon_showcase5](babylonjs_planets2.jpeg)
 
-This project was as fun as it was frustrating to create, and I learnt so many new thing in graphics programming in the process. But this was only the beginning in a long journey in astronomy.
+This project was as fun as it was frustrating to create, and I learnt so many new thing in graphics programming in the process. But this was only the beginning of a long journey in astronomy.
