@@ -39,6 +39,16 @@
         "title": "The Universe ver. 1",
         "titleImage": "universe_bg2.jpg"
     },
+    "universe2_post1": {
+        "author": "Chinomso Nosiri",
+        "backgroundImage": "",
+        "category": "Programming",
+        "id": "universe2_post1",
+        "subtitle": "The Simulated Universe part 1",
+        "time": "2024-06-11T16:10:28Z",
+        "title": "Yet Another Universe",
+        "titleImage": ""
+    },
     "welcome": {
         "author": "Chinomso Nosiri",
         "backgroundImage": "",

@@ -1,7 +1,20 @@
 # Planets on the Web
-I've always been obsessed with voxels, terrain procedural generation, and just doing grid math in code.
+This is how I created planets using Babylon.js
+
+Let me show you some pictures first:
+
+![babylon_showcase1](planet.png)
+
+![babylon_showcase2](planet_dev_13.png)
+
+![babylon_showcase3](babylonjs_planets1.jpeg)
+
+![babylon_showcase4](planet_dev.jpg)
+
 
 ## Where it all started
+I've always been obsessed with voxels, terrain procedural generation, and just doing grid math in code.
+
 I remember the first thing I saw that started this idea of planet generation is from a certain shader I saw on [Shadertoy](https://www.shadertoy.com/view/lt3XDM).
 
 ![planet_shader](shader1.jpg)
@@ -95,3 +108,31 @@ In the Quadtree technique, I managed to optimize the rebuild by making each LOD 
 In the end I still stuck with Spherical Icosahedron LODs because of its simplicity.
 
 ## The Atmosphere
+Now I was ready to work on the atmosphere rendering. I think this took the longest amount of time to do because I was still new to volume rendering in general.
+
+I moved my LOD implementation out of the playground to a full JS application so I can work with more complex rendering features. Then I created a volume raymarcher, I set the origin to the planet origin, and tried the atmosphere rendering approach above. (I later discovered this was [Sean O'Neil's Atmospheric Scattering implementation](https://developer.nvidia.com/gpugems/gpugems2/part-ii-shading-lighting-and-shadows/chapter-16-accurate-atmospheric-scattering))
+
+![planet_dev](planet_dev_7.png)
+
+This was a screenshot I took at that time because the project was finally getting somewhere. And don't mind the FPS, my screenshot and recording software at the time causes a major FPS drop on anything running on the GPU when capturing a screenshot. Although it wasn't running 12 fps, it was running quite slow, around 25 to 30 fps, this was the first problem.
+
+Atmosphere rendering is split into two, the volume lighting, and the volume rendering, **Radiance** and **Irradiance**. With the approach I was using, I had the volume rendering, but I didn't know to do the lighting, which was the second problem (even though the lighting is actually very easy to do).
+
+So I started googling again. That's when I found [Eric Bruneton's Precomputed Atmospheric Scattering](https://ebruneton.github.io/precomputed_atmospheric_scattering/). I thought this was my big break, it was incredibly fast and scalable... But it sure as hell wasn't easy to implement!
+
+Note that all this was way before the popular and widely accepted [Sébastien Hillaire's Production Ready Atmosphere Rendering](https://sebh.github.io/publications/egsr2020.pdf).
+
+When I found it, I was met with this great wall of GLSL functions. most of which had little to do with the actual technique itself. So I was lost and didn't know where to start. I started googling again, thats when I found [someone's implementation of Bruneton's technique in Unity](https://github.com/Scrawk/Brunetons-Atmospheric-Scatter). This was a life saver for me, it had code that I could read and relate to. I even figured out how to change the color while I was converting it from HLSL, (see lines 491 and 492 on this [Github](https://github.com/TheNosiriN/BabylonJS-Planets/blob/48c2b2d4af2f6808b1c9b97bdfdc7500c5243902/src/planet/shdr/atmosphere/Eric_B.atmosphere.glsl#L491) page).
+
+Now I have the Sun's Radiance, and the Sky's Irradiance covered.
+
+## The Terrain
+I'll just say it. Modelling terrain is hard. Whether its procedural or not.
+
+*__TODO: Finish "The Terrain" section of this page__*
+
+
+## Conclusion
+![babylon_showcase5](babylonjs_planets2.jpeg)
+
+This project was as fun as it was frustrating to create, and I learnt so many new thing in graphics programming in the process. But this was only the beginning in a long journey in astronomy.
