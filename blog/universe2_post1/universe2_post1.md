@@ -18,4 +18,10 @@ I think we would have to start with the coordinate system. In my universe projec
 
 I'm just starting this project so I don't know for sure, but I don't think that coordinate system is going to cut it for individual and independent objects in space. In this space the goal is for any object to be anywhere, from spaceships to planets.
 
-I don't think 64 bits will be enough. So over the last few days I created a type that simulated 128, 256, 512 and 1024 bits of number precision. But this will be really slow if I use these numbers for every object in space.
+I don't think 64 bits will be enough. So over the last few days I created a type that simulated 128, 256, 512, and 1024 bits of number precision.
+
+```
+2^512 = 1.34078079e154 micrometers = 1.417206413e132 light years
+```
+
+That is a lot of light years. But unfortunately, this will be really slow if I use these numbers for every object in space.
