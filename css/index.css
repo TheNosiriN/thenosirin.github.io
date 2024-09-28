@@ -445,9 +445,6 @@
     .blogpage #index_grid_div > div {
         position: relative;
     }
-    .blogpage #index_cont {
-        height: 50vh;
-    }
 
     .blogpage #index_grid_div {
         order: -1;
@@ -460,6 +457,7 @@
     }
     .blogpage #page_cont, .blogpage #index_cont, .blogpage #comment_cont {
         padding-top: 5em;
+        padding-bottom: 3em;
         padding-left: 1.5em;
         padding-right: 1.5em;
         margin-bottom: 100vh;

@@ -312,6 +312,13 @@ input[type=number] {
     background-position: center;
 }
 
+/* @media screen and (max-width: 600px) {
+    .center_container {
+        width: 100vh;
+        max-width: none;
+    }
+} */
+
 
 .reading_text {
     color: var(--reading-text-col);

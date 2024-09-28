@@ -19,7 +19,7 @@ I remember the first thing I saw that started this idea of planet generation is 
 
 ![planet_shader](shader1.jpg)
 
-After I saw this I kept wondering, "how can I generate spherical terrain link this?" But that's not even where I started from, of course, as a graphics programmer, I started with making the atmosphere.
+After I saw this I kept wondering, "how can I generate spherical terrain like this?" But that's not even where I started from, of course, as a graphics programmer, I started with making the atmosphere.
 
 The ultimate goal at this point is making my own version of that shader. I cant lie, I had no idea what I was doing, I even tried the [naive technique](https://cyos.babylonjs.com/#SFRDCR#7) of mixing gradients on a skybox to look like a sky. Fortunately, I later found an [atmosphere shader](https://www.shadertoy.com/view/lslXDr) to work with.
 

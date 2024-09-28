@@ -5,7 +5,7 @@ The way I created it restricted it to the limits of what we know exists out ther
 
 But then I thought to myself... How big can I really go? Space in real life doesn't care about scale, it's just a bunch of particles moving however they want, as far as they want, and they clump together to form a bigger object, as big as they want. No restrictions.
 
-The Universe is expanding, and we are inside its bubble. But space is infinite. Is there anything after than the Universe we're inside? Maybe that thing is much bigger. Maybe it's another universe? Or supergiant gas cloud. Instead of spending time imagining what it is, why don't I create it?
+We are inside a small bubble we call the Observable Universe. But space is infinite. Is there anything after than the Observable Universe we're inside? Maybe that thing is much bigger. Maybe it's another universe? Or supergiant gas cloud. Instead of spending time imagining what it is, why don't I create it?
 
 A space without restrictions, anything can be any size. From a gas cloud orders of magnitudes bigger than a universe, to a grain of sand, each having their own position in space.
 
@@ -20,8 +20,6 @@ I'm just starting this project so I don't know for sure, but I don't think that 
 
 I don't think 64 bits will be enough. So over the last few days I created a type that simulated 128, 256, 512, and 1024 bits of number precision.
 
-```
-2^512 = 1.34078079e154 micrometers = 1.417206413e132 light years
-```
+`2^512 = 1.34078079e154 micrometers = 1.417206413e132 light years`
 
 That is a lot of light years. But unfortunately, this will be really slow if I use these numbers for every object in space.
